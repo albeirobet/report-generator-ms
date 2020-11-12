@@ -8,13 +8,13 @@ const ApiError = require('../dto/commons/response/apiErrorDTO');
 const ServiceException = require('../utils/errors/serviceException');
 const commonErrors = require('../utils/constants/commonErrors');
 const reportGeneratorMessages = require('../utils/constants/reportGeneratorMessages');
-const Client = require('../models/clientModel');
+const Supplier = require('../models/supplierModel');
 const httpCodes = require('../utils/constants/httpCodes');
 const constants = require('../utils/constants/constants');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 
-// =========== Function to loadClients
-exports.loadClients = async (req, res) => {
+// =========== Function to loadSuppliers
+exports.loadSuppliers = async (req, res) => {
   try {
     if (req.file === undefined) {
       throw new ServiceException(
@@ -29,13 +29,13 @@ exports.loadClients = async (req, res) => {
     }
     const pathTmp = path.resolve(__dirname, '../resources/uploads/');
     const pathx = `${pathTmp}//${req.file.filename}`;
-    const clients = [];
+    const suppliers = [];
     let count = 0;
     await readXlsxFile(pathx).then(rows => {
       rows.forEach(row => {
         if (count === 0) {
           const fileTitle = row[0];
-          if (fileTitle !== constants.CLIENT_TEMPLATE_TITLE) {
+          if (fileTitle !== constants.SUPPLIERS_TEMPLATE_TITLE) {
             throw new ServiceException(
               commonErrors.E_COMMON_01,
               new ApiError(
@@ -48,36 +48,40 @@ exports.loadClients = async (req, res) => {
           }
         }
 
-        if (count > constants.CLIENT_TEMPLATE_ROW_INIT) {
-          const client = {
+        if (count > constants.SUPPLIERS_TEMPLATE_ROW_INIT) {
+          const supplier = {
             state: row[0],
-            client: row[1],
+            supplier: row[1],
             name: row[2],
             address: row[3],
-            city: row[4],
-            email: row[5],
-            department: row[6],
-            identificationType: row[7],
-            identificationNumber: row[8],
-            country: row[9]
+            paymentConditions: row[4],
+            city: row[5],
+            email: row[6],
+            department: row[7],
+            bankName: row[8],
+            bankAccountNumber: row[9],
+            identificationNumber: row[10],
+            country: row[11],
+            identificationType: row[12]
           };
-          clients.push(client);
+          suppliers.push(supplier);
         }
         count += 1;
       });
     });
     const summaryLoadedData = new SummaryLoadedData('', 0);
-    await Client.insertMany(clients)
+    await Supplier.insertMany(suppliers)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
-        summaryLoadedData.counter = clients.length;
+        summaryLoadedData.counter = suppliers.length;
       })
       .catch(function(error) {
         summaryLoadedData.message =
           reportGeneratorMessages.E_REPORT_GENERATOR_MS_03;
         console.log(error);
       });
+
     fs.unlink(pathx, function(err) {
       if (err) throw err;
     });

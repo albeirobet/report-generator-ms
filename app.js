@@ -11,6 +11,7 @@ const compression = require('compression');
 const cors = require('cors');
 const notFoundRoute = require('./routes/common/notFoundRoute');
 const clientRoute = require('./routes/clientRoute');
+const supplierRoute = require('./routes/supplierRoute');
 
 const app = express();
 
@@ -65,6 +66,8 @@ app.use(xss());
 // ================= ROUTES DEFINITION
 // 1. Clients Route
 app.use('/api/v1/clients', clientRoute);
+// 2. Suppliers Route
+app.use('/api/v1/suppliers', supplierRoute);
 // ... End Not Found Route
 app.all('*', notFoundRoute);
 
