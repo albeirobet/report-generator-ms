@@ -5,34 +5,44 @@ const mongoose = require('mongoose');
 
 const clientSchema = new mongoose.Schema({
   state: {
-    type: String
+    type: String,
+    uppercase: true
   },
   client: {
-    type: String
+    type: String,
+    uppercase: true
   },
   name: {
-    type: String
+    type: String,
+    uppercase: true
   },
   address: {
-    type: String
+    type: String,
+    uppercase: true
   },
   city: {
-    type: String
+    type: String,
+    uppercase: true
   },
   email: {
-    type: String
+    type: String,
+    uppercase: true
   },
   department: {
-    type: String
+    type: String,
+    uppercase: true
   },
   identificationType: {
-    type: String
+    type: String,
+    uppercase: true
   },
   identificationNumber: {
-    type: String
+    type: String,
+    uppercase: true
   },
   country: {
-    type: String
+    type: String,
+    uppercase: true
   }
 });
 

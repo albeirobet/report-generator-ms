@@ -8,13 +8,13 @@ const ApiError = require('../dto/commons/response/apiErrorDTO');
 const ServiceException = require('../utils/errors/serviceException');
 const commonErrors = require('../utils/constants/commonErrors');
 const reportGeneratorMessages = require('../utils/constants/reportGeneratorMessages');
-const EntryMerchandise = require('../models/entryMerchandiseModel');
+const MasterReport = require('../models/masterReportModel');
 const httpCodes = require('../utils/constants/httpCodes');
 const constants = require('../utils/constants/constants');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 
-// =========== Function to loadEntryMerchandises
-exports.loadEntryMerchandises = async (req, res) => {
+// =========== Function to loadSuppliers
+exports.loadMasterReportData = async (req, res) => {
   try {
     if (req.file === undefined) {
       throw new ServiceException(
@@ -29,7 +29,7 @@ exports.loadEntryMerchandises = async (req, res) => {
     }
     const pathTmp = path.resolve(__dirname, '../resources/uploads/');
     const pathx = `${pathTmp}//${req.file.filename}`;
-    const entryMerchandises = [];
+    const masterReport = [];
     let count = 0;
     const workbook = new Excel.Workbook();
     await workbook.xlsx.readFile(pathx).then(function() {
@@ -38,7 +38,7 @@ exports.loadEntryMerchandises = async (req, res) => {
         const currRow = workSheet.getRow(rowNumber);
         if (count === 0) {
           const fileTitle = currRow.getCell(2).value;
-          if (fileTitle !== constants.ENTRY_MERCHANDISE_TEMPLATE_TITLE) {
+          if (fileTitle !== constants.MASTER_REPORT_TEMPLATE_TITLE) {
             fs.unlink(pathx, function(err) {
               if (err) throw err;
             });
@@ -53,35 +53,34 @@ exports.loadEntryMerchandises = async (req, res) => {
             );
           }
         }
-        if (count > constants.ENTRY_MERCHANDISE_TEMPLATE_ROW_INIT) {
-          const entryMerchandise = {
-            state: currRow.getCell(2).value,
-            supplier: currRow.getCell(3).value,
-            supplierName: currRow.getCell(4).value,
-            productId: currRow.getCell(5).value,
-            productName: currRow.getCell(6).value,
-            entryMerchandiseId: currRow.getCell(7).value,
-            positionEntryMerchandiseId: currRow.getCell(8).value,
-            purchaseOrderId: currRow.getCell(9).value,
-            quantityBaseUnitMeasure: currRow.getCell(10).value,
-            quantity: currRow.getCell(11).value,
-            netValue: currRow.getCell(12).value,
-            netValueCompanyCurrency: currRow.getCell(13).value,
-            price: currRow.getCell(14).value,
-            priceUnit: currRow.getCell(15).value
+
+        if (count > constants.MASTER_REPORT_TEMPLATE_ROW_INIT) {
+          const report = {
+            seniorAccountantId: currRow.getCell(2).value,
+            seniorAccountantName: currRow.getCell(3).value,
+            postingDate: currRow.getCell(4).value,
+            accountingSeat: currRow.getCell(5).value,
+            externalReferenceId: currRow.getCell(6).value,
+            accountingSeatType: currRow.getCell(7).value,
+            accountingSeatAnnulled: currRow.getCell(8).value,
+            originalDocumentId: currRow.getCell(9).value,
+            accountingSeatAnnulment: currRow.getCell(10).value,
+            extraOriginalDocumentId: currRow.getCell(11).value,
+            debtAmountCompanyCurrency: currRow.getCell(12).value,
+            creditAmountCompanyCurrency: currRow.getCell(13).value
           };
-          entryMerchandises.push(entryMerchandise);
+          masterReport.push(report);
         }
         count += 1;
       });
     });
     const summaryLoadedData = new SummaryLoadedData('', 0);
     console.log('Insert Data Init');
-    await EntryMerchandise.insertMany(entryMerchandises)
+    await MasterReport.insertMany(masterReport)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
-        summaryLoadedData.counter = entryMerchandises.length;
+        summaryLoadedData.counter = masterReport.length;
         console.log('Insert Data Finish');
       })
       .catch(function(error) {

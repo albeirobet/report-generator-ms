@@ -5,25 +5,32 @@ const mongoose = require('mongoose');
 
 const materialSchema = new mongoose.Schema({
   materialId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   name: {
-    type: String
+    type: String,
+    uppercase: true
   },
   baseUnitMeasure: {
-    type: String
+    type: String,
+    uppercase: true
   },
   productCategory: {
-    type: String
+    type: String,
+    uppercase: true
   },
   type: {
-    type: String
+    type: String,
+    uppercase: true
   },
   createdAt: {
-    type: String
+    type: String,
+    uppercase: true
   },
   modifiedAt: {
-    type: String
+    type: String,
+    uppercase: true
   }
 });
 

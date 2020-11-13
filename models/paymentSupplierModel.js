@@ -5,34 +5,44 @@ const mongoose = require('mongoose');
 
 const pyamentSupplierSchema = new mongoose.Schema({
   state: {
-    type: String
+    type: String,
+    uppercase: true
   },
   documentId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   externalReferenceId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   createdAt: {
-    type: String
+    type: String,
+    uppercase: true
   },
   pyamentMethod: {
-    type: String
+    type: String,
+    uppercase: true
   },
   businessPartnerName: {
-    type: String
+    type: String,
+    uppercase: true
   },
   bankAccountId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   minorExpensesId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   paymentAmount: {
-    type: String
+    type: String,
+    uppercase: true
   },
   companyId: {
-    type: String
+    type: String,
+    uppercase: true
   }
 });
 

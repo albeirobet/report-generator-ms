@@ -5,31 +5,40 @@ const mongoose = require('mongoose');
 
 const purchaseOrderSchema = new mongoose.Schema({
   state: {
-    type: String
+    type: String,
+    uppercase: true
   },
   purchaseOrderId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   documentId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   documentType: {
-    type: String
+    type: String,
+    uppercase: true
   },
   invoiceDate: {
-    type: String
+    type: String,
+    uppercase: true
   },
   orderDate: {
-    type: String
+    type: String,
+    uppercase: true
   },
   requestedQuantity: {
-    type: String
+    type: String,
+    uppercase: true
   },
   deliveredQuantity: {
-    type: String
+    type: String,
+    uppercase: true
   },
   invoicedValue: {
-    type: String
+    type: String,
+    uppercase: true
   }
 });
 

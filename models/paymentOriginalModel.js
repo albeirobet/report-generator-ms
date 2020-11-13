@@ -3,40 +3,51 @@
 // Company: Runcode Ingeniería SAS
 const mongoose = require('mongoose');
 
-const invoiceClientSchema = new mongoose.Schema({
-  clientName: {
+const pyamentOriginalSchema = new mongoose.Schema({
+  state: {
     type: String,
     uppercase: true
   },
-  clientId: {
+  documentId: {
     type: String,
     uppercase: true
   },
-  invoiceId: {
+  externalReferenceId: {
     type: String,
     uppercase: true
   },
-  invoiceDate: {
+  createdAt: {
     type: String,
     uppercase: true
   },
-  grossValueInvoice: {
+  pyamentMethod: {
     type: String,
     uppercase: true
   },
-  netValueInvoice: {
+  businessPartnerName: {
     type: String,
     uppercase: true
   },
-  tax: {
+  bankAccountId: {
     type: String,
     uppercase: true
   },
-  netInvoicedValue: {
+  minorExpensesId: {
+    type: String,
+    uppercase: true
+  },
+  paymentAmount: {
+    type: String,
+    uppercase: true
+  },
+  companyId: {
     type: String,
     uppercase: true
   }
 });
 
-const InvoiceClient = mongoose.model('InvoiceClient', invoiceClientSchema);
-module.exports = InvoiceClient;
+const PaymentOriginal = mongoose.model(
+  'PaymentOriginal',
+  pyamentOriginalSchema
+);
+module.exports = PaymentOriginal;

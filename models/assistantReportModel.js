@@ -6,51 +6,64 @@ const mongoose = require('mongoose');
 const assistanReportSchema = new mongoose.Schema({
   // ID de entrada de mercancías y servicios
   entryMerchandiseId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   //ID de entrega entrante confirmada
   inboundDeliveryConfirmedId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   invoiceId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   // ID de pedido de compra
   purchaseOrderId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   supplierId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   supplierName: {
-    type: String
+    type: String,
+    uppercase: true
   },
   counter: {
-    type: String
+    type: String,
+    uppercase: true
   },
   //Valor bruto en moneda de empresa en fecha de contabilización
   grossValueCompanyCurrencyPostingDate: {
-    type: String
+    type: String,
+    uppercase: true
   },
   //Valor neto en moneda de empresa en fecha de contabilización
   netValueCompanyCurrencyPostingDate: {
-    type: String
+    type: String,
+    uppercase: true
   },
   //Importe bruto
   grossValue: {
-    type: String
+    type: String,
+    uppercase: true
   },
   //Importe bruto en moneda de empresa
   grossValueCompanyCurrency: {
-    type: String
+    type: String,
+    uppercase: true
   },
   // Importe neto en moneda de empresa
   netValueCompanyCurrency: {
-    type: String
+    type: String,
+    uppercase: true
   },
   // Importe neto
   netValue: {
-    type: String
+    type: String,
+    uppercase: true
   }
 });
 

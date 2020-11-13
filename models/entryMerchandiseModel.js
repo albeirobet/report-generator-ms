@@ -5,46 +5,60 @@ const mongoose = require('mongoose');
 
 const entryMerchandiseSchema = new mongoose.Schema({
   state: {
-    type: String
+    type: String,
+    uppercase: true
   },
   supplier: {
-    type: String
+    type: String,
+    uppercase: true
   },
   supplierName: {
-    type: String
+    type: String,
+    uppercase: true
   },
   productId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   productName: {
-    type: String
+    type: String,
+    uppercase: true
   },
   entryMerchandiseId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   positionEntryMerchandiseId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   purchaseOrderId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   quantityBaseUnitMeasure: {
-    type: String
+    type: String,
+    uppercase: true
   },
   quantity: {
-    type: String
+    type: String,
+    uppercase: true
   },
   netValue: {
-    type: String
+    type: String,
+    uppercase: true
   },
   netValueCompanyCurrency: {
-    type: String
+    type: String,
+    uppercase: true
   },
   price: {
-    type: String
+    type: String,
+    uppercase: true
   },
   priceUnit: {
-    type: String
+    type: String,
+    uppercase: true
   }
 });
 

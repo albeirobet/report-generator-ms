@@ -5,46 +5,60 @@ const mongoose = require('mongoose');
 
 const supplierSchema = new mongoose.Schema({
   state: {
-    type: String
+    type: String,
+    uppercase: true
   },
   supplier: {
-    type: String
+    type: String,
+    uppercase: true
   },
   name: {
-    type: String
+    type: String,
+    uppercase: true
   },
   address: {
-    type: String
+    type: String,
+    uppercase: true
   },
   paymentConditions: {
-    type: String
+    type: String,
+    uppercase: true
   },
   city: {
-    type: String
+    type: String,
+    uppercase: true
   },
   email: {
-    type: String
+    type: String,
+    uppercase: true
   },
   department: {
-    type: String
+    type: String,
+    uppercase: true
   },
   bankName: {
-    type: String
+    type: String,
+    uppercase: true
   },
   bankAccountNumber: {
-    type: String
+    type: String,
+    uppercase: true
   },
   identificationType: {
-    type: String
+    type: String,
+    uppercase: true
   },
   identificationNumber: {
-    type: String
+    type: String,
+    uppercase: true
   },
   country: {
-    type: String
+    type: String,
+    uppercase: true
   },
   counter: {
-    type: String
+    type: String,
+    uppercase: true
   }
 });
 

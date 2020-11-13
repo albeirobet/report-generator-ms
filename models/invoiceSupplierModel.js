@@ -5,31 +5,40 @@ const mongoose = require('mongoose');
 
 const invoiceSupplierSchema = new mongoose.Schema({
   state: {
-    type: String
+    type: String,
+    uppercase: true
   },
   documentId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   externalDocumentId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   documentDate: {
-    type: String
+    type: String,
+    uppercase: true
   },
   expirationDate: {
-    type: String
+    type: String,
+    uppercase: true
   },
   invoiceAmount: {
-    type: String
+    type: String,
+    uppercase: true
   },
   netAmount: {
-    type: String
+    type: String,
+    uppercase: true
   },
   taxAmount: {
-    type: String
+    type: String,
+    uppercase: true
   },
   grossAmount: {
-    type: String
+    type: String,
+    uppercase: true
   }
 });
 

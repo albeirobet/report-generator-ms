@@ -23,8 +23,11 @@ module.exports = {
   PAYMENT_SUPPLIERS_TEMPLATE_TITLE: 'Detalles de clientes',
   PAYMENT_CLIENTS_TEMPLATE_ROW_INIT: 4,
   PAYMENT_CLIENTS_TEMPLATE_TITLE: 'Detalles de clientes',
-  MASTER_REPORT_TEMPLATE_ROW_INIT: 4,
-  MASTER_REPORT_TEMPLATE_TITLE: 'Detalles de clientes',
-  ASSISTANT_REPORT_TEMPLATE_ROW_INIT: 4,
-  ASSISTANT_REPORT_TEMPLATE_TITLE: 'Detalles de clientes'
+  MASTER_REPORT_TEMPLATE_ROW_INIT: 9,
+  MASTER_REPORT_TEMPLATE_TITLE: 'Cuentas de mayor - Partidas individuales',
+  ASSISTANT_REPORT_TEMPLATE_ROW_INIT: 7,
+  ASSISTANT_REPORT_TEMPLATE_TITLE:
+    'reporte2 - Informe abierto por el administrador en centro de trabajo Análisis empresarial.',
+  PAYMENT_ORIGINAL_TEMPLATE_ROW_INIT: 2,
+  PAYMENT_ORIGINAL_TEMPLATE_TITLE: 'Control de pagos (Todos los pagos)'
 };

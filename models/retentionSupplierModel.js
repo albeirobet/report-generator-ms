@@ -5,43 +5,56 @@ const mongoose = require('mongoose');
 
 const retentionSupplierSchema = new mongoose.Schema({
   company: {
-    type: String
+    type: String,
+    uppercase: true
   },
   supplierId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   supplierName: {
-    type: String
+    type: String,
+    uppercase: true
   },
   postingDate: {
-    type: String
+    type: String,
+    uppercase: true
   },
   invoiceId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   invoicePosition: {
-    type: String
+    type: String,
+    uppercase: true
   },
   amountCompanyCurrency: {
-    type: String
+    type: String,
+    uppercase: true
   },
   reteFuentePercentage: {
-    type: String
+    type: String,
+    uppercase: true
   },
   reteFuenteValue: {
-    type: String
+    type: String,
+    uppercase: true
   },
   reteIcaPercentage: {
-    type: String
+    type: String,
+    uppercase: true
   },
   reteIcaValue: {
-    type: String
+    type: String,
+    uppercase: true
   },
   reteIvaPercentage: {
-    type: String
+    type: String,
+    uppercase: true
   },
   reteIvaValue: {
-    type: String
+    type: String,
+    uppercase: true
   }
 });
 

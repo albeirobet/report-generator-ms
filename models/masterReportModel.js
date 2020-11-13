@@ -6,46 +6,58 @@ const mongoose = require('mongoose');
 const masterReportSchema = new mongoose.Schema({
   //Cuenta de mayor
   seniorAccountantId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   seniorAccountantName: {
-    type: String
+    type: String,
+    uppercase: true
   },
   postingDate: {
-    type: String
+    type: String,
+    uppercase: true
   },
   //Asiento contable
   accountingSeat: {
-    type: String
+    type: String,
+    uppercase: true
   },
   externalReferenceId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   //Tipo de Asiento contable
   accountingSeatType: {
-    type: String
+    type: String,
+    uppercase: true
   },
   //Asiento contable anulado
   accountingSeatAnnulled: {
-    type: String
+    type: String,
+    uppercase: true
   },
   originalDocumentId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   //Asiento contable de anulación
   accountingSeatAnnulment: {
-    type: String
+    type: String,
+    uppercase: true
   },
   extraOriginalDocumentId: {
-    type: String
+    type: String,
+    uppercase: true
   },
   //Importe en debe en moneda de empresa
   debtAmountCompanyCurrency: {
-    type: String
+    type: String,
+    uppercase: true
   },
   // Importe en haber en moneda de empresa
   creditAmountCompanyCurrency: {
-    type: String
+    type: String,
+    uppercase: true
   }
 });
 

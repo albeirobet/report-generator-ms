@@ -8,13 +8,13 @@ const ApiError = require('../dto/commons/response/apiErrorDTO');
 const ServiceException = require('../utils/errors/serviceException');
 const commonErrors = require('../utils/constants/commonErrors');
 const reportGeneratorMessages = require('../utils/constants/reportGeneratorMessages');
-const EntryMerchandise = require('../models/entryMerchandiseModel');
+const PaymentOriginal = require('../models/paymentOriginalModel');
 const httpCodes = require('../utils/constants/httpCodes');
 const constants = require('../utils/constants/constants');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 
-// =========== Function to loadEntryMerchandises
-exports.loadEntryMerchandises = async (req, res) => {
+// =========== Function to loadSuppliers
+exports.loadPaymentOriginalData = async (req, res) => {
   try {
     if (req.file === undefined) {
       throw new ServiceException(
@@ -29,7 +29,7 @@ exports.loadEntryMerchandises = async (req, res) => {
     }
     const pathTmp = path.resolve(__dirname, '../resources/uploads/');
     const pathx = `${pathTmp}//${req.file.filename}`;
-    const entryMerchandises = [];
+    const paymentOriginalData = [];
     let count = 0;
     const workbook = new Excel.Workbook();
     await workbook.xlsx.readFile(pathx).then(function() {
@@ -38,7 +38,7 @@ exports.loadEntryMerchandises = async (req, res) => {
         const currRow = workSheet.getRow(rowNumber);
         if (count === 0) {
           const fileTitle = currRow.getCell(2).value;
-          if (fileTitle !== constants.ENTRY_MERCHANDISE_TEMPLATE_TITLE) {
+          if (fileTitle !== constants.PAYMENT_ORIGINAL_TEMPLATE_TITLE) {
             fs.unlink(pathx, function(err) {
               if (err) throw err;
             });
@@ -53,35 +53,32 @@ exports.loadEntryMerchandises = async (req, res) => {
             );
           }
         }
-        if (count > constants.ENTRY_MERCHANDISE_TEMPLATE_ROW_INIT) {
-          const entryMerchandise = {
+
+        if (count > constants.PAYMENT_ORIGINAL_TEMPLATE_ROW_INIT) {
+          const payment = {
             state: currRow.getCell(2).value,
-            supplier: currRow.getCell(3).value,
-            supplierName: currRow.getCell(4).value,
-            productId: currRow.getCell(5).value,
-            productName: currRow.getCell(6).value,
-            entryMerchandiseId: currRow.getCell(7).value,
-            positionEntryMerchandiseId: currRow.getCell(8).value,
-            purchaseOrderId: currRow.getCell(9).value,
-            quantityBaseUnitMeasure: currRow.getCell(10).value,
-            quantity: currRow.getCell(11).value,
-            netValue: currRow.getCell(12).value,
-            netValueCompanyCurrency: currRow.getCell(13).value,
-            price: currRow.getCell(14).value,
-            priceUnit: currRow.getCell(15).value
+            documentId: currRow.getCell(3).value,
+            externalReferenceId: currRow.getCell(4).value,
+            createdAt: currRow.getCell(5).value,
+            pyamentMethod: currRow.getCell(6).value,
+            businessPartnerName: currRow.getCell(7).value,
+            bankAccountId: currRow.getCell(8).value,
+            minorExpensesId: currRow.getCell(9).value,
+            paymentAmount: currRow.getCell(10).value,
+            companyId: currRow.getCell(11).value
           };
-          entryMerchandises.push(entryMerchandise);
+          paymentOriginalData.push(payment);
         }
         count += 1;
       });
     });
     const summaryLoadedData = new SummaryLoadedData('', 0);
     console.log('Insert Data Init');
-    await EntryMerchandise.insertMany(entryMerchandises)
+    await PaymentOriginal.insertMany(paymentOriginalData)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
-        summaryLoadedData.counter = entryMerchandises.length;
+        summaryLoadedData.counter = paymentOriginalData.length;
         console.log('Insert Data Finish');
       })
       .catch(function(error) {

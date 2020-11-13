@@ -39,6 +39,9 @@ exports.loadInvoiceClients = async (req, res) => {
         if (count === 0) {
           const fileTitle = currRow.getCell(2).value;
           if (fileTitle !== constants.INVOICE_CLIENTS_TEMPLATE_TITLE) {
+            fs.unlink(pathx, function(err) {
+              if (err) throw err;
+            });
             throw new ServiceException(
               commonErrors.E_COMMON_01,
               new ApiError(
