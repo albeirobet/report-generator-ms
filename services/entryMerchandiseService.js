@@ -8,13 +8,13 @@ const ApiError = require('../dto/commons/response/apiErrorDTO');
 const ServiceException = require('../utils/errors/serviceException');
 const commonErrors = require('../utils/constants/commonErrors');
 const reportGeneratorMessages = require('../utils/constants/reportGeneratorMessages');
-const Client = require('../models/clientModel');
+const EntryMerchandise = require('../models/entryMerchandiseModel');
 const httpCodes = require('../utils/constants/httpCodes');
 const constants = require('../utils/constants/constants');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 
-// =========== Function to loadClients
-exports.loadClients = async (req, res) => {
+// =========== Function to loadEntryMerchandises
+exports.loadEntryMerchandises = async (req, res) => {
   try {
     if (req.file === undefined) {
       throw new ServiceException(
@@ -29,7 +29,7 @@ exports.loadClients = async (req, res) => {
     }
     const pathTmp = path.resolve(__dirname, '../resources/uploads/');
     const pathx = `${pathTmp}//${req.file.filename}`;
-    const clients = [];
+    const entryMerchandises = [];
     let count = 0;
     const workbook = new Excel.Workbook();
     await workbook.xlsx.readFile(pathx).then(function() {
@@ -38,7 +38,7 @@ exports.loadClients = async (req, res) => {
         const currRow = workSheet.getRow(rowNumber);
         if (count === 0) {
           const fileTitle = currRow.getCell(2).value;
-          if (fileTitle !== constants.CLIENT_TEMPLATE_TITLE) {
+          if (fileTitle !== constants.ENTRY_MERCHANDISE_TEMPLATE_TITLE) {
             throw new ServiceException(
               commonErrors.E_COMMON_01,
               new ApiError(
@@ -50,32 +50,35 @@ exports.loadClients = async (req, res) => {
             );
           }
         }
-
-        if (count > constants.CLIENT_TEMPLATE_ROW_INIT) {
-          const client = {
+        if (count > constants.ENTRY_MERCHANDISE_TEMPLATE_ROW_INIT) {
+          const entryMerchandise = {
             state: currRow.getCell(2).value,
-            client: currRow.getCell(3).value,
-            name: currRow.getCell(4).value,
-            address: currRow.getCell(5).value,
-            city: currRow.getCell(6).value,
-            email: currRow.getCell(7).value,
-            department: currRow.getCell(8).value,
-            identificationType: currRow.getCell(9).value,
-            identificationNumber: currRow.getCell(10).value,
-            country: currRow.getCell(11).value
+            supplier: currRow.getCell(3).value,
+            supplierName: currRow.getCell(4).value,
+            productId: currRow.getCell(5).value,
+            productName: currRow.getCell(6).value,
+            entryMerchandiseId: currRow.getCell(7).value,
+            positionEntryMerchandiseId: currRow.getCell(8).value,
+            purchaseOrderId: currRow.getCell(9).value,
+            quantityBaseUnitMeasure: currRow.getCell(10).value,
+            quantity: currRow.getCell(11).value,
+            netValue: currRow.getCell(12).value,
+            netValueCompanyCurrency: currRow.getCell(13).value,
+            price: currRow.getCell(14).value,
+            priceUnit: currRow.getCell(15).value
           };
-          clients.push(client);
+          entryMerchandises.push(entryMerchandise);
         }
         count += 1;
       });
     });
     const summaryLoadedData = new SummaryLoadedData('', 0);
     console.log('Insert Data Init');
-    await Client.insertMany(clients)
+    await EntryMerchandise.insertMany(entryMerchandises)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
-        summaryLoadedData.counter = clients.length;
+        summaryLoadedData.counter = entryMerchandises.length;
         console.log('Insert Data Finish');
       })
       .catch(function(error) {
@@ -83,6 +86,7 @@ exports.loadClients = async (req, res) => {
           reportGeneratorMessages.E_REPORT_GENERATOR_MS_03;
         console.log(error);
       });
+
     fs.unlink(pathx, function(err) {
       if (err) throw err;
     });

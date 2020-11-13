@@ -1,7 +1,7 @@
 // Created By Eyder Ascuntar Rosales
 // Mail: eyder.ascuntar@runcode.co
 // Company: Runcode Ingeniería SAS
-const readXlsxFile = require('read-excel-file/node');
+const Excel = require('exceljs');
 const path = require('path');
 const fs = require('fs');
 const ApiError = require('../dto/commons/response/apiErrorDTO');
@@ -31,10 +31,13 @@ exports.loadSuppliers = async (req, res) => {
     const pathx = `${pathTmp}//${req.file.filename}`;
     const suppliers = [];
     let count = 0;
-    await readXlsxFile(pathx).then(rows => {
-      rows.forEach(row => {
+    const workbook = new Excel.Workbook();
+    await workbook.xlsx.readFile(pathx).then(function() {
+      const workSheet = workbook.getWorksheet(1);
+      workSheet.eachRow(function(row, rowNumber) {
+        const currRow = workSheet.getRow(rowNumber);
         if (count === 0) {
-          const fileTitle = row[0];
+          const fileTitle = currRow.getCell(2).value;
           if (fileTitle !== constants.SUPPLIERS_TEMPLATE_TITLE) {
             throw new ServiceException(
               commonErrors.E_COMMON_01,
@@ -50,19 +53,19 @@ exports.loadSuppliers = async (req, res) => {
 
         if (count > constants.SUPPLIERS_TEMPLATE_ROW_INIT) {
           const supplier = {
-            state: row[0],
-            supplier: row[1],
-            name: row[2],
-            address: row[3],
-            paymentConditions: row[4],
-            city: row[5],
-            email: row[6],
-            department: row[7],
-            bankName: row[8],
-            bankAccountNumber: row[9],
-            identificationNumber: row[10],
-            country: row[11],
-            identificationType: row[12]
+            state: currRow.getCell(2).value,
+            supplier: currRow.getCell(3).value,
+            name: currRow.getCell(4).value,
+            address: currRow.getCell(5).value,
+            paymentConditions: currRow.getCell(6).value,
+            city: currRow.getCell(7).value,
+            email: currRow.getCell(8).value,
+            department: currRow.getCell(9).value,
+            bankName: currRow.getCell(10).value,
+            bankAccountNumber: currRow.getCell(11).value,
+            identificationNumber: currRow.getCell(12).value,
+            country: currRow.getCell(13).value,
+            identificationType: currRow.getCell(14).value
           };
           suppliers.push(supplier);
         }
@@ -70,11 +73,13 @@ exports.loadSuppliers = async (req, res) => {
       });
     });
     const summaryLoadedData = new SummaryLoadedData('', 0);
+    console.log('Insert Data Init');
     await Supplier.insertMany(suppliers)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
         summaryLoadedData.counter = suppliers.length;
+        console.log('Insert Data Finish');
       })
       .catch(function(error) {
         summaryLoadedData.message =

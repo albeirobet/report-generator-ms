@@ -7,11 +7,12 @@ module.exports = {
   SERVICES_TEMPLATE_TITLE:
     'Servicios modificados - Informe abierto por el administrador en centro de trabajo Análisis empresarial.',
   MATERIALS_TEMPLATE_ROW_INIT: 4,
-  MATERIALS_TEMPLATE_TITLE: 'Detalles de clientes',
-  PURCHASE_ORDER_TEMPLATE_ROW_INIT: 4,
-  PURCHASE_ORDER_TEMPLATE_TITLE: 'Detalles de clientes',
-  ENTRY_MERCHANDISE_TEMPLATE_ROW_INIT: 4,
-  ENTRY_MERCHANDISE_TEMPLATE_TITLE: 'Detalles de clientes',
+  MATERIALS_TEMPLATE_TITLE:
+    'Materiales modificados - Informe abierto por el administrador en centro de trabajo Análisis empresarial.',
+  PURCHASE_ORDER_TEMPLATE_ROW_INIT: 8,
+  PURCHASE_ORDER_TEMPLATE_TITLE: 'Historial de pedidos',
+  ENTRY_MERCHANDISE_TEMPLATE_ROW_INIT: 7,
+  ENTRY_MERCHANDISE_TEMPLATE_TITLE: 'Seguimiento de entrada de mercancías',
   INVOICE_SUPPLIERS_TEMPLATE_ROW_INIT: 4,
   INVOICE_SUPPLIERS_TEMPLATE_TITLE: 'Detalles de clientes',
   RETENTION_SUPPLIERS_TEMPLATE_ROW_INIT: 4,

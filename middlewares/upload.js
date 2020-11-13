@@ -18,7 +18,6 @@ const storage = multer.diskStorage({
     cb(null, path.resolve(__dirname, '../resources/uploads/'));
   },
   filename: (req, file, cb) => {
-    console.log(file.originalname);
     cb(null, `${Date.now()}-runcode-${file.originalname}`);
   }
 });

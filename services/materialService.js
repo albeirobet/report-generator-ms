@@ -8,13 +8,13 @@ const ApiError = require('../dto/commons/response/apiErrorDTO');
 const ServiceException = require('../utils/errors/serviceException');
 const commonErrors = require('../utils/constants/commonErrors');
 const reportGeneratorMessages = require('../utils/constants/reportGeneratorMessages');
-const Client = require('../models/clientModel');
+const Material = require('../models/materialModel');
 const httpCodes = require('../utils/constants/httpCodes');
 const constants = require('../utils/constants/constants');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 
-// =========== Function to loadClients
-exports.loadClients = async (req, res) => {
+// =========== Function to loadMaterials
+exports.loadMaterials = async (req, res) => {
   try {
     if (req.file === undefined) {
       throw new ServiceException(
@@ -29,7 +29,7 @@ exports.loadClients = async (req, res) => {
     }
     const pathTmp = path.resolve(__dirname, '../resources/uploads/');
     const pathx = `${pathTmp}//${req.file.filename}`;
-    const clients = [];
+    const materials = [];
     let count = 0;
     const workbook = new Excel.Workbook();
     await workbook.xlsx.readFile(pathx).then(function() {
@@ -38,7 +38,7 @@ exports.loadClients = async (req, res) => {
         const currRow = workSheet.getRow(rowNumber);
         if (count === 0) {
           const fileTitle = currRow.getCell(2).value;
-          if (fileTitle !== constants.CLIENT_TEMPLATE_TITLE) {
+          if (fileTitle !== constants.MATERIALS_TEMPLATE_TITLE) {
             throw new ServiceException(
               commonErrors.E_COMMON_01,
               new ApiError(
@@ -51,31 +51,28 @@ exports.loadClients = async (req, res) => {
           }
         }
 
-        if (count > constants.CLIENT_TEMPLATE_ROW_INIT) {
-          const client = {
-            state: currRow.getCell(2).value,
-            client: currRow.getCell(3).value,
-            name: currRow.getCell(4).value,
-            address: currRow.getCell(5).value,
-            city: currRow.getCell(6).value,
-            email: currRow.getCell(7).value,
-            department: currRow.getCell(8).value,
-            identificationType: currRow.getCell(9).value,
-            identificationNumber: currRow.getCell(10).value,
-            country: currRow.getCell(11).value
+        if (count > constants.MATERIALS_TEMPLATE_ROW_INIT) {
+          const material = {
+            materialId: currRow.getCell(2).value,
+            name: currRow.getCell(3).value,
+            baseUnitMeasure: currRow.getCell(4).value,
+            productCategory: currRow.getCell(5).value,
+            type: currRow.getCell(6).value,
+            createdAt: currRow.getCell(7).value,
+            modifiedAt: currRow.getCell(8).value
           };
-          clients.push(client);
+          materials.push(material);
         }
         count += 1;
       });
     });
     const summaryLoadedData = new SummaryLoadedData('', 0);
     console.log('Insert Data Init');
-    await Client.insertMany(clients)
+    await Material.insertMany(materials)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
-        summaryLoadedData.counter = clients.length;
+        summaryLoadedData.counter = materials.length;
         console.log('Insert Data Finish');
       })
       .catch(function(error) {
@@ -83,6 +80,7 @@ exports.loadClients = async (req, res) => {
           reportGeneratorMessages.E_REPORT_GENERATOR_MS_03;
         console.log(error);
       });
+
     fs.unlink(pathx, function(err) {
       if (err) throw err;
     });

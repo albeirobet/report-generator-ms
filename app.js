@@ -12,6 +12,10 @@ const cors = require('cors');
 const notFoundRoute = require('./routes/common/notFoundRoute');
 const clientRoute = require('./routes/clientRoute');
 const supplierRoute = require('./routes/supplierRoute');
+const serviceRoute = require('./routes/serviceRoute');
+const materialRoute = require('./routes/materialRoute');
+const purchaseOrderRoute = require('./routes/purchaseOrderRoute');
+const entryMerchandiseRoute = require('./routes/entryMerchandiseRoute');
 
 const app = express();
 
@@ -68,6 +72,14 @@ app.use(xss());
 app.use('/api/v1/clients', clientRoute);
 // 2. Suppliers Route
 app.use('/api/v1/suppliers', supplierRoute);
+// 3. Services Route
+app.use('/api/v1/services', serviceRoute);
+// 4. Materials Route
+app.use('/api/v1/materials', materialRoute);
+// 5. Purchase Orders
+app.use('/api/v1/purchaseOrders', purchaseOrderRoute);
+// 6. Purchase Orders
+app.use('/api/v1/entryMerchandises', entryMerchandiseRoute);
 // ... End Not Found Route
 app.all('*', notFoundRoute);
 
