@@ -16,6 +16,9 @@ const serviceRoute = require('./routes/serviceRoute');
 const materialRoute = require('./routes/materialRoute');
 const purchaseOrderRoute = require('./routes/purchaseOrderRoute');
 const entryMerchandiseRoute = require('./routes/entryMerchandiseRoute');
+const invoiceSupplierRoute = require('./routes/invoiceSupplierRouter');
+const retentionSupplierRoute = require('./routes/retentionSupplierRouter');
+const invoiceClientRoute = require('./routes/invoiceClientRoute');
 
 const app = express();
 
@@ -80,6 +83,12 @@ app.use('/api/v1/materials', materialRoute);
 app.use('/api/v1/purchaseOrders', purchaseOrderRoute);
 // 6. Purchase Orders
 app.use('/api/v1/entryMerchandises', entryMerchandiseRoute);
+// 7. Invoice Supplier
+app.use('/api/v1/invoiceSupplier', invoiceSupplierRoute);
+// 8. Retention Supplier
+app.use('/api/v1/retentionSupplier', retentionSupplierRoute);
+// 9. Invoice Clients
+app.use('/api/v1/invoiceClient', invoiceClientRoute);
 // ... End Not Found Route
 app.all('*', notFoundRoute);
 
