@@ -1,0 +1,529 @@
+{
+	"info": {
+		"_postman_id": "46871419-a971-4ddc-99ad-67d5439c9b79",
+		"name": "Report Generator MS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Load Clients",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmN2ZkOTE4YTFkZDUyMjk2NDVkMGE4NyIsImF1dGhvcml0aWVzIjpbInVzZXIiLCJhZG1pbiJdLCJlbWFpbCI6ImZhYmlhbmJwQGdtYWlsLmNvbSIsIm5hbWUiOiJGQUJJQU4iLCJpYXQiOjE2MDUxNDc2ODQsImV4cCI6MTYxMjkyMzY4NH0.1bD8AfaPyR4eSX5wSrSQL0OV8tDb86t8A1rfYbnRdE4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/1. Base datos clientes.xlsx"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://report-generator-ms.herokuapp.com/api/v1/clients/load",
+					"protocol": "https",
+					"host": [
+						"report-generator-ms",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"clients",
+						"load"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Load Suppliers",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/2. Base datos Proveedores.xlsx"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://report-generator-ms.herokuapp.com/api/v1/suppliers/load",
+					"protocol": "https",
+					"host": [
+						"report-generator-ms",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"suppliers",
+						"load"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Load Services",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/3. Servicios.xlsx"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://report-generator-ms.herokuapp.com/api/v1/services/load",
+					"protocol": "https",
+					"host": [
+						"report-generator-ms",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"services",
+						"load"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Load Materials",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/4. Materiales .xlsx"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://report-generator-ms.herokuapp.com/api/v1/materials/load",
+					"protocol": "https",
+					"host": [
+						"report-generator-ms",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"materials",
+						"load"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Load Purchase Orders",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/5. Pedidos de compra.xlsx"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://report-generator-ms.herokuapp.com/api/v1/purchaseOrders/load",
+					"protocol": "https",
+					"host": [
+						"report-generator-ms",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"purchaseOrders",
+						"load"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Load Entry Merchandises",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/6. Entrada de mercancias.xlsx"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://report-generator-ms.herokuapp.com/api/v1/entryMerchandises/load",
+					"protocol": "https",
+					"host": [
+						"report-generator-ms",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"entryMerchandises",
+						"load"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Load Invoice Suppliers",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/7. Factura Proveedores.xlsx"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://report-generator-ms.herokuapp.com/api/v1/invoiceSupplier/load",
+					"protocol": "https",
+					"host": [
+						"report-generator-ms",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"invoiceSupplier",
+						"load"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Load Retention Suppliers",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/8. Retenciones a Proveedor.xlsx"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://report-generator-ms.herokuapp.com/api/v1/retentionSupplier/load",
+					"protocol": "https",
+					"host": [
+						"report-generator-ms",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"retentionSupplier",
+						"load"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Load Invoice Clients",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/9.Facturas de Ventas.xlsx"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://report-generator-ms.herokuapp.com/api/v1/invoiceClient/load",
+					"protocol": "https",
+					"host": [
+						"report-generator-ms",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"invoiceClient",
+						"load"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Load Master Report Data",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/11. Reporte 2 Cuentas Contables y Documentos.xlsx"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://report-generator-ms.herokuapp.com/api/v1/masterReport/load",
+					"protocol": "https",
+					"host": [
+						"report-generator-ms",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"masterReport",
+						"load"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Load Assistant Report Data",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/12. Reporte 3  Documentos facturas.xlsx"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://report-generator-ms.herokuapp.com/api/v1/assistantReport/load",
+					"protocol": "https",
+					"host": [
+						"report-generator-ms",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"assistantReport",
+						"load"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Load Payment Original Data",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/10.Pagos y depositos.xlsx"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://report-generator-ms.herokuapp.com/api/v1/paymentOriginal/load",
+					"protocol": "https",
+					"host": [
+						"report-generator-ms",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"paymentOriginal",
+						"load"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
