@@ -13,8 +13,6 @@ const httpCodes = require('../utils/constants/httpCodes');
 const constants = require('../utils/constants/constants');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const userService = require('../services/userService');
-const { promisify } = require('util');
-const jwt = require('jsonwebtoken');
 
 // =========== Function to loadSuppliers
 exports.loadAssistantReportData = async (req, res) => {
@@ -26,6 +24,18 @@ exports.loadAssistantReportData = async (req, res) => {
           `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_01}`,
           `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_01}`,
           'E_REPORT_GENERATOR_MS_01',
+          httpCodes.BAD_REQUEST
+        )
+      );
+    }
+    const userInfo = await userService.getUserInfo(req, res);
+    if (!userInfo.companyId) {
+      throw new ServiceException(
+        commonErrors.E_COMMON_01,
+        new ApiError(
+          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_04}`,
+          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_04}`,
+          'E_REPORT_GENERATOR_MS_04',
           httpCodes.BAD_REQUEST
         )
       );
@@ -105,7 +115,7 @@ exports.loadAssistantReportData = async (req, res) => {
 // =========== Function to delete AssistantReport
 exports.deleteAssistantReport = async (req, res) => {
   try {
-    let userInfo = await getUserInfo(req, res);
+    const userInfo = await userService.getUserInfo(req, res);
     await AssistantReport.deleteMany({ companyId: userInfo.companyId });
     console.log('All Data successfully deleted');
     return true;
@@ -117,33 +127,9 @@ exports.deleteAssistantReport = async (req, res) => {
 // =========== Function to count AssistantReport
 exports.countAssistantReport = async (req, res) => {
   try {
-    let userInfo = await getUserInfo(req, res);
+    const userInfo = await userService.getUserInfo(req, res);
     return await AssistantReport.countDocuments({ companyId: userInfo.companyId });
   } catch (err) {
     console.log(err);
   }
 };
-
-async function getUserInfo(req, res) {
-  let token;
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith('Bearer')
-    ) {
-      token = req.headers.authorization;
-    }
-    if (!token) {
-      throw new ServiceException(
-        commonErrors.E_COMMON_01,
-        new ApiError(
-          `${accessControlMessages.E_ACCESS_CONTROL_MS_02}`,
-          `${accessControlMessages.E_ACCESS_CONTROL_MS_02}`,
-          'E_ACCESS_CONTROL_MS_02',
-          httpCodes.UNAUTHORIZED
-        )
-      );
-    }
-
-    const decoded = await promisify(jwt.verify)(token.split(' ')[1], process.env.JWT_SECRET);
-    return await userService.getUserInfo(decoded.id, token, res);
-}

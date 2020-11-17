@@ -13,8 +13,6 @@ const httpCodes = require('../utils/constants/httpCodes');
 const constants = require('../utils/constants/constants');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const userService = require('../services/userService');
-const { promisify } = require('util');
-const jwt = require('jsonwebtoken');
 
 // =========== Function to loadClients
 exports.loadClients = async (req, res) => {
@@ -30,7 +28,7 @@ exports.loadClients = async (req, res) => {
         )
       );
     }
-    let userInfo = await getUserInfo(req, res);
+    const userInfo = await userService.getUserInfo(req, res);
     if (!userInfo.companyId) {
       throw new ServiceException(
         commonErrors.E_COMMON_01,
@@ -80,7 +78,7 @@ exports.loadClients = async (req, res) => {
             department: currRow.getCell(8).value,
             identificationType: currRow.getCell(9).value,
             identificationNumber: currRow.getCell(10).value,
-            country: currRow.getCell(11).value, 
+            country: currRow.getCell(11).value,
             companyId: userInfo.companyId,
             userId: userInfo._id
           };
@@ -115,7 +113,7 @@ exports.loadClients = async (req, res) => {
 // =========== Function to delete clients
 exports.deleteClients = async (req, res) => {
   try {
-    let userInfo = await getUserInfo(req, res);
+    const userInfo = await userService.getUserInfo(req, res);
     await Client.deleteMany({ companyId: userInfo.companyId });
     console.log('All Data successfully deleted');
     return true;
@@ -127,33 +125,9 @@ exports.deleteClients = async (req, res) => {
 // =========== Function to count clients
 exports.countClients = async (req, res) => {
   try {
-    let userInfo = await getUserInfo(req, res);
+    const userInfo = await userService.getUserInfo(req, res);
     return await Client.countDocuments({ companyId: userInfo.companyId });
   } catch (err) {
     console.log(err);
   }
 };
-
-async function getUserInfo(req, res) {
-  let token;
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith('Bearer')
-    ) {
-      token = req.headers.authorization;
-    }
-    if (!token) {
-      throw new ServiceException(
-        commonErrors.E_COMMON_01,
-        new ApiError(
-          `${accessControlMessages.E_ACCESS_CONTROL_MS_02}`,
-          `${accessControlMessages.E_ACCESS_CONTROL_MS_02}`,
-          'E_ACCESS_CONTROL_MS_02',
-          httpCodes.UNAUTHORIZED
-        )
-      );
-    }
-
-    const decoded = await promisify(jwt.verify)(token.split(' ')[1], process.env.JWT_SECRET);
-    return await userService.getUserInfo(decoded.id, token, res);
-}
