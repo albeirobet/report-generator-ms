@@ -27,7 +27,7 @@ exports.deleteAssistantReport = async (req, res) => {
   let generalResponse = new GeneralResponse();
   generalResponse.success = true;
   try {
-    const data = await assistantReportService.deleteClients(req, res);
+    const data = await assistantReportService.deleteAssistantReport(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
     console.log(err);
@@ -43,7 +43,7 @@ exports.countAssistantReport = async (req, res) => {
   let generalResponse = new GeneralResponse();
   generalResponse.success = true;
   try {
-    const data = await assistantReportService.countClients(req, res);
+    const data = await assistantReportService.countAssistantReport(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
     console.log(err);

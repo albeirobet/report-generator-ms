@@ -1,13 +1,16 @@
 {
+	"variables": [],
 	"info": {
-		"_postman_id": "46871419-a971-4ddc-99ad-67d5439c9b79",
 		"name": "Report Generator MS",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"_postman_id": "64f96f66-06ae-ba14-d33c-5e5b033fcc84",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "Load Clients",
 			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/clients/load",
 				"method": "POST",
 				"header": [
 					{
@@ -22,41 +25,19 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/1. Base datos clientes.xlsx"
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/1. Base datos clientes.xlsx",
+							"value": ""
 						}
 					]
 				},
-				"url": {
-					"raw": "https://report-generator-ms.herokuapp.com/api/v1/clients/load",
-					"protocol": "https",
-					"host": [
-						"report-generator-ms",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"v1",
-						"clients",
-						"load"
-					]
-				}
+				"description": ""
 			},
 			"response": []
 		},
 		{
 			"name": "Load Suppliers",
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{jwt}}",
-							"type": "string"
-						}
-					]
-				},
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/suppliers/load",
 				"method": "POST",
 				"header": [
 					{
@@ -72,41 +53,19 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/2. Base datos Proveedores.xlsx"
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/2. Base datos Proveedores.xlsx",
+							"value": ""
 						}
 					]
 				},
-				"url": {
-					"raw": "https://report-generator-ms.herokuapp.com/api/v1/suppliers/load",
-					"protocol": "https",
-					"host": [
-						"report-generator-ms",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"v1",
-						"suppliers",
-						"load"
-					]
-				}
+				"description": ""
 			},
 			"response": []
 		},
 		{
 			"name": "Load Services",
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{jwt}}",
-							"type": "string"
-						}
-					]
-				},
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/services/load",
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -115,41 +74,19 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/3. Servicios.xlsx"
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/3. Servicios.xlsx",
+							"value": ""
 						}
 					]
 				},
-				"url": {
-					"raw": "https://report-generator-ms.herokuapp.com/api/v1/services/load",
-					"protocol": "https",
-					"host": [
-						"report-generator-ms",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"v1",
-						"services",
-						"load"
-					]
-				}
+				"description": ""
 			},
 			"response": []
 		},
 		{
 			"name": "Load Materials",
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{jwt}}",
-							"type": "string"
-						}
-					]
-				},
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/materials/load",
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -158,41 +95,19 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/4. Materiales .xlsx"
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/4. Materiales .xlsx",
+							"value": ""
 						}
 					]
 				},
-				"url": {
-					"raw": "https://report-generator-ms.herokuapp.com/api/v1/materials/load",
-					"protocol": "https",
-					"host": [
-						"report-generator-ms",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"v1",
-						"materials",
-						"load"
-					]
-				}
+				"description": ""
 			},
 			"response": []
 		},
 		{
 			"name": "Load Purchase Orders",
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{jwt}}",
-							"type": "string"
-						}
-					]
-				},
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/purchaseOrders/load",
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -201,41 +116,19 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/5. Pedidos de compra.xlsx"
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/5. Pedidos de compra.xlsx",
+							"value": ""
 						}
 					]
 				},
-				"url": {
-					"raw": "https://report-generator-ms.herokuapp.com/api/v1/purchaseOrders/load",
-					"protocol": "https",
-					"host": [
-						"report-generator-ms",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"v1",
-						"purchaseOrders",
-						"load"
-					]
-				}
+				"description": ""
 			},
 			"response": []
 		},
 		{
 			"name": "Load Entry Merchandises",
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{jwt}}",
-							"type": "string"
-						}
-					]
-				},
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/entryMerchandises/load",
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -244,41 +137,19 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/6. Entrada de mercancias.xlsx"
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/6. Entrada de mercancias.xlsx",
+							"value": ""
 						}
 					]
 				},
-				"url": {
-					"raw": "https://report-generator-ms.herokuapp.com/api/v1/entryMerchandises/load",
-					"protocol": "https",
-					"host": [
-						"report-generator-ms",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"v1",
-						"entryMerchandises",
-						"load"
-					]
-				}
+				"description": ""
 			},
 			"response": []
 		},
 		{
 			"name": "Load Invoice Suppliers",
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{jwt}}",
-							"type": "string"
-						}
-					]
-				},
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/invoiceSupplier/load",
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -287,41 +158,19 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/7. Factura Proveedores.xlsx"
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/7. Factura Proveedores.xlsx",
+							"value": ""
 						}
 					]
 				},
-				"url": {
-					"raw": "https://report-generator-ms.herokuapp.com/api/v1/invoiceSupplier/load",
-					"protocol": "https",
-					"host": [
-						"report-generator-ms",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"v1",
-						"invoiceSupplier",
-						"load"
-					]
-				}
+				"description": ""
 			},
 			"response": []
 		},
 		{
 			"name": "Load Retention Suppliers",
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{jwt}}",
-							"type": "string"
-						}
-					]
-				},
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/retentionSupplier/load",
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -330,41 +179,19 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/8. Retenciones a Proveedor.xlsx"
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/8. Retenciones a Proveedor.xlsx",
+							"value": ""
 						}
 					]
 				},
-				"url": {
-					"raw": "https://report-generator-ms.herokuapp.com/api/v1/retentionSupplier/load",
-					"protocol": "https",
-					"host": [
-						"report-generator-ms",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"v1",
-						"retentionSupplier",
-						"load"
-					]
-				}
+				"description": ""
 			},
 			"response": []
 		},
 		{
 			"name": "Load Invoice Clients",
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{jwt}}",
-							"type": "string"
-						}
-					]
-				},
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/invoiceClient/load",
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -373,41 +200,19 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/9.Facturas de Ventas.xlsx"
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/9.Facturas de Ventas.xlsx",
+							"value": ""
 						}
 					]
 				},
-				"url": {
-					"raw": "https://report-generator-ms.herokuapp.com/api/v1/invoiceClient/load",
-					"protocol": "https",
-					"host": [
-						"report-generator-ms",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"v1",
-						"invoiceClient",
-						"load"
-					]
-				}
+				"description": ""
 			},
 			"response": []
 		},
 		{
 			"name": "Load Master Report Data",
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{jwt}}",
-							"type": "string"
-						}
-					]
-				},
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/masterReport/load",
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -416,41 +221,19 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/11. Reporte 2 Cuentas Contables y Documentos.xlsx"
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/11. Reporte 2 Cuentas Contables y Documentos.xlsx",
+							"value": ""
 						}
 					]
 				},
-				"url": {
-					"raw": "https://report-generator-ms.herokuapp.com/api/v1/masterReport/load",
-					"protocol": "https",
-					"host": [
-						"report-generator-ms",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"v1",
-						"masterReport",
-						"load"
-					]
-				}
+				"description": ""
 			},
 			"response": []
 		},
 		{
 			"name": "Load Assistant Report Data",
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{jwt}}",
-							"type": "string"
-						}
-					]
-				},
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/assistantReport/load",
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -459,41 +242,19 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/12. Reporte 3  Documentos facturas.xlsx"
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/12. Reporte 3  Documentos facturas.xlsx",
+							"value": ""
 						}
 					]
 				},
-				"url": {
-					"raw": "https://report-generator-ms.herokuapp.com/api/v1/assistantReport/load",
-					"protocol": "https",
-					"host": [
-						"report-generator-ms",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"v1",
-						"assistantReport",
-						"load"
-					]
-				}
+				"description": ""
 			},
 			"response": []
 		},
 		{
 			"name": "Load Payment Original Data",
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{jwt}}",
-							"type": "string"
-						}
-					]
-				},
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/paymentOriginal/load",
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -502,28 +263,218 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/10.Pagos y depositos.xlsx"
+							"src": "/E:/Runcode/REPORTES SAP-20201112T221218Z-001/REPORTES SAP/10.Pagos y depositos.xlsx",
+							"value": ""
 						}
 					]
 				},
-				"url": {
-					"raw": "https://report-generator-ms.herokuapp.com/api/v1/paymentOriginal/load",
-					"protocol": "https",
-					"host": [
-						"report-generator-ms",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"v1",
-						"paymentOriginal",
-						"load"
-					]
-				}
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Count Clients",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/clients/count",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Count Suppliers",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/suppliers/count",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Count Services",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/services/count",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Count Materials",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/materials/count",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Count Purchase Orders",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/purchaseOrders/count",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Count Entry Merchandises",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/entryMerchandises/count",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Count Invoice Supplier",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/invoiceSupplier/count",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Count Retention Supplier",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/retentionSupplier/count",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Count Invoice Client",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/invoiceClient/count",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Count Master Report",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/masterReport/count",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Count Assistant Report",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/assistantReport/count",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Count Payment Original",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/paymentOriginal/count",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
 			},
 			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
