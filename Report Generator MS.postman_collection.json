@@ -475,6 +475,210 @@
 				"description": ""
 			},
 			"response": []
+		},
+		{
+			"name": "Delete Clients",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/clients/delete",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Suppliers",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/suppliers/delete",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Services",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/services/delete",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Materials",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/materials/delete",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Purchase Orders",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/purchaseOrders/delete",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Entry Merchandises",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/entryMerchandises/delete",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Invoice Supplier",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/invoiceSupplier/delete",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Retention Supplier",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/retentionSupplier/delete",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Invoice Client",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/invoiceClient/delete",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Master Report",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/masterReport/delete",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Assistant Report",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/assistantReport/delete",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Payment Original",
+			"request": {
+				"url": "https://report-generator-ms.herokuapp.com/api/v1/paymentOriginal/delete",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjJjNzNmMmQ0YTJlMDAxNzMxZmRmMiIsImF1dGhvcml0aWVzIjpbImFkbWluIl0sImVtYWlsIjoiZmFiaWFuYnBAZ21haWwuY29tIiwibmFtZSI6IkZBQklBTiIsImlhdCI6MTYwNTU1MjM2MCwiZXhwIjoxNjEzMzI4MzYwfQ.1m9pDlMAPTaIJlV-40wpvCtUis8vbkznuNVgMnkFjNc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
 		}
 	]
 }
