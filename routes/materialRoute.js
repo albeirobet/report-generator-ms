@@ -15,5 +15,17 @@ router.post(
   upload.single('file'),
   materialController.loadMaterials
 );
+router.delete(
+  '/delete',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  materialController.deleteMaterials
+);
+router.get(
+  '/count',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  materialController.countMaterials
+);
 
 module.exports = router;

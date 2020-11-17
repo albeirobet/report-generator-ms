@@ -15,5 +15,17 @@ router.post(
   upload.single('file'),
   paymentOriginalController.loadPaymentOriginalData
 );
+router.delete(
+  '/delete',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  paymentOriginalController.deletePaymentOriginal
+);
+router.get(
+  '/count',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  paymentOriginalController.countPaymentOriginal
+);
 
 module.exports = router;

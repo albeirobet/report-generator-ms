@@ -15,5 +15,17 @@ router.post(
   upload.single('file'),
   supplierController.loadSuppliers
 );
+router.delete(
+  '/delete',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  supplierController.deleteSuppliers
+);
+router.get(
+  '/count',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  supplierController.countSuppliers
+);
 
 module.exports = router;

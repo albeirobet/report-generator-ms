@@ -21,3 +21,35 @@ exports.loadPaymentOriginalData = async (req, res) => {
   }
   return res.status(codeHttp).json(generalResponse);
 };
+
+exports.deletePaymentOriginal = async (req, res) => {
+  let codeHttp = httpCodes.OK;
+  let generalResponse = new GeneralResponse();
+  generalResponse.success = true;
+  try {
+    const data = await paymentOriginalService.deletePaymentOriginal(req, res);
+    generalResponse = generalResp.generalSuccess(data);
+  } catch (err) {
+    console.log(err);
+    generalResponse = generalResp.generalError(err);
+    codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
+    generalResponse.apiError.codeHTTP = undefined;
+  }
+  return res.status(codeHttp).json(generalResponse);
+};
+
+exports.countPaymentOriginal = async (req, res) => {
+  let codeHttp = httpCodes.OK;
+  let generalResponse = new GeneralResponse();
+  generalResponse.success = true;
+  try {
+    const data = await paymentOriginalService.countPaymentOriginal(req, res);
+    generalResponse = generalResp.generalSuccess(data);
+  } catch (err) {
+    console.log(err);
+    generalResponse = generalResp.generalError(err);
+    codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
+    generalResponse.apiError.codeHTTP = undefined;
+  }
+  return res.status(codeHttp).json(generalResponse);
+};

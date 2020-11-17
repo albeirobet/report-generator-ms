@@ -15,5 +15,17 @@ router.post(
   upload.single('file'),
   masterReportController.loadMasterReportData
 );
+router.delete(
+  '/delete',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  masterReportController.deleteMasterReport
+);
+router.get(
+  '/count',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  masterReportController.countMasterReport
+);
 
 module.exports = router;

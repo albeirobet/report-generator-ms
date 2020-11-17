@@ -15,5 +15,17 @@ router.post(
   upload.single('file'),
   entryMerchandiseController.loadEntryMerchandises
 );
+router.delete(
+  '/delete',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  entryMerchandiseController.deleteEntryMerchandises
+);
+router.get(
+  '/count',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  entryMerchandiseController.countEntryMerchandises
+);
 
 module.exports = router;

@@ -12,6 +12,9 @@ const RetentionSupplier = require('../models/retentionSupplierModel');
 const httpCodes = require('../utils/constants/httpCodes');
 const constants = require('../utils/constants/constants');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
+const userService = require('../services/userService');
+const { promisify } = require('util');
+const jwt = require('jsonwebtoken');
 
 // =========== Function to loadEntryMerchandises
 exports.loadRetentionSupplier = async (req, res) => {
@@ -97,3 +100,49 @@ exports.loadRetentionSupplier = async (req, res) => {
     throw error;
   }
 };
+
+// =========== Function to delete RetentionSupplier
+exports.deleteRetentionSupplier = async (req, res) => {
+  try {
+    let userInfo = await getUserInfo(req, res);
+    await RetentionSupplier.deleteMany({ companyId: userInfo.companyId });
+    console.log('All Data successfully deleted');
+    return true;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// =========== Function to count RetentionSupplier
+exports.countRetentionSupplier = async (req, res) => {
+  try {
+    let userInfo = await getUserInfo(req, res);
+    return await RetentionSupplier.countDocuments({ companyId: userInfo.companyId });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+async function getUserInfo(req, res) {
+  let token;
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith('Bearer')
+    ) {
+      token = req.headers.authorization;
+    }
+    if (!token) {
+      throw new ServiceException(
+        commonErrors.E_COMMON_01,
+        new ApiError(
+          `${accessControlMessages.E_ACCESS_CONTROL_MS_02}`,
+          `${accessControlMessages.E_ACCESS_CONTROL_MS_02}`,
+          'E_ACCESS_CONTROL_MS_02',
+          httpCodes.UNAUTHORIZED
+        )
+      );
+    }
+
+    const decoded = await promisify(jwt.verify)(token.split(' ')[1], process.env.JWT_SECRET);
+    return await userService.getUserInfo(decoded.id, token, res);
+}

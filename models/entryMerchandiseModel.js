@@ -59,6 +59,20 @@ const entryMerchandiseSchema = new mongoose.Schema({
   priceUnit: {
     type: String,
     uppercase: true
+  },
+  companyId: {
+    type: String,
+    required: [
+      true,
+      'Por favor ingrese el ID de la compania, es un dato obligatorio. '
+    ]
+  },
+  userId: {
+    type: String,
+    required: [
+      true,
+      'Por favor ingrese el ID del Usuario, es un dato obligatorio. '
+    ]
   }
 });
 

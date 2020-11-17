@@ -12,6 +12,9 @@ const PurchaseOrder = require('../models/purchaseOrderModel');
 const httpCodes = require('../utils/constants/httpCodes');
 const constants = require('../utils/constants/constants');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
+const userService = require('../services/userService');
+const { promisify } = require('util');
+const jwt = require('jsonwebtoken');
 
 // =========== Function to loadPurchaseOrders
 exports.loadPurchaseOrders = async (req, res) => {
@@ -94,3 +97,49 @@ exports.loadPurchaseOrders = async (req, res) => {
     throw error;
   }
 };
+
+// =========== Function to delete PurchaseOrder
+exports.deletePurchaseOrder = async (req, res) => {
+  try {
+    let userInfo = await getUserInfo(req, res);
+    await PurchaseOrder.deleteMany({ companyId: userInfo.companyId });
+    console.log('All Data successfully deleted');
+    return true;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// =========== Function to count PurchaseOrder
+exports.countPurchaseOrder = async (req, res) => {
+  try {
+    let userInfo = await getUserInfo(req, res);
+    return await PurchaseOrder.countDocuments({ companyId: userInfo.companyId });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+async function getUserInfo(req, res) {
+  let token;
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith('Bearer')
+    ) {
+      token = req.headers.authorization;
+    }
+    if (!token) {
+      throw new ServiceException(
+        commonErrors.E_COMMON_01,
+        new ApiError(
+          `${accessControlMessages.E_ACCESS_CONTROL_MS_02}`,
+          `${accessControlMessages.E_ACCESS_CONTROL_MS_02}`,
+          'E_ACCESS_CONTROL_MS_02',
+          httpCodes.UNAUTHORIZED
+        )
+      );
+    }
+
+    const decoded = await promisify(jwt.verify)(token.split(' ')[1], process.env.JWT_SECRET);
+    return await userService.getUserInfo(decoded.id, token, res);
+}

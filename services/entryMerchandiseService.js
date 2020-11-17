@@ -12,6 +12,9 @@ const EntryMerchandise = require('../models/entryMerchandiseModel');
 const httpCodes = require('../utils/constants/httpCodes');
 const constants = require('../utils/constants/constants');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
+const userService = require('../services/userService');
+const { promisify } = require('util');
+const jwt = require('jsonwebtoken');
 
 // =========== Function to loadEntryMerchandises
 exports.loadEntryMerchandises = async (req, res) => {
@@ -98,3 +101,49 @@ exports.loadEntryMerchandises = async (req, res) => {
     throw error;
   }
 };
+
+// =========== Function to delete EntryMerchandises
+exports.deleteEntryMerchandises = async (req, res) => {
+  try {
+    let userInfo = await getUserInfo(req, res);
+    await EntryMerchandise.deleteMany({ companyId: userInfo.companyId });
+    console.log('All Data successfully deleted');
+    return true;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// =========== Function to count EntryMerchandises
+exports.countEntryMerchandises = async (req, res) => {
+  try {
+    let userInfo = await getUserInfo(req, res);
+    return await EntryMerchandise.countDocuments({ companyId: userInfo.companyId });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+async function getUserInfo(req, res) {
+  let token;
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith('Bearer')
+    ) {
+      token = req.headers.authorization;
+    }
+    if (!token) {
+      throw new ServiceException(
+        commonErrors.E_COMMON_01,
+        new ApiError(
+          `${accessControlMessages.E_ACCESS_CONTROL_MS_02}`,
+          `${accessControlMessages.E_ACCESS_CONTROL_MS_02}`,
+          'E_ACCESS_CONTROL_MS_02',
+          httpCodes.UNAUTHORIZED
+        )
+      );
+    }
+
+    const decoded = await promisify(jwt.verify)(token.split(' ')[1], process.env.JWT_SECRET);
+    return await userService.getUserInfo(decoded.id, token, res);
+}

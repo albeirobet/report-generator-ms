@@ -15,5 +15,17 @@ router.post(
   upload.single('file'),
   purchaseOrderController.loadPurchaseOrders
 );
+router.delete(
+  '/delete',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  purchaseOrderController.deletePurchaseOrders
+);
+router.get(
+  '/count',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  purchaseOrderController.countPurchaseOrders
+);
 
 module.exports = router;

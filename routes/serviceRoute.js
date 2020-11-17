@@ -15,5 +15,17 @@ router.post(
   upload.single('file'),
   serviceController.loadServices
 );
+router.delete(
+  '/delete',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  serviceController.deleteServices
+);
+router.get(
+  '/count',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  serviceController.countServices
+);
 
 module.exports = router;
