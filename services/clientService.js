@@ -118,7 +118,7 @@ exports.deleteClients = async (req, res) => {
     console.log('All Data successfully deleted');
     return true;
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };
 
@@ -128,6 +128,6 @@ exports.countClients = async (req, res) => {
     const userInfo = await userService.getUserInfo(req, res);
     return await Client.countDocuments({ companyId: userInfo.companyId });
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };
