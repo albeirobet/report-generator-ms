@@ -11,42 +11,38 @@ const httpCodes = require('../utils/constants/httpCodes');
  * Función encargada de consultar la informacion del Usuario en Sesion
  */
 exports.getUserInfo = async (req, res) => {
-  try {
-    let token;
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith('Bearer')
-    ) {
-      token = req.headers.authorization;
-    }
-    if (!token) {
-      throw new ServiceException(
-        commonErrors.E_COMMON_01,
-        new ApiError(
-          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_05}`,
-          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_05}`,
-          'E_REPORT_GENERATOR_MS_05',
-          httpCodes.UNAUTHORIZED
-        )
-      );
-    }
-
-    const decoded = await promisify(jwt.verify)(
-      token.split(' ')[1],
-      process.env.JWT_SECRET
-    );
-
-    const response = await axios.get(
-      `https://access-control-ms.herokuapp.com/api/v1/users/getUser/${decoded.id}`,
-      {
-        headers: {
-          Authorization: token
-        }
-      }
-    );
-
-    return response.data.data;
-  } catch (err) {
-    console.error(err);
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization;
   }
+  if (!token) {
+    throw new ServiceException(
+      commonErrors.E_COMMON_01,
+      new ApiError(
+        `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_05}`,
+        `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_05}`,
+        'E_REPORT_GENERATOR_MS_05',
+        httpCodes.UNAUTHORIZED
+      )
+    );
+  }
+
+  const decoded = await promisify(jwt.verify)(
+    token.split(' ')[1],
+    process.env.JWT_SECRET
+  );
+
+  const response = await axios.get(
+    `https://access-control-ms.herokuapp.com/api/v1/users/getUser/${decoded.id}`,
+    {
+      headers: {
+        Authorization: token
+      }
+    }
+  );
+
+  return response.data.data;
 };
