@@ -14,8 +14,8 @@ exports.loadEntryMerchandises = async (req, res) => {
     const data = await entryMerchandiseService.loadEntryMerchandises(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
-    console.log(err);
     generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
     codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
     generalResponse.apiError.codeHTTP = undefined;
   }
@@ -30,8 +30,8 @@ exports.deleteEntryMerchandises = async (req, res) => {
     const data = await entryMerchandiseService.deleteEntryMerchandises(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
-    console.log(err);
     generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
     codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
     generalResponse.apiError.codeHTTP = undefined;
   }
@@ -46,8 +46,8 @@ exports.countEntryMerchandises = async (req, res) => {
     const data = await entryMerchandiseService.countEntryMerchandises(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
-    console.log(err);
     generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
     codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
     generalResponse.apiError.codeHTTP = undefined;
   }

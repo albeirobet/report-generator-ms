@@ -14,8 +14,8 @@ exports.loadRetentionSupplier = async (req, res) => {
     const data = await retentionSupplier.loadRetentionSupplier(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
-    console.log(err);
     generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
     codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
     generalResponse.apiError.codeHTTP = undefined;
   }
@@ -30,8 +30,8 @@ exports.deleteRetentionSupplier = async (req, res) => {
     const data = await retentionSupplier.deleteRetentionSupplier(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
-    console.log(err);
     generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
     codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
     generalResponse.apiError.codeHTTP = undefined;
   }
@@ -46,8 +46,8 @@ exports.countRetentionSupplier = async (req, res) => {
     const data = await retentionSupplier.countRetentionSupplier(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
-    console.log(err);
     generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
     codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
     generalResponse.apiError.codeHTTP = undefined;
   }

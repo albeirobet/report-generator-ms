@@ -14,8 +14,8 @@ exports.loadInvoiceClients = async (req, res) => {
     const data = await invoiceClientService.loadInvoiceClients(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
-    console.log(err);
     generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
     codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
     generalResponse.apiError.codeHTTP = undefined;
   }
@@ -30,8 +30,8 @@ exports.deleteInvoiceClients = async (req, res) => {
     const data = await invoiceClientService.deleteInvoiceClient(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
-    console.log(err);
     generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
     codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
     generalResponse.apiError.codeHTTP = undefined;
   }
@@ -46,8 +46,8 @@ exports.countInvoiceClients = async (req, res) => {
     const data = await invoiceClientService.countInvoiceClient(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
-    console.log(err);
     generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
     codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
     generalResponse.apiError.codeHTTP = undefined;
   }

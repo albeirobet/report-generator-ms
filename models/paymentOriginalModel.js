@@ -40,6 +40,10 @@ const pyamentOriginalSchema = new mongoose.Schema({
     type: String,
     uppercase: true
   },
+  companyIdFile: {
+    type: String,
+    uppercase: true
+  },
   companyId: {
     type: String,
     required: [

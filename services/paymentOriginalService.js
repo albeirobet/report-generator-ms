@@ -78,7 +78,9 @@ exports.loadPaymentOriginalData = async (req, res) => {
             bankAccountId: currRow.getCell(8).value,
             minorExpensesId: currRow.getCell(9).value,
             paymentAmount: currRow.getCell(10).value,
-            companyId: currRow.getCell(11).value
+            companyIdFile: currRow.getCell(11).value,
+            companyId: userInfo.companyId,
+            userId: userInfo._id
           };
           paymentOriginalData.push(payment);
         }

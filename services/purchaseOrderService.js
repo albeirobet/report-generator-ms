@@ -77,7 +77,9 @@ exports.loadPurchaseOrders = async (req, res) => {
             orderDate: currRow.getCell(7).value,
             requestedQuantity: currRow.getCell(8).value,
             deliveredQuantity: currRow.getCell(9).value,
-            invoicedValue: currRow.getCell(10).value
+            invoicedValue: currRow.getCell(10).value,
+            companyId: userInfo.companyId,
+            userId: userInfo._id
           };
           purchaseOrders.push(purchaseOrder);
         }

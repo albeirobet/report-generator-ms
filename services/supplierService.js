@@ -81,7 +81,9 @@ exports.loadSuppliers = async (req, res) => {
             bankAccountNumber: currRow.getCell(11).value,
             identificationNumber: currRow.getCell(12).value,
             country: currRow.getCell(13).value,
-            identificationType: currRow.getCell(14).value
+            identificationType: currRow.getCell(14).value,
+            companyId: userInfo.companyId,
+            userId: userInfo._id
           };
           suppliers.push(supplier);
         }

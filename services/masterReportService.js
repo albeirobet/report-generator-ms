@@ -29,7 +29,7 @@ exports.loadMasterReportData = async (req, res) => {
       );
     }
     const userInfo = await userService.getUserInfo(req, res);
-    if (!userInfo.companyId) {
+    if (!userInfo || !userInfo.companyId) {
       throw new ServiceException(
         commonErrors.E_COMMON_01,
         new ApiError(

@@ -80,7 +80,9 @@ exports.loadRetentionSupplier = async (req, res) => {
             reteIcaPercentage: currRow.getCell(11).value,
             reteIcaValue: currRow.getCell(12).value,
             reteIvaPercentage: currRow.getCell(13).value,
-            reteIvaValue: currRow.getCell(14).value
+            reteIvaValue: currRow.getCell(14).value,
+            companyId: userInfo.companyId,
+            userId: userInfo._id
           };
           invoiceSuppliers.push(invoiceSupplier);
         }

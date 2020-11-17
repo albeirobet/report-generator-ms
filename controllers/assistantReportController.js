@@ -14,8 +14,8 @@ exports.loadAssistantReportData = async (req, res) => {
     const data = await assistantReportService.loadAssistantReportData(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
-    console.log(err);
     generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
     codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
     generalResponse.apiError.codeHTTP = undefined;
   }
@@ -30,8 +30,8 @@ exports.deleteAssistantReport = async (req, res) => {
     const data = await assistantReportService.deleteAssistantReport(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
-    console.log(err);
     generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
     codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
     generalResponse.apiError.codeHTTP = undefined;
   }
@@ -46,8 +46,8 @@ exports.countAssistantReport = async (req, res) => {
     const data = await assistantReportService.countAssistantReport(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
-    console.log(err);
     generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
     codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
     generalResponse.apiError.codeHTTP = undefined;
   }
