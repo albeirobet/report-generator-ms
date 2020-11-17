@@ -80,7 +80,9 @@ exports.loadMasterReportData = async (req, res) => {
             accountingSeatAnnulment: currRow.getCell(10).value,
             extraOriginalDocumentId: currRow.getCell(11).value,
             debtAmountCompanyCurrency: currRow.getCell(12).value,
-            creditAmountCompanyCurrency: currRow.getCell(13).value
+            creditAmountCompanyCurrency: currRow.getCell(13).value,
+            companyId: userInfo.companyId,
+            userId: userInfo._id
           };
           masterReport.push(report);
         }

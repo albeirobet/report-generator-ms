@@ -75,7 +75,9 @@ exports.loadMaterials = async (req, res) => {
             productCategory: currRow.getCell(5).value,
             type: currRow.getCell(6).value,
             createdAt: currRow.getCell(7).value,
-            modifiedAt: currRow.getCell(8).value
+            modifiedAt: currRow.getCell(8).value,
+            companyId: userInfo.companyId,
+            userId: userInfo._id
           };
           materials.push(material);
         }

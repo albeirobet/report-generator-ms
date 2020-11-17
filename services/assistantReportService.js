@@ -81,7 +81,9 @@ exports.loadAssistantReportData = async (req, res) => {
             grossValue: currRow.getCell(11).value,
             grossValueCompanyCurrency: currRow.getCell(12).value,
             netValueCompanyCurrency: currRow.getCell(13).value,
-            netValue: currRow.getCell(14).value
+            netValue: currRow.getCell(14).value,
+            companyId: userInfo.companyId,
+            userId: userInfo._id
           };
           assistantReport.push(report);
         }

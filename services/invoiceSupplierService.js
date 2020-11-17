@@ -76,7 +76,9 @@ exports.loadInvoiceSupplier = async (req, res) => {
             invoiceAmount: currRow.getCell(7).value,
             netAmount: currRow.getCell(8).value,
             taxAmount: currRow.getCell(9).value,
-            grossAmount: currRow.getCell(10).value
+            grossAmount: currRow.getCell(10).value,
+            companyId: userInfo.companyId,
+            userId: userInfo._id
           };
           invoiceSuppliers.push(invoiceSupplier);
         }

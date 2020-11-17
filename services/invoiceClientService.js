@@ -76,7 +76,9 @@ exports.loadInvoiceClients = async (req, res) => {
             grossValueInvoice: currRow.getCell(6).value,
             netValueInvoice: currRow.getCell(7).value,
             tax: currRow.getCell(8).value,
-            netInvoicedValue: currRow.getCell(9).value
+            netInvoicedValue: currRow.getCell(9).value,
+            companyId: userInfo.companyId,
+            userId: userInfo._id
           };
           invoiceClients.push(invoiceClient);
         }

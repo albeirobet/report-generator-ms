@@ -81,7 +81,9 @@ exports.loadEntryMerchandises = async (req, res) => {
             netValue: currRow.getCell(12).value,
             netValueCompanyCurrency: currRow.getCell(13).value,
             price: currRow.getCell(14).value,
-            priceUnit: currRow.getCell(15).value
+            priceUnit: currRow.getCell(15).value,
+            companyId: userInfo.companyId,
+            userId: userInfo._id
           };
           entryMerchandises.push(entryMerchandise);
         }
