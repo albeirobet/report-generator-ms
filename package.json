@@ -4,9 +4,9 @@
   "description": "Microservice to generate reports based on the information loaded from external systems",
   "main": "app.js",
   "scripts": {
-    "start": "node --max-old-space-size=8192 server.js",
+    "start": "node --max-old-space-size=500 server.js",
     "dev": "nodemon server.js",
-    "test": "node --max-old-space-size=8192 server.js",
+    "test": "node --max-old-space-size=500 server.js",
     "start:prod": "NODE_ENV=production nodemon server.js",
     "debug": "ndb server.js"
   },
