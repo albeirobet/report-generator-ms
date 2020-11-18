@@ -23,6 +23,7 @@ const masterReportRoute = require('./routes/masterReportRoute');
 const assistantReportRoute = require('./routes/assistantReportRoute');
 const paymentOriginalRoute = require('./routes/paymentOriginalRoute');
 const paymentExtraRoute = require('./routes/paymentExtraRoute');
+const counterRoute = require('./routes/counterRoute');
 
 const app = express();
 
@@ -101,6 +102,8 @@ app.use('/api/v1/assistantReport', assistantReportRoute);
 app.use('/api/v1/paymentOriginal', paymentOriginalRoute);
 // 13. Payment Extra
 app.use('/api/v1/paymentExtra', paymentExtraRoute);
+// 14. Counter
+app.use('/api/v1/counter', counterRoute);
 // ... End Not Found Route
 app.all('*', notFoundRoute);
 
