@@ -22,6 +22,7 @@ const invoiceClientRoute = require('./routes/invoiceClientRoute');
 const masterReportRoute = require('./routes/masterReportRoute');
 const assistantReportRoute = require('./routes/assistantReportRoute');
 const paymentOriginalRoute = require('./routes/paymentOriginalRoute');
+const paymentExtraRoute = require('./routes/paymentExtraRoute');
 
 const app = express();
 
@@ -98,6 +99,8 @@ app.use('/api/v1/masterReport', masterReportRoute);
 app.use('/api/v1/assistantReport', assistantReportRoute);
 // 12. Payment Original
 app.use('/api/v1/paymentOriginal', paymentOriginalRoute);
+// 13. Payment Extra
+app.use('/api/v1/paymentExtra', paymentExtraRoute);
 // ... End Not Found Route
 app.all('*', notFoundRoute);
 

@@ -29,5 +29,8 @@ module.exports = {
   ASSISTANT_REPORT_TEMPLATE_TITLE:
     'reporte2 - Informe abierto por el administrador en centro de trabajo Análisis empresarial.',
   PAYMENT_ORIGINAL_TEMPLATE_ROW_INIT: 2,
-  PAYMENT_ORIGINAL_TEMPLATE_TITLE: 'Control de pagos (Todos los pagos)'
+  PAYMENT_ORIGINAL_TEMPLATE_TITLE: 'Control de pagos (Todos los pagos)',
+  PAYMENT_EXTRA_TEMPLATE_ROW_INIT: 11,
+  PAYMENT_EXTRA_TEMPLATE_TITLE:
+    'Reporte de Pagos - Informe abierto por el administrador en centro de trabajo Análisis empresarial.'
 };
