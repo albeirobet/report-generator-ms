@@ -164,12 +164,18 @@ exports.getMaterial = async (req, res) => {
 
 // =========== Function to get all Invoice Clients with filters to the table
 exports.getAllMaterials = async (req, res) => {
-  const features = new APIFeatures(Material.find(), req.query)
+  const userInfo = await userService.getUserInfo(req, res);
+  const features = new APIFeatures(
+    Material.find({ companyId: userInfo.companyId }),
+    req.query
+  )
     .filterTable()
     .sort()
     .limitFields()
     .paginate();
-  const total = await Material.countDocuments();
+  const total = await Material.countDocuments({
+    companyId: userInfo.companyId
+  });
   const data = await features.query;
   const dataList = new CommonLst(total, data);
   return dataList;

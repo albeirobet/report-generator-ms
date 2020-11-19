@@ -170,12 +170,18 @@ exports.getPaymentExtra = async (req, res) => {
 
 // =========== Function to get all Invoice Clients with filters to the table
 exports.getAllPaymentExtra = async (req, res) => {
-  const features = new APIFeatures(PaymentExtra.find(), req.query)
+  const userInfo = await userService.getUserInfo(req, res);
+  const features = new APIFeatures(
+    PaymentExtra.find({ companyId: userInfo.companyId }),
+    req.query
+  )
     .filterTable()
     .sort()
     .limitFields()
     .paginate();
-  const total = await PaymentExtra.countDocuments();
+  const total = await PaymentExtra.countDocuments({
+    companyId: userInfo.companyId
+  });
   const data = await features.query;
   const dataList = new CommonLst(total, data);
   return dataList;

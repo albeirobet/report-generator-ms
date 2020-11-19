@@ -169,12 +169,18 @@ exports.getSupplier = async (req, res) => {
 
 // =========== Function to get all Suppliers with filters to the table
 exports.getAllSuppliers = async (req, res) => {
-  const features = new APIFeatures(Supplier.find(), req.query)
+  const userInfo = await userService.getUserInfo(req, res);
+  const features = new APIFeatures(
+    Supplier.find({ companyId: userInfo.companyId }),
+    req.query
+  )
     .filterTable()
     .sort()
     .limitFields()
     .paginate();
-  const total = await Supplier.countDocuments();
+  const total = await Supplier.countDocuments({
+    companyId: userInfo.companyId
+  });
   const companies = await features.query;
   const companiesList = new CommonLst(total, companies);
   return companiesList;

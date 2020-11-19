@@ -166,12 +166,16 @@ exports.getClient = async (req, res) => {
 
 // =========== Function to get all Clients with filters to the table
 exports.getAllClients = async (req, res) => {
-  const features = new APIFeatures(Client.find(), req.query)
+  const userInfo = await userService.getUserInfo(req, res);
+  const features = new APIFeatures(
+    Client.find({ companyId: userInfo.companyId }),
+    req.query
+  )
     .filterTable()
     .sort()
     .limitFields()
     .paginate();
-  const total = await Client.countDocuments();
+  const total = await Client.countDocuments({ companyId: userInfo.companyId });
   const companies = await features.query;
   const companiesList = new CommonLst(total, companies);
   return companiesList;

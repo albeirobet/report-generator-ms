@@ -168,12 +168,18 @@ exports.getPurchaseOrder = async (req, res) => {
 
 // =========== Function to get all Invoice Clients with filters to the table
 exports.getAllPurchaseOrder = async (req, res) => {
-  const features = new APIFeatures(PurchaseOrder.find(), req.query)
+  const userInfo = await userService.getUserInfo(req, res);
+  const features = new APIFeatures(
+    PurchaseOrder.find({ companyId: userInfo.companyId }),
+    req.query
+  )
     .filterTable()
     .sort()
     .limitFields()
     .paginate();
-  const total = await PurchaseOrder.countDocuments();
+  const total = await PurchaseOrder.countDocuments({
+    companyId: userInfo.companyId
+  });
   const data = await features.query;
   const dataList = new CommonLst(total, data);
   return dataList;

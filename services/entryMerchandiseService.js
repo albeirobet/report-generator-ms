@@ -171,12 +171,18 @@ exports.getEntryMerchandise = async (req, res) => {
 
 // =========== Function to get all
 exports.getAllEntryMerchandises = async (req, res) => {
-  const features = new APIFeatures(EntryMerchandise.find(), req.query)
+  const userInfo = await userService.getUserInfo(req, res);
+  const features = new APIFeatures(
+    EntryMerchandise.find({ companyId: userInfo.companyId }),
+    req.query
+  )
     .filterTable()
     .sort()
     .limitFields()
     .paginate();
-  const total = await EntryMerchandise.countDocuments();
+  const total = await EntryMerchandise.countDocuments({
+    companyId: userInfo.companyId
+  });
   const companies = await features.query;
   const companiesList = new CommonLst(total, companies);
   return companiesList;

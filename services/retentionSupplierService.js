@@ -171,12 +171,18 @@ exports.getRetentionSupplier = async (req, res) => {
 
 // =========== Function to get all Invoice Clients with filters to the table
 exports.getAllRetentionSupplier = async (req, res) => {
-  const features = new APIFeatures(RetentionSupplier.find(), req.query)
+  const userInfo = await userService.getUserInfo(req, res);
+  const features = new APIFeatures(
+    RetentionSupplier.find({ companyId: userInfo.companyId }),
+    req.query
+  )
     .filterTable()
     .sort()
     .limitFields()
     .paginate();
-  const total = await RetentionSupplier.countDocuments();
+  const total = await RetentionSupplier.countDocuments({
+    companyId: userInfo.companyId
+  });
   const data = await features.query;
   const dataList = new CommonLst(total, data);
   return dataList;

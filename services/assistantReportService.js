@@ -172,12 +172,18 @@ exports.getAssistantReport = async (req, res) => {
 
 // =========== Function to get all Assistant Reports Rows with filters to the table
 exports.getAllAssistantReports = async (req, res) => {
-  const features = new APIFeatures(AssistantReport.find(), req.query)
+  const userInfo = await userService.getUserInfo(req, res);
+  const features = new APIFeatures(
+    AssistantReport.find({ companyId: userInfo.companyId }),
+    req.query
+  )
     .filterTable()
     .sort()
     .limitFields()
     .paginate();
-  const total = await AssistantReport.countDocuments();
+  const total = await AssistantReport.countDocuments({
+    companyId: userInfo.companyId
+  });
   const companies = await features.query;
   const companiesList = new CommonLst(total, companies);
   return companiesList;

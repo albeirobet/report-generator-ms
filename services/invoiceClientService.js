@@ -167,12 +167,18 @@ exports.getInvoiceClient = async (req, res) => {
 
 // =========== Function to get all Invoice Clients with filters to the table
 exports.getAllInvoiceClients = async (req, res) => {
-  const features = new APIFeatures(InvoiceClient.find(), req.query)
+  const userInfo = await userService.getUserInfo(req, res);
+  const features = new APIFeatures(
+    InvoiceClient.find({ companyId: userInfo.companyId }),
+    req.query
+  )
     .filterTable()
     .sort()
     .limitFields()
     .paginate();
-  const total = await InvoiceClient.countDocuments();
+  const total = await InvoiceClient.countDocuments({
+    companyId: userInfo.companyId
+  });
   const data = await features.query;
   const dataList = new CommonLst(total, data);
   return dataList;

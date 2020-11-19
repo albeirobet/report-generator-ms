@@ -173,12 +173,16 @@ exports.getIvaData = async (req, res) => {
 
 // =========== Function to get all Clients with filters to the table
 exports.getAllIvaData = async (req, res) => {
-  const features = new APIFeatures(Iva.find(), req.query)
+  const userInfo = await userService.getUserInfo(req, res);
+  const features = new APIFeatures(
+    Iva.find({ companyId: userInfo.companyId }),
+    req.query
+  )
     .filterTable()
     .sort()
     .limitFields()
     .paginate();
-  const total = await Iva.countDocuments();
+  const total = await Iva.countDocuments({ companyId: userInfo.companyId });
   const data = await features.query;
   const dataList = new CommonLst(total, data);
   return dataList;
