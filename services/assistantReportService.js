@@ -1,6 +1,7 @@
 // Created By Eyder Ascuntar Rosales
 // Mail: eyder.ascuntar@runcode.co
 // Company: Runcode Ingeniería SAS
+const mongoose = require('mongoose');
 const Excel = require('exceljs');
 const path = require('path');
 const fs = require('fs');
@@ -12,6 +13,8 @@ const AssistantReport = require('../models/assistantReportModel');
 const httpCodes = require('../utils/constants/httpCodes');
 const constants = require('../utils/constants/constants');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
+const CommonLst = require('../dto/commons/commonLstDTO');
+const APIFeatures = require('../utils/responses/apiFeatures');
 const userService = require('../services/userService');
 
 // =========== Function to loadSuppliers
@@ -130,8 +133,52 @@ exports.deleteAssistantReport = async (req, res) => {
 exports.countAssistantReport = async (req, res) => {
   try {
     const userInfo = await userService.getUserInfo(req, res);
-    return await AssistantReport.countDocuments({ companyId: userInfo.companyId });
+    return await AssistantReport.countDocuments({
+      companyId: userInfo.companyId
+    });
   } catch (err) {
     console.log(err);
   }
+};
+
+// =========== Function to get all Assistant Reports Rows with filters to the table
+exports.getAllAssistantReports = async (req, res) => {
+  const features = new APIFeatures(AssistantReport.find(), req.query)
+    .filterTable()
+    .sort()
+    .limitFields()
+    .paginate();
+  const total = await AssistantReport.countDocuments();
+  const companies = await features.query;
+  const companiesList = new CommonLst(total, companies);
+  return companiesList;
+};
+
+// =========== Function to get a specific Assistant Report
+exports.getAssistantReport = async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    throw new ServiceException(
+      commonErrors.E_COMMON_01,
+      new ApiError(
+        `${commonErrors.EM_COMMON_10}`,
+        `${commonErrors.EM_COMMON_10}`,
+        'EM_COMMON_10',
+        httpCodes.BAD_REQUEST
+      )
+    );
+  }
+  const report = await AssistantReport.findById(req.params.id);
+  // CompanyData.findOne({ _id: req.params.id })
+  if (!report) {
+    throw new ServiceException(
+      commonErrors.E_COMMON_01,
+      new ApiError(
+        `${commonErrors.EM_COMMON_11}`,
+        `${commonErrors.EM_COMMON_11}`,
+        'EM_COMMON_11',
+        httpCodes.BAD_REQUEST
+      )
+    );
+  }
+  return report;
 };

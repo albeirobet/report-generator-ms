@@ -28,4 +28,17 @@ router.get(
   clientController.countClients
 );
 
+router.get(
+  '/getClient/:id',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  clientController.getClient
+);
+router.get(
+  '/all',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  clientController.getAllClients
+);
+
 module.exports = router;

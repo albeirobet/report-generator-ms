@@ -1,6 +1,7 @@
 // Created By Eyder Ascuntar Rosales
 // Mail: eyder.ascuntar@runcode.co
 // Company: Runcode Ingeniería SAS
+const mongoose = require('mongoose');
 const Excel = require('exceljs');
 const path = require('path');
 const fs = require('fs');
@@ -12,6 +13,8 @@ const Supplier = require('../models/supplierModel');
 const httpCodes = require('../utils/constants/httpCodes');
 const constants = require('../utils/constants/constants');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
+const CommonLst = require('../dto/commons/commonLstDTO');
+const APIFeatures = require('../utils/responses/apiFeatures');
 const userService = require('../services/userService');
 
 // =========== Function to loadSuppliers
@@ -134,4 +137,45 @@ exports.countSuppliers = async (req, res) => {
   } catch (err) {
     console.log(err);
   }
+};
+
+// =========== Function to get a specific Supplier
+exports.getSupplier = async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    throw new ServiceException(
+      commonErrors.E_COMMON_01,
+      new ApiError(
+        `${commonErrors.EM_COMMON_10}`,
+        `${commonErrors.EM_COMMON_10}`,
+        'EM_COMMON_10',
+        httpCodes.BAD_REQUEST
+      )
+    );
+  }
+  const supplier = await Supplier.findById(req.params.id);
+  if (!supplier) {
+    throw new ServiceException(
+      commonErrors.E_COMMON_01,
+      new ApiError(
+        `${commonErrors.EM_COMMON_11}`,
+        `${commonErrors.EM_COMMON_11}`,
+        'EM_COMMON_11',
+        httpCodes.BAD_REQUEST
+      )
+    );
+  }
+  return supplier;
+};
+
+// =========== Function to get all Suppliers with filters to the table
+exports.getAllSuppliers = async (req, res) => {
+  const features = new APIFeatures(Supplier.find(), req.query)
+    .filterTable()
+    .sort()
+    .limitFields()
+    .paginate();
+  const total = await Supplier.countDocuments();
+  const companies = await features.query;
+  const companiesList = new CommonLst(total, companies);
+  return companiesList;
 };

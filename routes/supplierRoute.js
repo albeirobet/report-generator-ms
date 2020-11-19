@@ -28,4 +28,17 @@ router.get(
   supplierController.countSuppliers
 );
 
+router.get(
+  '/getClient/:id',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  supplierController.getSupplier
+);
+router.get(
+  '/all',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  supplierController.getAllSuppliers
+);
+
 module.exports = router;

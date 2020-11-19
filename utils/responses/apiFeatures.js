@@ -23,17 +23,14 @@ class APIFeatures {
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach(el => delete queryObj[el]);
 
-    if(queryObj.filter) {
-      this.query = this.query.find(
-        { 
-          $or:[ 
-            { name: queryObj.filter.toUpperCase()}, 
-            { lastname: queryObj.filter.toUpperCase()}, 
-            { email: 
-              { $regex: queryObj.filter.toLowerCase() } 
-            } 
-          ],
-        });
+    if (queryObj.filter) {
+      this.query = this.query.find({
+        $or: [
+          { name: queryObj.filter.toUpperCase() },
+          { lastname: queryObj.filter.toUpperCase() },
+          { email: { $regex: queryObj.filter.toLowerCase() } }
+        ]
+      });
     }
 
     return this;

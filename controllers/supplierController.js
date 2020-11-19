@@ -53,3 +53,35 @@ exports.countSuppliers = async (req, res) => {
   }
   return res.status(codeHttp).json(generalResponse);
 };
+
+exports.getSupplier = async (req, res) => {
+  let codeHttp = httpCodes.OK;
+  let generalResponse = new GeneralResponse();
+  generalResponse.success = true;
+  try {
+    const data = await supplierService.getSupplier(req, res);
+    generalResponse = generalResp.generalSuccess(data);
+  } catch (err) {
+    generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
+    codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
+    generalResponse.apiError.codeHTTP = undefined;
+  }
+  return res.status(codeHttp).json(generalResponse);
+};
+
+exports.getAllSuppliers = async (req, res) => {
+  let codeHttp = httpCodes.OK;
+  let generalResponse = new GeneralResponse();
+  generalResponse.success = true;
+  try {
+    const data = await supplierService.getAllSuppliers(req, res);
+    generalResponse = generalResp.generalSuccess(data);
+  } catch (err) {
+    generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
+    codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
+    generalResponse.apiError.codeHTTP = undefined;
+  }
+  return res.status(codeHttp).json(generalResponse);
+};

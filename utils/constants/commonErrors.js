@@ -16,5 +16,7 @@ module.exports = {
   EM_COMMON_07: 'Datos Duplicados: ',
   EM_COMMON_08: '. Por favor ingrese un valor diferente',
   EM_COMMON_09: 'Datos ingresados no son validos',
-  EM_COMMON_10: 'Identificador de Objeto ingresado no es válido'
+  EM_COMMON_10: 'Identificador de Objeto ingresado no es válido',
+  EM_COMMON_11:
+    'Objeto con el Identificador ingresado no fue encontrado en el sistema'
 };
