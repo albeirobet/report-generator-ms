@@ -141,19 +141,6 @@ exports.countAssistantReport = async (req, res) => {
   }
 };
 
-// =========== Function to get all Assistant Reports Rows with filters to the table
-exports.getAllAssistantReports = async (req, res) => {
-  const features = new APIFeatures(AssistantReport.find(), req.query)
-    .filterTable()
-    .sort()
-    .limitFields()
-    .paginate();
-  const total = await AssistantReport.countDocuments();
-  const companies = await features.query;
-  const companiesList = new CommonLst(total, companies);
-  return companiesList;
-};
-
 // =========== Function to get a specific Assistant Report
 exports.getAssistantReport = async (req, res) => {
   if (!mongoose.isValidObjectId(req.params.id)) {
@@ -181,4 +168,17 @@ exports.getAssistantReport = async (req, res) => {
     );
   }
   return report;
+};
+
+// =========== Function to get all Assistant Reports Rows with filters to the table
+exports.getAllAssistantReports = async (req, res) => {
+  const features = new APIFeatures(AssistantReport.find(), req.query)
+    .filterTable()
+    .sort()
+    .limitFields()
+    .paginate();
+  const total = await AssistantReport.countDocuments();
+  const companies = await features.query;
+  const companiesList = new CommonLst(total, companies);
+  return companiesList;
 };

@@ -53,3 +53,35 @@ exports.countInvoiceClients = async (req, res) => {
   }
   return res.status(codeHttp).json(generalResponse);
 };
+
+exports.getInvoiceClient = async (req, res) => {
+  let codeHttp = httpCodes.OK;
+  let generalResponse = new GeneralResponse();
+  generalResponse.success = true;
+  try {
+    const data = await invoiceClientService.getInvoiceClient(req, res);
+    generalResponse = generalResp.generalSuccess(data);
+  } catch (err) {
+    generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
+    codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
+    generalResponse.apiError.codeHTTP = undefined;
+  }
+  return res.status(codeHttp).json(generalResponse);
+};
+
+exports.getAllInvoiceClients = async (req, res) => {
+  let codeHttp = httpCodes.OK;
+  let generalResponse = new GeneralResponse();
+  generalResponse.success = true;
+  try {
+    const data = await invoiceClientService.getAllInvoiceClients(req, res);
+    generalResponse = generalResp.generalSuccess(data);
+  } catch (err) {
+    generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
+    codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
+    generalResponse.apiError.codeHTTP = undefined;
+  }
+  return res.status(codeHttp).json(generalResponse);
+};

@@ -27,5 +27,16 @@ router.get(
   authController.protectPathWithRoles('admin'),
   paymentOriginalController.countPaymentOriginal
 );
-
+router.get(
+  '/getPaymentOriginal/:id',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  paymentOriginalController.getPaymentOriginal
+);
+router.get(
+  '/all',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  paymentOriginalController.getAllPaymentOriginal
+);
 module.exports = router;

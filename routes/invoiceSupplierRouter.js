@@ -28,4 +28,16 @@ router.get(
   invoiceSupplierController.countInvoiceSupplier
 );
 
+router.get(
+  '/getInvoiceSupplier/:id',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  invoiceSupplierController.getInvoiceSupplier
+);
+router.get(
+  '/all',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  invoiceSupplierController.getAllInvoiceSuppliers
+);
 module.exports = router;

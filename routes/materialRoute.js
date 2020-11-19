@@ -28,4 +28,17 @@ router.get(
   materialController.countMaterials
 );
 
+router.get(
+  '/getMaterial/:id',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  materialController.getMaterial
+);
+router.get(
+  '/all',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  materialController.getAllMaterials
+);
+
 module.exports = router;

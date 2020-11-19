@@ -28,4 +28,17 @@ router.get(
   purchaseOrderController.countPurchaseOrders
 );
 
+router.get(
+  '/getPurchaseOrder/:id',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  purchaseOrderController.getPurchaseOrder
+);
+router.get(
+  '/all',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  purchaseOrderController.getAllPurchaseOrder
+);
+
 module.exports = router;

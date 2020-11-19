@@ -28,4 +28,17 @@ router.get(
   invoiceClientController.countInvoiceClients
 );
 
+router.get(
+  '/getInvoiceClient/:id',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  invoiceClientController.getInvoiceClient
+);
+router.get(
+  '/all',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  invoiceClientController.getAllInvoiceClients
+);
+
 module.exports = router;

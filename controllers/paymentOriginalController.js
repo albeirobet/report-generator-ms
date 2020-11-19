@@ -53,3 +53,35 @@ exports.countPaymentOriginal = async (req, res) => {
   }
   return res.status(codeHttp).json(generalResponse);
 };
+
+exports.getPaymentOriginal = async (req, res) => {
+  let codeHttp = httpCodes.OK;
+  let generalResponse = new GeneralResponse();
+  generalResponse.success = true;
+  try {
+    const data = await paymentOriginalService.getPaymentOriginal(req, res);
+    generalResponse = generalResp.generalSuccess(data);
+  } catch (err) {
+    generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
+    codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
+    generalResponse.apiError.codeHTTP = undefined;
+  }
+  return res.status(codeHttp).json(generalResponse);
+};
+
+exports.getAllPaymentOriginal = async (req, res) => {
+  let codeHttp = httpCodes.OK;
+  let generalResponse = new GeneralResponse();
+  generalResponse.success = true;
+  try {
+    const data = await paymentOriginalService.getAllPaymentOriginal(req, res);
+    generalResponse = generalResp.generalSuccess(data);
+  } catch (err) {
+    generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
+    codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
+    generalResponse.apiError.codeHTTP = undefined;
+  }
+  return res.status(codeHttp).json(generalResponse);
+};

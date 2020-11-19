@@ -1,6 +1,7 @@
 // Created By Eyder Ascuntar Rosales
 // Mail: eyder.ascuntar@runcode.co
 // Company: Runcode Ingeniería SAS
+const mongoose = require('mongoose');
 const Excel = require('exceljs');
 const path = require('path');
 const fs = require('fs');
@@ -12,6 +13,8 @@ const MasterReport = require('../models/masterReportModel');
 const httpCodes = require('../utils/constants/httpCodes');
 const constants = require('../utils/constants/constants');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
+const CommonLst = require('../dto/commons/commonLstDTO');
+const APIFeatures = require('../utils/responses/apiFeatures');
 const userService = require('../services/userService');
 
 // =========== Function to loadSuppliers
@@ -133,4 +136,46 @@ exports.countMasterReport = async (req, res) => {
   } catch (err) {
     console.log(err);
   }
+};
+
+// =========== Function to get a specific
+exports.getMasterReportRow = async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    throw new ServiceException(
+      commonErrors.E_COMMON_01,
+      new ApiError(
+        `${commonErrors.EM_COMMON_10}`,
+        `${commonErrors.EM_COMMON_10}`,
+        'EM_COMMON_10',
+        httpCodes.BAD_REQUEST
+      )
+    );
+  }
+  const data = await MasterReport.findById(req.params.id);
+  // CompanyData.findOne({ _id: req.params.id })
+  if (!data) {
+    throw new ServiceException(
+      commonErrors.E_COMMON_01,
+      new ApiError(
+        `${commonErrors.EM_COMMON_11}`,
+        `${commonErrors.EM_COMMON_11}`,
+        'EM_COMMON_11',
+        httpCodes.BAD_REQUEST
+      )
+    );
+  }
+  return data;
+};
+
+// =========== Function to get all Invoice Clients with filters to the table
+exports.getAllMasterReportRows = async (req, res) => {
+  const features = new APIFeatures(MasterReport.find(), req.query)
+    .filterTable()
+    .sort()
+    .limitFields()
+    .paginate();
+  const total = await MasterReport.countDocuments();
+  const data = await features.query;
+  const dataList = new CommonLst(total, data);
+  return dataList;
 };

@@ -28,4 +28,17 @@ router.get(
   serviceController.countServices
 );
 
+router.get(
+  '/getService/:id',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  serviceController.getService
+);
+router.get(
+  '/all',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  serviceController.getAllServices
+);
+
 module.exports = router;

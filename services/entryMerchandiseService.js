@@ -1,6 +1,7 @@
 // Created By Eyder Ascuntar Rosales
 // Mail: eyder.ascuntar@runcode.co
 // Company: Runcode Ingeniería SAS
+const mongoose = require('mongoose');
 const Excel = require('exceljs');
 const path = require('path');
 const fs = require('fs');
@@ -12,6 +13,8 @@ const EntryMerchandise = require('../models/entryMerchandiseModel');
 const httpCodes = require('../utils/constants/httpCodes');
 const constants = require('../utils/constants/constants');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
+const CommonLst = require('../dto/commons/commonLstDTO');
+const APIFeatures = require('../utils/responses/apiFeatures');
 const userService = require('../services/userService');
 
 // =========== Function to loadEntryMerchandises
@@ -130,8 +133,51 @@ exports.deleteEntryMerchandises = async (req, res) => {
 exports.countEntryMerchandises = async (req, res) => {
   try {
     const userInfo = await userService.getUserInfo(req, res);
-    return await EntryMerchandise.countDocuments({ companyId: userInfo.companyId });
+    return await EntryMerchandise.countDocuments({
+      companyId: userInfo.companyId
+    });
   } catch (err) {
     console.log(err);
   }
+};
+
+// =========== Function to get a specific
+exports.getEntryMerchandise = async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    throw new ServiceException(
+      commonErrors.E_COMMON_01,
+      new ApiError(
+        `${commonErrors.EM_COMMON_10}`,
+        `${commonErrors.EM_COMMON_10}`,
+        'EM_COMMON_10',
+        httpCodes.BAD_REQUEST
+      )
+    );
+  }
+  const entry = await EntryMerchandise.findById(req.params.id);
+  if (!entry) {
+    throw new ServiceException(
+      commonErrors.E_COMMON_01,
+      new ApiError(
+        `${commonErrors.EM_COMMON_11}`,
+        `${commonErrors.EM_COMMON_11}`,
+        'EM_COMMON_11',
+        httpCodes.BAD_REQUEST
+      )
+    );
+  }
+  return entry;
+};
+
+// =========== Function to get all
+exports.getAllEntryMerchandises = async (req, res) => {
+  const features = new APIFeatures(EntryMerchandise.find(), req.query)
+    .filterTable()
+    .sort()
+    .limitFields()
+    .paginate();
+  const total = await EntryMerchandise.countDocuments();
+  const companies = await features.query;
+  const companiesList = new CommonLst(total, companies);
+  return companiesList;
 };

@@ -28,4 +28,17 @@ router.get(
   assistantReportController.countAssistantReport
 );
 
+router.get(
+  '/getAssistantReport/:id',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  assistantReportController.getAssistantReport
+);
+router.get(
+  '/all',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  assistantReportController.getAllAssistantReports
+);
+
 module.exports = router;

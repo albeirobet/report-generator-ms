@@ -28,4 +28,17 @@ router.get(
   entryMerchandiseController.countEntryMerchandises
 );
 
+router.get(
+  '/getEntryMerchandise/:id',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  entryMerchandiseController.getEntryMerchandise
+);
+router.get(
+  '/all',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  entryMerchandiseController.getAllEntryMerchandises
+);
+
 module.exports = router;

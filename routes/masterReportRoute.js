@@ -27,5 +27,17 @@ router.get(
   authController.protectPathWithRoles('admin'),
   masterReportController.countMasterReport
 );
+router.get(
+  '/getMasterReportRow/:id',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  masterReportController.getMasterReportRow
+);
+router.get(
+  '/all',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  masterReportController.getAllMasterReportRows
+);
 
 module.exports = router;

@@ -28,4 +28,16 @@ router.get(
   paymentExtraController.countPaymentExtra
 );
 
+router.get(
+  '/getPaymentExtra/:id',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  paymentExtraController.getPaymentExtra
+);
+router.get(
+  '/all',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  paymentExtraController.getAllPaymentExtra
+);
 module.exports = router;

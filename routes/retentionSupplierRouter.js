@@ -28,4 +28,17 @@ router.get(
   retentionSupplierController.countRetentionSupplier
 );
 
+router.get(
+  '/getRetentionSupplier/:id',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  retentionSupplierController.getRetentionSupplier
+);
+router.get(
+  '/all',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  retentionSupplierController.getAllRetentionSupplier
+);
+
 module.exports = router;
