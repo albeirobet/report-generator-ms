@@ -62,6 +62,32 @@ class APIFeatures {
     return this;
   }
 
+  filterTableServices(companyId) {
+    const queryObj = { ...this.queryString };
+    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    excludedFields.forEach(el => delete queryObj[el]);
+    if (queryObj.filter) {
+      this.query = this.query.find({ 
+        $or: [
+          { companyId: companyId },
+          { serviceId: { $regex: queryObj.filter.toUpperCase() } },
+          { name: { $regex: queryObj.filter.toUpperCase() } },
+          { baseUnitMeasure: { $regex: queryObj.filter.toUpperCase() } },
+          { productCategory: { $regex: queryObj.filter.toUpperCase() } },
+          { createdAt: { $regex: queryObj.filter.toUpperCase() } },
+          { name: { $regex: queryObj.filter.toUpperCase() } },
+          { modifiedAt: { $regex: queryObj.filter.toUpperCase() } },
+          { userId: { $regex: queryObj.filter.toUpperCase() } }
+        ]
+      });
+    } else {
+      this.query = this.query.find({
+        $or: [{ companyId: companyId }]
+      });
+    }
+    return this;
+  }
+
   sort() {
     if (this.queryString.sort) {
       const sortBy = this.queryString.sort.split(',').join(' ');

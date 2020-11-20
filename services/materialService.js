@@ -162,7 +162,7 @@ exports.getMaterial = async (req, res) => {
   return data;
 };
 
-// =========== Function to get all Invoice Clients with filters to the table
+// =========== Function to get all
 exports.getAllMaterials = async (req, res) => {
   const userInfo = await userService.getUserInfo(req, res);
   const features = new APIFeatures(Material.find(), req.query)
