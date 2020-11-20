@@ -175,8 +175,12 @@ exports.getAllClients = async (req, res) => {
     .sort()
     .limitFields()
     .paginate();
-  const total = await Client.countDocuments({ companyId: userInfo.companyId });
+  const total = new APIFeatures(
+    Client.find({ companyId: userInfo.companyId }),
+    req.query
+  ).filterTable();
+  const totalCount = await total.query;
   const companies = await features.query;
-  const companiesList = new CommonLst(total, companies);
+  const companiesList = new CommonLst(totalCount.length, companies);
   return companiesList;
 };
