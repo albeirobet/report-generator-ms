@@ -20,7 +20,15 @@ const paymentExtraSchema = new mongoose.Schema({
     type: String,
     uppercase: true
   },
+  documentType: {
+    type: String,
+    uppercase: true
+  },
   originalDocumentId: {
+    type: String,
+    uppercase: true
+  },
+  originalDocumentType: {
     type: String,
     uppercase: true
   },
@@ -28,17 +36,12 @@ const paymentExtraSchema = new mongoose.Schema({
     type: String,
     uppercase: true
   },
-  pendingAmount: {
+  accountingSeatId: {
     type: String,
     uppercase: true
   },
   // Importe en moneda de empresa
   amountCompanyCurrency: {
-    type: String,
-    uppercase: true
-  },
-  // Importe en moneda de partida individual
-  amountIndividualStartingCurrency: {
     type: String,
     uppercase: true
   },

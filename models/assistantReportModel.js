@@ -4,22 +4,11 @@
 const mongoose = require('mongoose');
 
 const assistanReportSchema = new mongoose.Schema({
-  // ID de entrada de mercancías y servicios
-  entryMerchandiseId: {
-    type: String,
-    uppercase: true
-  },
-  //ID de entrega entrante confirmada
-  inboundDeliveryConfirmedId: {
-    type: String,
-    uppercase: true
-  },
   invoiceId: {
     type: String,
     uppercase: true
   },
-  // ID de pedido de compra
-  purchaseOrderId: {
+  invoiceDate: {
     type: String,
     uppercase: true
   },
@@ -31,17 +20,54 @@ const assistanReportSchema = new mongoose.Schema({
     type: String,
     uppercase: true
   },
+  // ID de entrada de mercancías y servicios
+  entryMerchandiseId: {
+    type: String,
+    uppercase: true
+  },
+  //ID de entrega entrante confirmada
+  inboundDeliveryConfirmedId: {
+    type: String,
+    uppercase: true
+  },
+  // ID de pedido de compra
+  purchaseOrderId: {
+    type: String,
+    uppercase: true
+  },
+  supplierCoName: {
+    type: String,
+    uppercase: true
+  },
+  supplierCoId: {
+    type: String,
+    uppercase: true
+  },
+  refundCo: {
+    type: String,
+    uppercase: true
+  },
+  // ID de documento externo
+  externalDocumentId: {
+    type: String,
+    uppercase: true
+  },
+  // Posición de factura
+  invoicePosition: {
+    type: String,
+    uppercase: true
+  },
   counter: {
     type: String,
     uppercase: true
   },
   //Valor bruto en moneda de empresa en fecha de contabilización
-  grossValueCompanyCurrencyPostingDate: {
+  grossAmountCompanyCurrency: {
     type: String,
     uppercase: true
   },
   //Valor neto en moneda de empresa en fecha de contabilización
-  netValueCompanyCurrencyPostingDate: {
+  netAmountCompanyCurrency: {
     type: String,
     uppercase: true
   },
@@ -51,16 +77,6 @@ const assistanReportSchema = new mongoose.Schema({
     uppercase: true
   },
   //Importe bruto en moneda de empresa
-  grossValueCompanyCurrency: {
-    type: String,
-    uppercase: true
-  },
-  // Importe neto en moneda de empresa
-  netValueCompanyCurrency: {
-    type: String,
-    uppercase: true
-  },
-  // Importe neto
   netValue: {
     type: String,
     uppercase: true

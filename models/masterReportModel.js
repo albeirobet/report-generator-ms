@@ -26,6 +26,10 @@ const masterReportSchema = new mongoose.Schema({
     type: String,
     uppercase: true
   },
+  originalDocumentId: {
+    type: String,
+    uppercase: true
+  },
   //Tipo de Asiento contable
   accountingSeatType: {
     type: String,
@@ -36,7 +40,7 @@ const masterReportSchema = new mongoose.Schema({
     type: String,
     uppercase: true
   },
-  originalDocumentId: {
+  originalDocumentAnnulledId: {
     type: String,
     uppercase: true
   },
@@ -45,7 +49,15 @@ const masterReportSchema = new mongoose.Schema({
     type: String,
     uppercase: true
   },
+  extraOriginalDocumentAnulledId: {
+    type: String,
+    uppercase: true
+  },
   extraOriginalDocumentId: {
+    type: String,
+    uppercase: true
+  },
+  originalDocumentPosition: {
     type: String,
     uppercase: true
   },

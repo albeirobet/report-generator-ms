@@ -33,6 +33,6 @@ module.exports = {
   PAYMENT_EXTRA_TEMPLATE_ROW_INIT: 11,
   PAYMENT_EXTRA_TEMPLATE_TITLE:
     'Reporte de Pagos - Informe abierto por el administrador en centro de trabajo Análisis empresarial.',
-  IVA_TEMPLATE_ROW_INIT: 9,
+  IVA_TEMPLATE_ROW_INIT: 8,
   IVA_TEMPLATE_TITLE: 'Test reporte IVA '
 };
