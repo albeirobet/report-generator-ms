@@ -166,7 +166,7 @@ exports.getService = async (req, res) => {
 exports.getAllServices = async (req, res) => {
   const userInfo = await userService.getUserInfo(req, res);
   const features = new APIFeatures(Service.find(), req.query)
-    .filterTableMaterials(userInfo.companyId)
+    .filterTableServices(userInfo.companyId)
     .sort()
     .limitFields()
     .paginate();
