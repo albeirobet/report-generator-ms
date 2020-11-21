@@ -36,53 +36,51 @@ class APIFeatures {
     return this;
   }
 
-  filterTableMaterials(companyId) {
+  filterTableMaterials(companyIdIn) {
     const queryObj = { ...this.queryString };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach(el => delete queryObj[el]);
     if (queryObj.filter) {
       this.query = this.query.find({
+        companyId: companyIdIn,
         $or: [
-          { companyId: companyId },
-          { materialId: { $regex: queryObj.filter.toUpperCase() } },
+          { materialId: { $regex: queryObj.filter } },
           { name: { $regex: queryObj.filter.toUpperCase() } },
           { baseUnitMeasure: { $regex: queryObj.filter.toUpperCase() } },
           { productCategory: { $regex: queryObj.filter.toUpperCase() } },
           { createdAt: { $regex: queryObj.filter.toUpperCase() } },
-          { name: { $regex: queryObj.filter.toUpperCase() } },
           { modifiedAt: { $regex: queryObj.filter.toUpperCase() } },
           { userId: { $regex: queryObj.filter.toUpperCase() } }
         ]
       });
     } else {
       this.query = this.query.find({
-        $or: [{ companyId: companyId }]
+        companyId: companyIdIn
       });
     }
     return this;
   }
 
-  filterTableServices(companyId) {
+  filterTableServices(companyIdIn) {
     const queryObj = { ...this.queryString };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach(el => delete queryObj[el]);
     if (queryObj.filter) {
-      this.query = this.query.find({ 
+      this.query = this.query.find({
+        companyId: companyIdIn,
         $or: [
-          { companyId: companyId },
-          { serviceId: { $regex: queryObj.filter.toUpperCase() } },
+          { serviceId: { $regex: queryObj.filter } },
           { name: { $regex: queryObj.filter.toUpperCase() } },
           { baseUnitMeasure: { $regex: queryObj.filter.toUpperCase() } },
           { productCategory: { $regex: queryObj.filter.toUpperCase() } },
           { createdAt: { $regex: queryObj.filter.toUpperCase() } },
-          { name: { $regex: queryObj.filter.toUpperCase() } },
           { modifiedAt: { $regex: queryObj.filter.toUpperCase() } },
           { userId: { $regex: queryObj.filter.toUpperCase() } }
         ]
       });
     } else {
       this.query = this.query.find({
-        $or: [{ companyId: companyId }]
+        companyId: companyIdIn
       });
     }
     return this;
