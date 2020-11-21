@@ -1,4 +1,8 @@
 /* eslint-disable no-const-assign */
+/* eslint-disable radix */
+// Created By Eyder Ascuntar Rosales
+// Mail: eyder.ascuntar@runcode.co
+// Company: Runcode Ingeniería SAS
 class APIFeatures {
   constructor(query, queryString) {
     this.query = query;
@@ -6,23 +10,22 @@ class APIFeatures {
   }
   // =========== Function to filter specific properties to udpate
 
-  filter(companyIdIn, ...filterColumns) {
+  filter(companyIdIn, counter, filterColumns) {
     const queryObj = { ...this.queryString };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     const filterArray = [];
     let filterObject = {};
-    /// TEST
     if (queryObj.filter) {
       if (filterColumns && filterColumns.length > 0) {
-        filterColumns.forEach(el => {
-          filterObject[el] = { $regex: queryObj.filter };
+        filterColumns.forEach(function(elemento) {
+          filterObject[elemento] = { $regex: queryObj.filter };
           filterArray.push(filterObject);
           filterObject = {};
         });
       }
       excludedFields.push('filter');
     }
-    /// END TEST
+
     excludedFields.forEach(el => delete queryObj[el]);
     // Agregando propiedad empresa
     queryObj.companyId = companyIdIn;
@@ -33,6 +36,10 @@ class APIFeatures {
     this.query = this.query.find(JSON.parse(queryStr));
     if (filterArray.length > 0) {
       this.query.or(filterArray);
+    }
+    if (counter === true) {
+      this.query.countDocuments();
+      return this;
     }
     return this;
   }

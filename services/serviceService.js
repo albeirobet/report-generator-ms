@@ -170,29 +170,25 @@ exports.getService = async (req, res) => {
 // =========== Function to get all Invoice Clients with filters to the table
 exports.getAllServices = async (req, res) => {
   const userInfo = await userService.getUserInfo(req, res);
-  const features = new APIFeatures(Service.find(), req.query)
-    .filter(
-      userInfo.companyId,
-      'serviceId',
-      'name',
-      'baseUnitMeasure',
-      'productCategory',
-      'type'
-    )
-    .sort()
-    .limitFields()
-    .paginate();
-  const total = new APIFeatures(Service.countDocuments(), req.query).filter(
-    userInfo.companyId,
+  const filterColumns = [
     'serviceId',
     'name',
     'baseUnitMeasure',
     'productCategory',
     'type'
+  ];
+  const dataTable = new APIFeatures(Service.find(), req.query)
+    .filter(userInfo.companyId, false, filterColumns)
+    .sort()
+    .limitFields()
+    .paginate();
+  const counter = new APIFeatures(Service.find(), req.query).filter(
+    userInfo.companyId,
+    true,
+    filterColumns
   );
-  // console.log(features.query);
-  const totalCount = await total.query;
-  const dataPaginate = await features.query;
-  const data = new CommonLst(totalCount.length, dataPaginate);
+  const totalCount = await counter.query;
+  const dataPaginate = await dataTable.query;
+  const data = new CommonLst(totalCount, dataPaginate);
   return data;
 };

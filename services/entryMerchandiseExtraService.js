@@ -182,18 +182,17 @@ exports.getAllEntryMerchandiseExtra = async (req, res) => {
     'price',
     'priceUnit'
   ];
-  const features = new APIFeatures(EntryMerchandiseExtra.find(), req.query)
-    .filter(userInfo.companyId, filterColumns)
+  const dataTable = new APIFeatures(EntryMerchandiseExtra.find(), req.query)
+    .filter(userInfo.companyId, false, filterColumns)
     .sort()
     .limitFields()
     .paginate();
-  const total = new APIFeatures(
-    EntryMerchandiseExtra.countDocuments(),
+  const counter = new APIFeatures(
+    EntryMerchandiseExtra.find(),
     req.query
-  ).filter(userInfo.companyId, filterColumns);
-  // console.log(features.query);
-  const totalCount = await total.query;
-  const dataPaginate = await features.query;
-  const data = new CommonLst(totalCount.length, dataPaginate);
+  ).filter(userInfo.companyId, true, filterColumns);
+  const totalCount = await counter.query;
+  const dataPaginate = await dataTable.query;
+  const data = new CommonLst(totalCount, dataPaginate);
   return data;
 };
