@@ -25,6 +25,7 @@ const paymentOriginalRoute = require('./routes/paymentOriginalRoute');
 const paymentExtraRoute = require('./routes/paymentExtraRoute');
 const counterRoute = require('./routes/counterRoute');
 const ivaRoute = require('./routes/ivaRoute');
+const entryMerchandiseExtraRoute = require('./routes/entryMerchandiseExtraRoute');
 
 const app = express();
 
@@ -87,7 +88,7 @@ app.use('/api/v1/services', serviceRoute);
 app.use('/api/v1/materials', materialRoute);
 // 5. Purchase Orders
 app.use('/api/v1/purchaseOrders', purchaseOrderRoute);
-// 6. Purchase Orders
+// 6. Entry Merchandise
 app.use('/api/v1/entryMerchandises', entryMerchandiseRoute);
 // 7. Invoice Supplier
 app.use('/api/v1/invoiceSupplier', invoiceSupplierRoute);
@@ -107,6 +108,8 @@ app.use('/api/v1/paymentExtra', paymentExtraRoute);
 app.use('/api/v1/counter', counterRoute);
 // 15. Iva
 app.use('/api/v1/iva', ivaRoute);
+// 16. Entry Merchandise Extra
+app.use('/api/v1/entryMerchandiseExtra', entryMerchandiseExtraRoute);
 // ... End Not Found Route
 app.all('*', notFoundRoute);
 
