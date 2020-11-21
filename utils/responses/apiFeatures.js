@@ -1,20 +1,39 @@
+/* eslint-disable no-const-assign */
 class APIFeatures {
   constructor(query, queryString) {
     this.query = query;
     this.queryString = queryString;
   }
+  // =========== Function to filter specific properties to udpate
 
-  filter() {
+  filter(companyIdIn, ...filterColumns) {
     const queryObj = { ...this.queryString };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    const filterArray = [];
+    let filterObject = {};
+    /// TEST
+    if (queryObj.filter) {
+      if (filterColumns && filterColumns.length > 0) {
+        filterColumns.forEach(el => {
+          filterObject[el] = { $regex: queryObj.filter };
+          filterArray.push(filterObject);
+          filterObject = {};
+        });
+      }
+      excludedFields.push('filter');
+    }
+    /// END TEST
     excludedFields.forEach(el => delete queryObj[el]);
-
+    // Agregando propiedad empresa
+    queryObj.companyId = companyIdIn;
     // 1B) Advanced filtering
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
-
+    //console.log(JSON.parse(queryStr));
     this.query = this.query.find(JSON.parse(queryStr));
-
+    if (filterArray.length > 0) {
+      this.query.or(filterArray);
+    }
     return this;
   }
 
@@ -63,7 +82,25 @@ class APIFeatures {
 
   filterTableServices(companyIdIn) {
     const queryObj = { ...this.queryString };
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    // eslint-disable-next-line prefer-const
+    let { createdAtFrom } = queryObj;
+    let { createdAtTo } = queryObj;
+    if (createdAtFrom) {
+      if (!createdAtTo) {
+        createdAtTo = createdAtFrom;
+      }
+    }
+    console.log(`Fecha de Inicio: ${createdAtFrom}`);
+    console.log(`Fecha de Fin: ${createdAtTo}`);
+
+    const excludedFields = [
+      'page',
+      'sort',
+      'limit',
+      'fields',
+      'createdAtFrom',
+      'createdAtTo'
+    ];
     excludedFields.forEach(el => delete queryObj[el]);
     if (queryObj.filter) {
       this.query = this.query.find({
@@ -72,15 +109,25 @@ class APIFeatures {
           { name: { $regex: queryObj.filter } },
           { baseUnitMeasure: { $regex: queryObj.filter.toUpperCase() } },
           { productCategory: { $regex: queryObj.filter.toUpperCase() } },
-          { type: { $regex: queryObj.filter.toUpperCase() } },
-          { createdAt: { $regex: queryObj.filter.toUpperCase() } },
-          { modifiedAt: { $regex: queryObj.filter.toUpperCase() } }
+          { type: { $regex: queryObj.filter.toUpperCase() } }
         ],
-        $and: [{ companyId: companyIdIn }]
+        $and: [
+          { companyId: companyIdIn },
+          {
+            createdAt: {
+              $gte: new Date(createdAtFrom),
+              $lte: new Date(createdAtTo)
+            }
+          }
+        ]
       });
     } else {
       this.query = this.query.find({
-        companyId: companyIdIn
+        createdAt: {
+          $gte: new Date(createdAtFrom),
+          $lt: new Date(createdAtTo)
+        },
+        $and: [{ companyId: companyIdIn }]
       });
     }
     return this;
@@ -91,7 +138,7 @@ class APIFeatures {
       const sortBy = this.queryString.sort.split(',').join(' ');
       this.query = this.query.sort(sortBy);
     } else {
-      this.query = this.query.sort('-createdAt');
+      this.query = this.query.sort('+createdAt');
     }
 
     return this;

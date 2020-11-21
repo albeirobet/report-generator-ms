@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 // Created By Eyder Ascuntar Rosales
 // Mail: eyder.ascuntar@runcode.co
 // Company: Runcode Ingeniería SAS
@@ -16,6 +17,7 @@ const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const userService = require('./userService');
 const CommonLst = require('../dto/commons/commonLstDTO');
 const APIFeatures = require('../utils/responses/apiFeatures');
+const customValidator = require('../utils/validators/validator');
 
 // =========== Function to loadServices
 exports.loadServices = async (req, res) => {
@@ -77,8 +79,10 @@ exports.loadServices = async (req, res) => {
             baseUnitMeasure: currRow.getCell(4).value,
             productCategory: currRow.getCell(5).value,
             type: currRow.getCell(6).value,
-            createdAt: currRow.getCell(7).value,
-            modifiedAt: currRow.getCell(8).value,
+            createdAt: customValidator.dateFromString(currRow.getCell(7).value),
+            modifiedAt: customValidator.dateFromString(
+              currRow.getCell(8).value
+            ),
             companyId: userInfo.companyId,
             userId: userInfo._id
           };
@@ -125,6 +129,7 @@ exports.deleteService = async (req, res) => {
 
 // =========== Function to count Service
 exports.countService = async (req, res) => {
+  // console.log(stringToDate(null, 'dd.MM.yyyy', '.'));
   try {
     const userInfo = await userService.getUserInfo(req, res);
     return await Service.countDocuments({ companyId: userInfo.companyId });
@@ -166,13 +171,26 @@ exports.getService = async (req, res) => {
 exports.getAllServices = async (req, res) => {
   const userInfo = await userService.getUserInfo(req, res);
   const features = new APIFeatures(Service.find(), req.query)
-    .filterTableServices(userInfo.companyId)
+    .filter(
+      userInfo.companyId,
+      'serviceId',
+      'name',
+      'baseUnitMeasure',
+      'productCategory',
+      'type'
+    )
     .sort()
     .limitFields()
     .paginate();
-  const total = new APIFeatures(Service.find(), req.query).filterTableServices(
-    userInfo.companyId
+  const total = new APIFeatures(Service.countDocuments(), req.query).filter(
+    userInfo.companyId,
+    'serviceId',
+    'name',
+    'baseUnitMeasure',
+    'productCategory',
+    'type'
   );
+  // console.log(features.query);
   const totalCount = await total.query;
   const dataPaginate = await features.query;
   const data = new CommonLst(totalCount.length, dataPaginate);

@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 // Created By Eyder Ascuntar Rosales
 // Mail: eyder.ascuntar@runcode.co
 // Company: Runcode Ingeniería SAS
@@ -31,4 +32,44 @@ exports.validateNotNullParameter = parameter => {
       )
     );
   }
+};
+
+function stringToDate(_date, _format, _delimiter) {
+  if (_date) {
+    const formatLowerCase = _format.toLowerCase();
+    const formatItems = formatLowerCase.split(_delimiter);
+    const dateItems = _date.split(_delimiter);
+    const monthIndex = formatItems.indexOf('mm');
+    const dayIndex = formatItems.indexOf('dd');
+    const yearIndex = formatItems.indexOf('yyyy');
+    let month = parseInt(dateItems[monthIndex]);
+    month -= 1;
+
+    const formatedDate = new Date(
+      dateItems[yearIndex],
+      month,
+      dateItems[dayIndex]
+    );
+    if (formatedDate.getDate()) {
+      return formatedDate;
+    }
+    return null;
+  }
+  return null;
+}
+
+exports.dateFromString = date => {
+  if (date) {
+    const pointDate = stringToDate(date, 'dd.MM.yyyy', '.');
+    if (pointDate != null) {
+      return pointDate;
+    }
+    const slashDate = stringToDate(date, 'dd/MM/yyyy', '/');
+    if (slashDate != null) {
+      return slashDate;
+    }
+
+    return null;
+  }
+  return null;
 };
