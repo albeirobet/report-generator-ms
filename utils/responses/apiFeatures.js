@@ -62,7 +62,6 @@ class APIFeatures {
   }
 
   filterTableServices(companyIdIn) {
-    console.log(companyIdIn);
     const queryObj = { ...this.queryString };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach(el => delete queryObj[el]);
@@ -73,7 +72,7 @@ class APIFeatures {
           { name: { $regex: queryObj.filter } },
           { baseUnitMeasure: { $regex: queryObj.filter.toUpperCase() } },
           { productCategory: { $regex: queryObj.filter.toUpperCase() } },
-          { type: { $regex: queryObj.filter } },
+          { type: { $regex: queryObj.filter.toUpperCase() } },
           { createdAt: { $regex: queryObj.filter.toUpperCase() } },
           { modifiedAt: { $regex: queryObj.filter.toUpperCase() } }
         ],
