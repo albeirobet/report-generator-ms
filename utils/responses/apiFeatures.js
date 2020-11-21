@@ -45,12 +45,12 @@ class APIFeatures {
         companyId: companyIdIn,
         $or: [
           { materialId: { $regex: queryObj.filter } },
-          { name: { $regex: queryObj.filter.toUpperCase() } },
+          { name: { $regex: queryObj.filter } },
           { baseUnitMeasure: { $regex: queryObj.filter.toUpperCase() } },
           { productCategory: { $regex: queryObj.filter.toUpperCase() } },
+          { type: { $regex: queryObj.filter } },
           { createdAt: { $regex: queryObj.filter.toUpperCase() } },
-          { modifiedAt: { $regex: queryObj.filter.toUpperCase() } },
-          { userId: { $regex: queryObj.filter.toUpperCase() } }
+          { modifiedAt: { $regex: queryObj.filter.toUpperCase() } }
         ]
       });
     } else {
@@ -62,21 +62,22 @@ class APIFeatures {
   }
 
   filterTableServices(companyIdIn) {
+    console.log(companyIdIn);
     const queryObj = { ...this.queryString };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach(el => delete queryObj[el]);
     if (queryObj.filter) {
       this.query = this.query.find({
-        companyId: companyIdIn,
         $or: [
           { serviceId: { $regex: queryObj.filter } },
-          { name: { $regex: queryObj.filter.toUpperCase() } },
+          { name: { $regex: queryObj.filter } },
           { baseUnitMeasure: { $regex: queryObj.filter.toUpperCase() } },
           { productCategory: { $regex: queryObj.filter.toUpperCase() } },
+          { type: { $regex: queryObj.filter } },
           { createdAt: { $regex: queryObj.filter.toUpperCase() } },
-          { modifiedAt: { $regex: queryObj.filter.toUpperCase() } },
-          { userId: { $regex: queryObj.filter.toUpperCase() } }
-        ]
+          { modifiedAt: { $regex: queryObj.filter.toUpperCase() } }
+        ],
+        $and: [{ companyId: companyIdIn }]
       });
     } else {
       this.query = this.query.find({
