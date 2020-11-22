@@ -18,12 +18,30 @@ const Iva = require('../models/ivaModel');
 const EntryMerchandiseExtra = require('../models/entryMerchandiseExtraModel');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const userService = require('./userService');
+const { count } = require('../models/assistantReportModel');
 
 // =========== Function to count records of reports
 exports.generateIvaReport = async (req, res) => {
   try {
     const userInfo = await userService.getUserInfo(req, res);
-    return `hi from ivaReport with company id:  ${userInfo.companyId}`;
+    //console.log(new Date());
+
+    const masterReportData = await MasterReport.find({
+      companyId: userInfo.companyId,
+      seniorAccountantName: 'CAJA GENERAL PESOS'
+    })
+      .select({
+        originalDocumentId: 1,
+        externalReferenceId: 1,
+        companyId: 1
+      })
+
+      .lean();
+    let counter = 0;
+    masterReportData.forEach(elementMRD => {
+      counter += 1;
+    });
+    return counter;
   } catch (err) {
     throw err;
   }
