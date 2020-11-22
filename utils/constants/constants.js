@@ -36,5 +36,8 @@ module.exports = {
   IVA_TEMPLATE_ROW_INIT: 8,
   IVA_TEMPLATE_TITLE: 'Test reporte IVA ',
   ENTRY_MERCHANDISE_EXTRA_TEMPLATE_ROW_INIT: 6,
-  ENTRY_MERCHANDISE_EXTRA_TEMPLATE_TITLE: 'Seguimiento de entrada de mercancías'
+  ENTRY_MERCHANDISE_EXTRA_TEMPLATE_TITLE:
+    'Seguimiento de entrada de mercancías',
+  PURCHASE_ORDER_TRACKING_TEMPLATE_ROW_INIT: 7,
+  PURCHASE_ORDER_TRACKING_TEMPLATE_TITLE: 'Seguimiento de pedidos de compra'
 };
