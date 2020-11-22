@@ -87,7 +87,7 @@ const masterReportSchema = new mongoose.Schema({
   }
 });
 
-masterReportSchema.indexs({ companyId: +1 });
+masterReportSchema.index({ companyId: +1 });
 masterReportSchema.index({ externalReferenceId: +1 });
 masterReportSchema.index({ originalDocumentId: +1 });
 const MasterReport = mongoose.model('MasterReport', masterReportSchema);
