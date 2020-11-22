@@ -15,6 +15,7 @@ const RetentionSupplier = require('../models/retentionSupplierModel');
 const Service = require('../models/serviceModel');
 const Supplier = require('../models/supplierModel');
 const Iva = require('../models/ivaModel');
+const EntryMerchandiseExtra = require('../models/entryMerchandiseExtraModel');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const userService = require('./userService');
 
@@ -97,6 +98,12 @@ exports.reportRecordCounter = async (req, res) => {
 
     count = await Iva.countDocuments({ companyId: userInfo.companyId });
     summaryLoadedData = new SummaryLoadedData(null, count, 'IVA');
+    recordCounters.push(summaryLoadedData);
+
+    count = await EntryMerchandiseExtra.countDocuments({
+      companyId: userInfo.companyId
+    });
+    summaryLoadedData = new SummaryLoadedData(null, count, 'EME');
     recordCounters.push(summaryLoadedData);
 
     return recordCounters;
