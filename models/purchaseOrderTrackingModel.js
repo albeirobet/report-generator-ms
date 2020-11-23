@@ -16,24 +16,8 @@ const purchaseOrderTrackingSchema = new mongoose.Schema({
     type: String,
     uppercase: true
   },
-  purchaseOrderPosition: {
-    type: String,
-    uppercase: true
-  },
   purchaseOrderDate: {
     type: Date,
-    uppercase: true
-  },
-  itemsDescriptionPurchaseOrder: {
-    type: String,
-    uppercase: true
-  },
-  sedeCode: {
-    type: String,
-    uppercase: true
-  },
-  sedeName: {
-    type: String,
     uppercase: true
   },
   requestedAmount: {
@@ -86,6 +70,7 @@ const purchaseOrderTrackingSchema = new mongoose.Schema({
 });
 
 purchaseOrderTrackingSchema.index({ companyId: +1 });
+purchaseOrderTrackingSchema.index({ purchaseOrderId: +1 });
 const PurchaseOrderTracking = mongoose.model(
   'PurchaseOrderTracking',
   purchaseOrderTrackingSchema

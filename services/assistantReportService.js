@@ -89,6 +89,7 @@ exports.loadAssistantReportData = async (req, res) => {
             netAmountCompanyCurrency: currRow.getCell(16).value,
             grossValue: currRow.getCell(17).value,
             netValue: currRow.getCell(18).value,
+            quantity: currRow.getCell(19).value,
             companyId: userInfo.companyId,
             userId: userInfo._id
           };

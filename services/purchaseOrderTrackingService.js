@@ -77,21 +77,17 @@ exports.loadPurchaseOrderTracking = async (req, res) => {
             supplierId: currRow.getCell(2).value,
             supplierName: currRow.getCell(3).value,
             purchaseOrderId: currRow.getCell(4).value,
-            purchaseOrderPosition: currRow.getCell(5).value,
             purchaseOrderDate: customValidator.dateFromString(
-              currRow.getCell(6).value
+              currRow.getCell(5).value
             ),
-            itemsDescriptionPurchaseOrder: currRow.getCell(7).value,
-            sedeCode: currRow.getCell(7).value,
-            sedeName: currRow.getCell(7).value,
-            requestedAmount: currRow.getCell(7).value,
+            requestedAmount: currRow.getCell(6).value,
             netPriceCompanyCurrency: currRow.getCell(7).value,
-            deliveredQuantity: currRow.getCell(7).value,
-            deliveredValue: currRow.getCell(7).value,
-            deliveredValueCompanyCurrency: currRow.getCell(7).value,
-            invoicedAmount: currRow.getCell(7).value,
-            invoicedValue: currRow.getCell(7).value,
-            invoicedValueCompanyCurrency: currRow.getCell(7).value,
+            deliveredQuantity: currRow.getCell(8).value,
+            deliveredValue: currRow.getCell(9).value,
+            deliveredValueCompanyCurrency: currRow.getCell(10).value,
+            invoicedAmount: currRow.getCell(11).value,
+            invoicedValue: currRow.getCell(12).value,
+            invoicedValueCompanyCurrency: currRow.getCell(13).value,
             companyId: userInfo.companyId,
             userId: userInfo._id
           };

@@ -81,6 +81,11 @@ const assistanReportSchema = new mongoose.Schema({
     type: String,
     uppercase: true
   },
+  //Cantidad
+  quantity: {
+    type: String,
+    uppercase: true
+  },
   companyId: {
     type: String,
     required: [
@@ -97,5 +102,8 @@ const assistanReportSchema = new mongoose.Schema({
   }
 });
 
+assistanReportSchema.index({ companyId: +1 });
+assistanReportSchema.index({ entryMerchandiseId: +1 });
+assistanReportSchema.index({ invoiceId: +1 });
 const AssistantReport = mongoose.model('AssistantReport', assistanReportSchema);
 module.exports = AssistantReport;
