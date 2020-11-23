@@ -170,18 +170,34 @@ exports.getSupplier = async (req, res) => {
 // =========== Function to get all Suppliers with filters to the table
 exports.getAllSuppliers = async (req, res) => {
   const userInfo = await userService.getUserInfo(req, res);
-  const features = new APIFeatures(
-    Supplier.find({ companyId: userInfo.companyId }),
-    req.query
-  )
-    .filterTable()
+  const filterColumns = [
+    'state',
+    'supplier',
+    'name',
+    'address',
+    'paymentConditions',
+    'city',
+    'email',
+    'department',
+    'bankName',
+    'bankAccountNumber',
+    'identificationType',
+    'identificationNumber',
+    'country'
+  ];
+  const dataTable = new APIFeatures(Supplier.find(), req.query)
+    .filter(userInfo.companyId, false, filterColumns)
     .sort()
     .limitFields()
     .paginate();
-  const total = await Supplier.countDocuments({
-    companyId: userInfo.companyId
-  });
-  const companies = await features.query;
-  const companiesList = new CommonLst(total, companies);
-  return companiesList;
+  const counter = new APIFeatures(Supplier.find(), req.query).filter(
+    userInfo.companyId,
+    true,
+    filterColumns
+  );
+  const totalCount = await counter.query;
+  const dataPaginate = await dataTable.query;
+  const data = new CommonLst(totalCount, dataPaginate);
+
+  return data;
 };
