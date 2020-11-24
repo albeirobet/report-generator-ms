@@ -70,5 +70,11 @@ const paymentExtraSchema = new mongoose.Schema({
   }
 });
 
+paymentExtraSchema.index({ companyId: +1, documentId: +1 });
+paymentExtraSchema.index({ companyId: +1 });
+paymentExtraSchema.index({ documentId: +1 });
 const PaymentExtra = mongoose.model('PaymentExtra', paymentExtraSchema);
+PaymentExtra.ensureIndexes(function(err) {
+  if (err) console.log(err);
+});
 module.exports = PaymentExtra;

@@ -102,8 +102,12 @@ const assistanReportSchema = new mongoose.Schema({
   }
 });
 
+assistanReportSchema.index({ companyId: +1, entryMerchandiseId: +1 });
 assistanReportSchema.index({ companyId: +1 });
 assistanReportSchema.index({ entryMerchandiseId: +1 });
 assistanReportSchema.index({ invoiceId: +1 });
 const AssistantReport = mongoose.model('AssistantReport', assistanReportSchema);
+AssistantReport.ensureIndexes(function(err) {
+  if (err) console.log(err);
+});
 module.exports = AssistantReport;

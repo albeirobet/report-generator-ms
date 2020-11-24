@@ -91,4 +91,7 @@ masterReportSchema.index({ companyId: +1 });
 masterReportSchema.index({ externalReferenceId: +1 });
 masterReportSchema.index({ originalDocumentId: +1 });
 const MasterReport = mongoose.model('MasterReport', masterReportSchema);
+MasterReport.ensureIndexes(function(err) {
+  if (err) console.log(err);
+});
 module.exports = MasterReport;

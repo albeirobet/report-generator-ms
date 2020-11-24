@@ -56,8 +56,15 @@ const entryMerchandiseExtraSchema = new mongoose.Schema({
   }
 });
 
+entryMerchandiseExtraSchema.index({ companyId: +1, entryMerchandiseId: +1 });
+entryMerchandiseExtraSchema.index({ companyId: +1 });
+entryMerchandiseExtraSchema.index({ entryMerchandiseId: +1 });
+
 const EntryMerchandiseExtra = mongoose.model(
   'EntryMerchandiseExtra',
   entryMerchandiseExtraSchema
 );
+EntryMerchandiseExtra.ensureIndexes(function(err) {
+  if (err) console.log(err);
+});
 module.exports = EntryMerchandiseExtra;

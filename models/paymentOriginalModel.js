@@ -60,8 +60,17 @@ const pyamentOriginalSchema = new mongoose.Schema({
   }
 });
 
+pyamentOriginalSchema.index({ companyId: +1, documentId: +1 });
+pyamentOriginalSchema.index({ companyId: +1 });
+pyamentOriginalSchema.index({ documentId: +1 });
+
 const PaymentOriginal = mongoose.model(
   'PaymentOriginal',
   pyamentOriginalSchema
 );
+
+PaymentOriginal.ensureIndexes(function(err) {
+  if (err) console.log(err);
+});
+
 module.exports = PaymentOriginal;

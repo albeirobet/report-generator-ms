@@ -21,7 +21,7 @@ const userService = require('./userService');
 // =========== Function to count records of reports
 exports.generateIvaReport = async (req, res) => {
   try {
-    console.time('>>>>>>>>> TIEMPO DE INICIO');
+    console.log('>>>>>>>> TIEMPO DE INICIO');
     console.log(new Date());
     const userInfo = await userService.getUserInfo(req, res);
     const arrayGenerated = [];
@@ -32,14 +32,21 @@ exports.generateIvaReport = async (req, res) => {
 
     const masterReportData = await MasterReport.find({
       companyId: userInfo.companyId
-      // originalDocumentId: { $in: [32572, 33139] }
-    }).lean();
+      //,      originalDocumentId: { $in: ['FP-51950'] }
+    })
+      //.limit(1700)
+      .lean();
 
     // ===== ITERACION SOBRE MASTER REPORT ORIGINAL
     // ===== Paso 1.
     let temporaloriginalDocumentId = null;
     console.log('Cargada información Maestra en Memoria');
+    let contador = 0;
     for await (const reportData of masterReportData) {
+      contador += 1;
+      console.log(
+        `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId}`
+      );
       objectGenerated.seniorAccountantId = reportData.seniorAccountantId;
       objectGenerated.seniorAccountantName = reportData.seniorAccountantName;
       objectGenerated.postingDate = reportData.postingDate;
@@ -74,7 +81,10 @@ exports.generateIvaReport = async (req, res) => {
         //console.log(objectGenerated);
         //console.table(arrayInvoicePaymentGenerated);
 
-        if (arrayInvoicePaymentGenerated) {
+        if (
+          arrayInvoicePaymentGenerated &&
+          arrayInvoicePaymentGenerated.length > 0
+        ) {
           let count = 0;
           arrayInvoicePaymentGenerated.forEach(elementInvoicePayment => {
             let objectGeneratedToSave = { ...objectGenerated };
@@ -136,186 +146,367 @@ exports.generateIvaReport = async (req, res) => {
         // console.log('Finalizando insercion primer registro');
         // objectGenerated = {};
       }
-      // ===== Buscar Entrada de mercancias con el id Documento Original
-      const entryMerchandiseExtraData = await EntryMerchandiseExtra.find({
-        companyId: userInfo.companyId,
-        entryMerchandiseId: reportData.originalDocumentId
-      })
-        .select({
-          purchaseOrderId: 1,
-          entryMerchandiseState: 1
+
+      if (
+        reportData.originalDocumentId &&
+        reportData.originalDocumentId !== '#' &&
+        reportData.originalDocumentId !== ''
+      ) {
+        // ===== Buscar Entrada de mercancias con el id Documento Original
+        const entryMerchandiseExtraData = await EntryMerchandiseExtra.find({
+          companyId: userInfo.companyId,
+          entryMerchandiseId: reportData.originalDocumentId
         })
-        .lean();
-      // ===== Comprobar si encontró mercancias con el id Documento original proporcionado
-      if (entryMerchandiseExtraData) {
-        // ===== Iteracion sobre la entrada de mercancias
-        for await (const entryMerchandise of entryMerchandiseExtraData) {
-          objectGenerated.entryMerchandiseStateGenerated =
-            entryMerchandise.entryMerchandiseState;
-          objectGenerated.purchaseOrderIdGenerated =
-            entryMerchandise.purchaseOrderId;
-
-          // ===== Buscar Serguimiento de Orden de compra
-          // ===== Paso 2.
-          const purchaseOrderTrackingData = await PurchaseOrderTracking.find({
-            companyId: userInfo.companyId,
-            purchaseOrderId: entryMerchandise.purchaseOrderId
+          .select({
+            purchaseOrderId: 1,
+            entryMerchandiseState: 1
           })
-            .select({
-              requestedAmount: 1,
-              netPriceCompanyCurrency: 1,
-              deliveredQuantity: 1,
-              deliveredValue: 1,
-              deliveredValueCompanyCurrency: 1,
-              invoicedAmount: 1,
-              invoicedValue: 1,
-              invoicedValueCompanyCurrency: 1
-            })
-            .lean();
-          if (purchaseOrderTrackingData) {
-            // Iterar sobre el seguimiento de ordenes de Compra
-            for await (const purchaseOrderTracking of purchaseOrderTrackingData) {
-              objectGenerated.requestedAmountGenerated =
-                purchaseOrderTracking.requestedAmount;
-              objectGenerated.netPriceCompanyCurrencyGenerated =
-                purchaseOrderTracking.netPriceCompanyCurrency;
-              objectGenerated.deliveredQuantityGenerated =
-                purchaseOrderTracking.deliveredQuantity;
-              objectGenerated.deliveredValueGenerated =
-                purchaseOrderTracking.deliveredValue;
-              objectGenerated.deliveredValueCompanyCurrencyGenerated =
-                purchaseOrderTracking.deliveredValueCompanyCurrency;
-              objectGenerated.invoicedAmountGenerated =
-                purchaseOrderTracking.invoicedAmount;
-              objectGenerated.invoicedValueGenerated =
-                purchaseOrderTracking.invoicedValue;
-              objectGenerated.invoicedValueCompanyCurrencyGenerated =
-                purchaseOrderTracking.invoicedValueCompanyCurrency;
+          .lean();
+        // ===== Comprobar si encontró mercancias con el id Documento original proporcionado
+        if (entryMerchandiseExtraData && entryMerchandiseExtraData.length > 0) {
+          // ===== Iteracion sobre la entrada de mercancias
+          for await (const entryMerchandise of entryMerchandiseExtraData) {
+            objectGenerated.entryMerchandiseStateGenerated =
+              entryMerchandise.entryMerchandiseState;
+            objectGenerated.purchaseOrderIdGenerated =
+              entryMerchandise.purchaseOrderId;
 
-              // ===== Realizamos los calculos sociitados de sumas en cantidades con redondeo a dos decimales
-              // ===== Paso 3.
-              let deliveredQuantityNumber = 0;
-              let invoicedAmountNumber = 0;
-              let deliveredValueNumber = 0;
-              let invoicedValueNumber = 0;
-
-              if (objectGenerated.deliveredQuantityGenerated) {
-                deliveredQuantityNumber = parseFloat(
-                  objectGenerated.deliveredQuantityGenerated
-                );
-              }
-
-              if (objectGenerated.invoicedAmountGenerated) {
-                invoicedAmountNumber = parseFloat(
-                  objectGenerated.invoicedAmountGenerated
-                );
-              }
-
-              if (objectGenerated.deliveredValueGenerated) {
-                deliveredValueNumber = parseFloat(
-                  objectGenerated.deliveredValueGenerated
-                );
-              }
-
-              if (objectGenerated.invoicedValueGenerated) {
-                invoicedValueNumber = parseFloat(
-                  objectGenerated.invoicedValueGenerated
-                );
-              }
-
-              if (
-                !isNaN(deliveredQuantityNumber) &&
-                !isNaN(invoicedAmountNumber)
-              ) {
-                objectGenerated.balanceQuantityEntryMerchandiseQuantitiesGenerated = (
-                  deliveredQuantityNumber - invoicedAmountNumber
-                ).toFixed(2);
-              }
-
-              if (!isNaN(deliveredValueNumber) && !isNaN(invoicedValueNumber)) {
-                objectGenerated.balanceQuantityEntryMerchandiseCurrenciesGenerated = (
-                  deliveredValueNumber - invoicedValueNumber
-                ).toFixed(2);
-              }
-
-              // ===== Buscar en el Assistant Report para armar información de facturas y pagos
-              // ===== Paso 4.
-
-              // ====== Importante, Comprobamos primero si existe el registro por entrada de mercancias, en caso contrario por factura
-              // ====== CASO A
-              let assistantReportFull = null;
-              const assistantReportDataEM = await AssistantReport.find({
-                companyId: userInfo.companyId,
-                entryMerchandiseId: reportData.originalDocumentId
-              })
+            // ===== Buscar Serguimiento de Orden de compra
+            // ===== Paso 2.
+            if (
+              entryMerchandise.purchaseOrderId &&
+              reportData.purchaseOrderId !== '#' &&
+              reportData.purchaseOrderId !== ''
+            ) {
+              const purchaseOrderTrackingData = await PurchaseOrderTracking.find(
+                {
+                  companyId: userInfo.companyId,
+                  purchaseOrderId: entryMerchandise.purchaseOrderId
+                }
+              )
                 .select({
-                  invoiceId: 1,
-                  supplierId: 1,
-                  supplierName: 1,
-                  externalDocumentId: 1,
-                  entryMerchandiseId: 1,
-                  grossAmountCompanyCurrency: 1,
-                  netAmountCompanyCurrency: 1,
-                  quantity: 1
+                  requestedAmount: 1,
+                  netPriceCompanyCurrency: 1,
+                  deliveredQuantity: 1,
+                  deliveredValue: 1,
+                  deliveredValueCompanyCurrency: 1,
+                  invoicedAmount: 1,
+                  invoicedValue: 1,
+                  invoicedValueCompanyCurrency: 1
                 })
                 .lean();
-              if (assistantReportDataEM) {
-                assistantReportFull = assistantReportDataEM;
-              } else {
-                // ====== CASO B
-                const assistantReportDataF = await AssistantReport.find({
-                  companyId: userInfo.companyId,
-                  invoiceId: reportData.originalDocumentId
-                })
-                  .select({
-                    invoiceId: 1,
-                    supplierId: 1,
-                    supplierName: 1,
-                    externalDocumentId: 1,
-                    entryMerchandiseId: 1,
-                    grossAmountCompanyCurrency: 1,
-                    netAmountCompanyCurrency: 1,
-                    quantity: 1
-                  })
-                  .lean();
-                if (assistantReportDataF) {
-                  assistantReportFull = assistantReportDataF;
-                }
-              }
-              // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
-              if (assistantReportFull) {
+              if (
+                purchaseOrderTrackingData &&
+                purchaseOrderTrackingData.length > 0
+              ) {
                 // Iterar sobre el seguimiento de ordenes de Compra
-                for await (const assistantReport of assistantReportFull) {
-                  objectInvoicePaymentGenerated.invoiceIdGenerated =
-                    assistantReport.invoiceId;
-                  objectInvoicePaymentGenerated.supplierIdGenerated =
-                    assistantReport.supplierId;
-                  objectInvoicePaymentGenerated.supplierNameGenerated =
-                    assistantReport.supplierName;
-                  objectInvoicePaymentGenerated.externalDocumentIdGenerated =
-                    assistantReport.externalDocumentId;
-                  objectInvoicePaymentGenerated.entryMerchandiseIdGenerated =
-                    assistantReport.entryMerchandiseId;
-                  objectInvoicePaymentGenerated.grossAmountCompanyCurrencyGenerated =
-                    assistantReport.grossAmountCompanyCurrency;
-                  objectInvoicePaymentGenerated.netAmountCompanyCurrencyGenerated =
-                    assistantReport.netAmountCompanyCurrency;
-                  objectInvoicePaymentGenerated.quantityGenerated =
-                    assistantReport.quantity;
+                for await (const purchaseOrderTracking of purchaseOrderTrackingData) {
+                  objectGenerated.requestedAmountGenerated =
+                    purchaseOrderTracking.requestedAmount;
+                  objectGenerated.netPriceCompanyCurrencyGenerated =
+                    purchaseOrderTracking.netPriceCompanyCurrency;
+                  objectGenerated.deliveredQuantityGenerated =
+                    purchaseOrderTracking.deliveredQuantity;
+                  objectGenerated.deliveredValueGenerated =
+                    purchaseOrderTracking.deliveredValue;
+                  objectGenerated.deliveredValueCompanyCurrencyGenerated =
+                    purchaseOrderTracking.deliveredValueCompanyCurrency;
+                  objectGenerated.invoicedAmountGenerated =
+                    purchaseOrderTracking.invoicedAmount;
+                  objectGenerated.invoicedValueGenerated =
+                    purchaseOrderTracking.invoicedValue;
+                  objectGenerated.invoicedValueCompanyCurrencyGenerated =
+                    purchaseOrderTracking.invoicedValueCompanyCurrency;
 
-                  // Buscar el Id de la factura en PaymentExtras
-                  const paymentExtraData = await PaymentExtra.find({
+                  // ===== Realizamos los calculos sociitados de sumas en cantidades con redondeo a dos decimales
+                  // ===== Paso 3.
+                  let deliveredQuantityNumber = 0;
+                  let invoicedAmountNumber = 0;
+                  let deliveredValueNumber = 0;
+                  let invoicedValueNumber = 0;
+
+                  if (objectGenerated.deliveredQuantityGenerated) {
+                    deliveredQuantityNumber = parseFloat(
+                      objectGenerated.deliveredQuantityGenerated
+                    );
+                  }
+
+                  if (objectGenerated.invoicedAmountGenerated) {
+                    invoicedAmountNumber = parseFloat(
+                      objectGenerated.invoicedAmountGenerated
+                    );
+                  }
+
+                  if (objectGenerated.deliveredValueGenerated) {
+                    deliveredValueNumber = parseFloat(
+                      objectGenerated.deliveredValueGenerated
+                    );
+                  }
+
+                  if (objectGenerated.invoicedValueGenerated) {
+                    invoicedValueNumber = parseFloat(
+                      objectGenerated.invoicedValueGenerated
+                    );
+                  }
+
+                  if (
+                    !isNaN(deliveredQuantityNumber) &&
+                    !isNaN(invoicedAmountNumber)
+                  ) {
+                    objectGenerated.balanceQuantityEntryMerchandiseQuantitiesGenerated = (
+                      deliveredQuantityNumber - invoicedAmountNumber
+                    ).toFixed(2);
+                  }
+
+                  if (
+                    !isNaN(deliveredValueNumber) &&
+                    !isNaN(invoicedValueNumber)
+                  ) {
+                    objectGenerated.balanceQuantityEntryMerchandiseCurrenciesGenerated = (
+                      deliveredValueNumber - invoicedValueNumber
+                    ).toFixed(2);
+                  }
+
+                  // ===== Buscar en el Assistant Report para armar información de facturas y pagos
+                  // ===== Paso 4.
+
+                  // ====== Importante, Comprobamos primero si existe el registro por entrada de mercancias, en caso contrario por factura
+                  // ====== CASO A
+                  let assistantReportFull = null;
+                  const assistantReportDataEM = await AssistantReport.find({
                     companyId: userInfo.companyId,
-                    documentId: assistantReport.invoiceId
+                    entryMerchandiseId: reportData.originalDocumentId
                   })
                     .select({
-                      originalDocumentId: 1
+                      invoiceId: 1,
+                      supplierId: 1,
+                      supplierName: 1,
+                      externalDocumentId: 1,
+                      entryMerchandiseId: 1,
+                      grossAmountCompanyCurrency: 1,
+                      netAmountCompanyCurrency: 1,
+                      quantity: 1
                     })
                     .lean();
+                  if (
+                    assistantReportDataEM &&
+                    assistantReportDataEM.length > 0
+                  ) {
+                    assistantReportFull = assistantReportDataEM;
+                  } else {
+                    // ====== CASO B
+                    const assistantReportDataF = await AssistantReport.find({
+                      companyId: userInfo.companyId,
+                      invoiceId: reportData.originalDocumentId
+                    })
+                      .select({
+                        invoiceId: 1,
+                        supplierId: 1,
+                        supplierName: 1,
+                        externalDocumentId: 1,
+                        entryMerchandiseId: 1,
+                        grossAmountCompanyCurrency: 1,
+                        netAmountCompanyCurrency: 1,
+                        quantity: 1
+                      })
+                      .lean();
+                    if (
+                      assistantReportDataF &&
+                      assistantReportDataF.length > 0
+                    ) {
+                      assistantReportFull = assistantReportDataF;
+                    }
+                  }
+                  // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
+                  if (assistantReportFull && assistantReportFull.length > 0) {
+                    // Iterar sobre el seguimiento de ordenes de Compra
+                    for await (const assistantReport of assistantReportFull) {
+                      objectInvoicePaymentGenerated.invoiceIdGenerated =
+                        assistantReport.invoiceId;
+                      objectInvoicePaymentGenerated.supplierIdGenerated =
+                        assistantReport.supplierId;
+                      objectInvoicePaymentGenerated.supplierNameGenerated =
+                        assistantReport.supplierName;
+                      objectInvoicePaymentGenerated.externalDocumentIdGenerated =
+                        assistantReport.externalDocumentId;
+                      objectInvoicePaymentGenerated.entryMerchandiseIdGenerated =
+                        assistantReport.entryMerchandiseId;
+                      objectInvoicePaymentGenerated.grossAmountCompanyCurrencyGenerated =
+                        assistantReport.grossAmountCompanyCurrency;
+                      objectInvoicePaymentGenerated.netAmountCompanyCurrencyGenerated =
+                        assistantReport.netAmountCompanyCurrency;
+                      objectInvoicePaymentGenerated.quantityGenerated =
+                        assistantReport.quantity;
 
-                  // Iterar sobre los pagos que están asociados a esta factura
-                  for await (const paymentExtra of paymentExtraData) {
-                    // Obtener la información faltante del pago para completar la tabla
+                      // Buscar el Id de la factura en PaymentExtras
+                      if (
+                        assistantReport.invoiceId &&
+                        assistantReport.invoiceId !== '#' &&
+                        assistantReport.invoiceId !== ''
+                      ) {
+                        const paymentExtraData = await PaymentExtra.find({
+                          companyId: userInfo.companyId,
+                          documentId: assistantReport.invoiceId
+                        })
+                          .select({
+                            originalDocumentId: 1
+                          })
+                          .lean();
+
+                        // Iterar sobre los pagos que están asociados a esta factura
+                        for await (const paymentExtra of paymentExtraData) {
+                          // Obtener la información faltante del pago para completar la tabla
+
+                          if (
+                            paymentExtra.originalDocumentId &&
+                            paymentExtra.originalDocumentId !== '#' &&
+                            paymentExtra.originalDocumentId !== ''
+                          ) {
+                            const paymentOriginalData = await PaymentOriginal.find(
+                              {
+                                companyId: userInfo.companyId,
+                                documentId: paymentExtra.originalDocumentId
+                              }
+                            )
+                              .select({
+                                documentId: 1,
+                                createdAt: 1,
+                                pyamentMethod: 1,
+                                businessPartnerName: 1,
+                                paymentAmount: 1
+                              })
+                              .lean();
+                            // Iterar sobre la información completa del pago
+                            if (
+                              paymentOriginalData &&
+                              paymentOriginalData.length > 0
+                            ) {
+                              for await (const paymentOriginal of paymentOriginalData) {
+                                if (
+                                  paymentOriginal.businessPartnerName ===
+                                  assistantReport.supplierName
+                                ) {
+                                  objectInvoicePaymentGenerated.documentIdGenerated =
+                                    paymentOriginal.documentId;
+                                  objectInvoicePaymentGenerated.createdAtGenerated =
+                                    paymentOriginal.createdAt;
+                                  objectInvoicePaymentGenerated.pyamentMethodGenerated =
+                                    paymentOriginal.pyamentMethod;
+                                  objectInvoicePaymentGenerated.businessPartnerNameGenerated =
+                                    paymentOriginal.businessPartnerName;
+                                  objectInvoicePaymentGenerated.paymentAmountGenerated =
+                                    paymentOriginal.paymentAmount;
+                                  break;
+                                }
+                              }
+                            }
+                          }
+                        }
+                        arrayInvoicePaymentGenerated.push(
+                          objectInvoicePaymentGenerated
+                        );
+                        objectInvoicePaymentGenerated = {};
+                      }
+                    }
+                  }
+                  break;
+                }
+              } // Quedé aquí
+            }
+          }
+        } else {
+          //  =============================================================
+          //  ================== IMPORTANTE ES UNA VARIANTE DEL CASO 4 Y ES COPIA DEL CODIGO ANTERIOR
+
+          // ===== Buscar en el Assistant Report para armar información de facturas y pagos
+          // ===== Paso 4.
+
+          // ====== Importante, Comprobamos primero si existe el registro por entrada de mercancias, en caso contrario por factura
+          // ====== CASO A
+          let assistantReportFull = null;
+          const assistantReportDataEM = await AssistantReport.find({
+            companyId: userInfo.companyId,
+            entryMerchandiseId: reportData.originalDocumentId
+          })
+            .select({
+              invoiceId: 1,
+              supplierId: 1,
+              supplierName: 1,
+              externalDocumentId: 1,
+              entryMerchandiseId: 1,
+              grossAmountCompanyCurrency: 1,
+              netAmountCompanyCurrency: 1,
+              quantity: 1
+            })
+            .lean();
+          if (assistantReportDataEM && assistantReportDataEM.length > 0) {
+            assistantReportFull = assistantReportDataEM;
+          } else {
+            // ====== CASO B
+            const assistantReportDataF = await AssistantReport.find({
+              companyId: userInfo.companyId,
+              invoiceId: reportData.originalDocumentId
+            })
+              .select({
+                invoiceId: 1,
+                supplierId: 1,
+                supplierName: 1,
+                externalDocumentId: 1,
+                entryMerchandiseId: 1,
+                grossAmountCompanyCurrency: 1,
+                netAmountCompanyCurrency: 1,
+                quantity: 1
+              })
+              .lean();
+            if (assistantReportDataF && assistantReportDataF.length > 0) {
+              assistantReportFull = assistantReportDataF;
+            }
+          }
+          // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
+          if (assistantReportFull && assistantReportFull.length > 0) {
+            // Iterar sobre el seguimiento de ordenes de Compra
+            for await (const assistantReport of assistantReportFull) {
+              objectInvoicePaymentGenerated.invoiceIdGenerated =
+                assistantReport.invoiceId;
+              objectInvoicePaymentGenerated.supplierIdGenerated =
+                assistantReport.supplierId;
+              objectInvoicePaymentGenerated.supplierNameGenerated =
+                assistantReport.supplierName;
+              objectInvoicePaymentGenerated.externalDocumentIdGenerated =
+                assistantReport.externalDocumentId;
+              objectInvoicePaymentGenerated.entryMerchandiseIdGenerated =
+                assistantReport.entryMerchandiseId;
+              objectInvoicePaymentGenerated.grossAmountCompanyCurrencyGenerated =
+                assistantReport.grossAmountCompanyCurrency;
+              objectInvoicePaymentGenerated.netAmountCompanyCurrencyGenerated =
+                assistantReport.netAmountCompanyCurrency;
+              objectInvoicePaymentGenerated.quantityGenerated =
+                assistantReport.quantity;
+
+              // Buscar el Id de la factura en PaymentExtras
+              if (
+                assistantReport.invoiceId &&
+                assistantReport.invoiceId !== '#' &&
+                assistantReport.invoiceId !== ''
+              ) {
+                const paymentExtraData = await PaymentExtra.find({
+                  companyId: userInfo.companyId,
+                  documentId: assistantReport.invoiceId
+                })
+                  .select({
+                    originalDocumentId: 1
+                  })
+                  .lean();
+
+                // Iterar sobre los pagos que están asociados a esta factura
+                for await (const paymentExtra of paymentExtraData) {
+                  // Obtener la información faltante del pago para completar la tabla
+
+                  if (
+                    paymentExtra.originalDocumentId &&
+                    paymentExtra.originalDocumentId !== '#' &&
+                    paymentExtra.originalDocumentId !== ''
+                  ) {
                     const paymentOriginalData = await PaymentOriginal.find({
                       companyId: userInfo.companyId,
                       documentId: paymentExtra.originalDocumentId
@@ -329,7 +520,7 @@ exports.generateIvaReport = async (req, res) => {
                       })
                       .lean();
                     // Iterar sobre la información completa del pago
-                    if (paymentOriginalData) {
+                    if (paymentOriginalData && paymentOriginalData.length > 0) {
                       for await (const paymentOriginal of paymentOriginalData) {
                         if (
                           paymentOriginal.businessPartnerName ===
@@ -345,24 +536,28 @@ exports.generateIvaReport = async (req, res) => {
                             paymentOriginal.businessPartnerName;
                           objectInvoicePaymentGenerated.paymentAmountGenerated =
                             paymentOriginal.paymentAmount;
+                          break;
                         }
                       }
                     }
                   }
-                  arrayInvoicePaymentGenerated.push(
-                    objectInvoicePaymentGenerated
-                  );
-                  objectInvoicePaymentGenerated = {};
                 }
+                arrayInvoicePaymentGenerated.push(
+                  objectInvoicePaymentGenerated
+                );
+                objectInvoicePaymentGenerated = {};
               }
-              break;
             }
           }
+          // ================================================================
         }
       }
       // console.log('Insertando el primer registro');
 
-      if (arrayInvoicePaymentGenerated) {
+      if (
+        arrayInvoicePaymentGenerated &&
+        arrayInvoicePaymentGenerated.length > 0
+      ) {
         let count = 0;
         arrayInvoicePaymentGenerated.forEach(elementInvoicePayment => {
           let objectGeneratedToSave = { ...objectGenerated };
@@ -418,7 +613,7 @@ exports.generateIvaReport = async (req, res) => {
       }
     }
     const summaryLoadedData = new SummaryLoadedData('', 0);
-    console.time(
+    console.log(
       '>>>>>>>>> TIEMPO DE FINALIZACIÓN DE PROCESAMIENTO INFORMACION'
     );
     console.log(new Date());
@@ -429,7 +624,7 @@ exports.generateIvaReport = async (req, res) => {
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
         summaryLoadedData.counter = arrayGenerated.length;
         console.log('Insert Data Finish');
-        console.time(
+        console.log(
           '>>>>>>>>> TIEMPO DE FINALIZACIÓN DE INSERCION INFORMACION'
         );
         console.log(new Date());

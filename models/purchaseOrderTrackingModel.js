@@ -69,10 +69,14 @@ const purchaseOrderTrackingSchema = new mongoose.Schema({
   }
 });
 
+purchaseOrderTrackingSchema.index({ companyId: +1, purchaseOrderId: +1 });
 purchaseOrderTrackingSchema.index({ companyId: +1 });
 purchaseOrderTrackingSchema.index({ purchaseOrderId: +1 });
 const PurchaseOrderTracking = mongoose.model(
   'PurchaseOrderTracking',
   purchaseOrderTrackingSchema
 );
+PurchaseOrderTracking.ensureIndexes(function(err) {
+  if (err) console.log(err);
+});
 module.exports = PurchaseOrderTracking;
