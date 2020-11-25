@@ -7,10 +7,30 @@ const authController = require('../controllers/common/authController');
 
 const router = express.Router();
 router.get(
-  '/generateIvaReport',
+  '/generateEntryMerchandiseAndServicesReport',
   authController.protectPath,
   authController.protectPathWithRoles('admin'),
-  reportCreatorController.generateIvaReport
+  reportCreatorController.generateEntryMerchandiseAndServicesReport
+);
+
+router.post(
+  '/create',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  reportCreatorController.createReport
+);
+
+router.get(
+  '/getReport/:id',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  reportCreatorController.getReport
+);
+router.get(
+  '/all',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  reportCreatorController.getAllAllReports
 );
 
 module.exports = router;

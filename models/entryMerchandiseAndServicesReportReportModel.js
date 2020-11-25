@@ -3,7 +3,7 @@
 // Company: Runcode Ingeniería SAS
 const mongoose = require('mongoose');
 
-const massyMasterReportSchema = new mongoose.Schema({
+const entryMerchandiseAndServiceReportSchema = new mongoose.Schema({
   //Cuenta de mayor
   seniorAccountantId: {
     type: String,
@@ -196,8 +196,8 @@ const massyMasterReportSchema = new mongoose.Schema({
   }
 });
 
-const MassyMasterReport = mongoose.model(
-  'MassyMasterReport',
-  massyMasterReportSchema
+const EntryMerchandiseAndServiceReport = mongoose.model(
+  'EntryMerchandiseAndServiceReport',
+  entryMerchandiseAndServiceReportSchema
 );
-module.exports = MassyMasterReport;
+module.exports = EntryMerchandiseAndServiceReport;

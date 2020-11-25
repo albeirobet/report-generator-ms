@@ -14,5 +14,7 @@ module.exports = {
     'El usuario debe tener asociada una empresa para subir información.',
   E_REPORT_GENERATOR_MS_05:
     'No se ha identificado. Por favor inicie sesión para acceder a este recurso',
+  E_REPORT_GENERATOR_MS_06:
+    'El reporte a ejecutar no se ha configurado para su Empresa. Por favor contácte a Soporte Técnico',
   M_REPORT_GENERATOR_MS_01: 'Plantilla cargada satisfactoriamente'
 };
