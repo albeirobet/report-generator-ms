@@ -210,6 +210,16 @@ exports.deleteEntryMerchandiseExtra = async (req, res) => {
   try {
     const userInfo = await userService.getUserInfo(req, res);
     await EntryMerchandiseExtra.deleteMany({ companyId: userInfo.companyId });
+    // Defino objeto y variables estandar para el resumen de la carga
+    const objectReportResume = {};
+    objectReportResume.code = 'EMETM';
+    objectReportResume.startDate = null;
+    objectReportResume.state = 'deleted_report';
+    objectReportResume.percentageCompletition = 0;
+    objectReportResume.counterRows = 0;
+    objectReportResume.message = 'Reporte borrado';
+    objectReportResume.endDate = new Date();
+    await reportFunctionsUpdate.updateReportUploader(objectReportResume);
     console.log('All Data successfully deleted');
     return true;
   } catch (err) {

@@ -11,7 +11,6 @@ const ServiceException = require('../utils/errors/serviceException');
 const commonErrors = require('../utils/constants/commonErrors');
 const reportGeneratorMessages = require('../utils/constants/reportGeneratorMessages');
 const MasterReport = require('../models/masterReportModel');
-const ReportUploader = require('../models/reportUploaderModel');
 const httpCodes = require('../utils/constants/httpCodes');
 const constants = require('../utils/constants/constants');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
@@ -19,14 +18,14 @@ const CommonLst = require('../dto/commons/commonLstDTO');
 const APIFeatures = require('../utils/responses/apiFeatures');
 const userService = require('../services/userService');
 const customValidator = require('../utils/validators/validator');
+const ReportUploader = require('../models/reportUploaderModel');
 const reportFunctionsUpdate = require('../utils/functions/reportFunctionsUpdate');
 
-// =========== Function to loadSuppliers
-
+// =========== Function to load
 exports.loadMasterReportData = async (req, res) => {
   try {
     this.loadMasterReportDataAsync(req, res);
-    return 'El reporte está siendo generado. Por favor validar su estado';
+    return 'El reporte está siendo Cargado. Por favor validar su estado';
   } catch (error) {
     throw error;
   }
@@ -38,7 +37,6 @@ exports.loadMasterReportDataAsync = async (req, res) => {
     const objectReportResume = {};
     objectReportResume.code = 'MASTM';
     objectReportResume.startDate = new Date();
-
     const userInfo = await userService.getUserInfo(req, res);
     if (!userInfo || !userInfo.companyId) {
       throw new ServiceException(
@@ -224,7 +222,7 @@ exports.deleteMasterReport = async (req, res) => {
 
     // Defino objeto y variables estandar para el resumen de la carga
     const objectReportResume = {};
-    objectReportResume.code = 'MASR';
+    objectReportResume.code = 'MASTM';
     objectReportResume.startDate = null;
     objectReportResume.state = 'deleted_report';
     objectReportResume.percentageCompletition = 0;

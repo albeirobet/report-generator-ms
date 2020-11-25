@@ -1,3 +1,4 @@
+/* eslint-disable no-inner-declarations */
 // Created By Eyder Ascuntar Rosales
 // Mail: eyder.ascuntar@runcode.co
 // Company: Runcode Ingeniería SAS
@@ -17,23 +18,27 @@ const CommonLst = require('../dto/commons/commonLstDTO');
 const APIFeatures = require('../utils/responses/apiFeatures');
 const userService = require('../services/userService');
 const customValidator = require('../utils/validators/validator');
+const ReportUploader = require('../models/reportUploaderModel');
+const reportFunctionsUpdate = require('../utils/functions/reportFunctionsUpdate');
 
 // =========== Function to loadEntryMerchandises
 exports.loadInvoiceSupplier = async (req, res) => {
   try {
-    if (req.file === undefined) {
-      throw new ServiceException(
-        commonErrors.E_COMMON_01,
-        new ApiError(
-          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_01}`,
-          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_01}`,
-          'E_REPORT_GENERATOR_MS_01',
-          httpCodes.BAD_REQUEST
-        )
-      );
-    }
+    this.loadInvoiceSupplierAsyncy(req, res);
+    return 'El reporte está siendo Cargado. Por favor validar su estado';
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.loadInvoiceSupplierAsyncy = async (req, res) => {
+  try {
+    // Defino objeto y variables estandar para el resumen de la carga
+    const objectReportResume = {};
+    objectReportResume.code = 'INSTM';
+    objectReportResume.startDate = new Date();
     const userInfo = await userService.getUserInfo(req, res);
-    if (!userInfo.companyId) {
+    if (!userInfo || !userInfo.companyId) {
       throw new ServiceException(
         commonErrors.E_COMMON_01,
         new ApiError(
@@ -44,6 +49,52 @@ exports.loadInvoiceSupplier = async (req, res) => {
         )
       );
     }
+
+    objectReportResume.companyId = userInfo.companyId;
+    objectReportResume.generatorUserId = userInfo._id;
+    const reportInfo = await ReportUploader.find({
+      companyId: userInfo.companyId,
+      code: objectReportResume.code
+    }).lean();
+    if (reportInfo.length === 0) {
+      throw new ServiceException(
+        commonErrors.E_COMMON_01,
+        new ApiError(
+          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_06}`,
+          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_06}`,
+          'E_REPORT_GENERATOR_MS_06',
+          httpCodes.BAD_REQUEST
+        )
+      );
+    }
+
+    if (req.file === undefined) {
+      // Actualizando información encabezado reporte
+      objectReportResume.state = 'error_report';
+      objectReportResume.percentageCompletition = 0;
+      objectReportResume.counterRows = 0;
+      objectReportResume.message = `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_01}`;
+      objectReportResume.endDate = new Date();
+      await reportFunctionsUpdate.updateReportUploader(objectReportResume);
+      throw new ServiceException(
+        commonErrors.E_COMMON_01,
+        new ApiError(
+          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_01}`,
+          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_01}`,
+          'E_REPORT_GENERATOR_MS_01',
+          httpCodes.BAD_REQUEST
+        )
+      );
+    }
+
+    // Actualizando información encabezado reporte
+    objectReportResume.state = 'processing';
+    objectReportResume.percentageCompletition = 33;
+    objectReportResume.counterRows = 0;
+    objectReportResume.message = 'Procesando Información';
+    objectReportResume.endDate = null;
+    await reportFunctionsUpdate.updateReportUploader(objectReportResume);
+
     const pathTmp = path.resolve(__dirname, '../resources/uploads/');
     const pathx = `${pathTmp}//${req.file.filename}`;
     const invoiceSuppliers = [];
@@ -59,6 +110,19 @@ exports.loadInvoiceSupplier = async (req, res) => {
             fs.unlink(pathx, function(err) {
               if (err) throw err;
             });
+            async function finishReport() {
+              // Actualizando información encabezado reporte
+              objectReportResume.state = 'error_report';
+              objectReportResume.percentageCompletition = 0;
+              objectReportResume.counterRows = 0;
+              objectReportResume.message = `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_02}`;
+              objectReportResume.endDate = new Date();
+              await reportFunctionsUpdate.updateReportUploader(
+                objectReportResume
+              );
+            }
+            finishReport();
+
             throw new ServiceException(
               commonErrors.E_COMMON_01,
               new ApiError(
@@ -95,12 +159,28 @@ exports.loadInvoiceSupplier = async (req, res) => {
     });
     const summaryLoadedData = new SummaryLoadedData('', 0);
     console.log('Insert Data Init');
+    // Actualizando información encabezado reporte
+    objectReportResume.state = 'entering_information';
+    objectReportResume.percentageCompletition = 66;
+    objectReportResume.counterRows = 0;
+    objectReportResume.message = 'Insertando Información';
+    await reportFunctionsUpdate.updateReportUploader(objectReportResume);
     await InvoiceSupplier.insertMany(invoiceSuppliers)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
         summaryLoadedData.counter = invoiceSuppliers.length;
         console.log('Insert Data Finish');
+        async function finishReport() {
+          // Actualizando información encabezado reporte
+          objectReportResume.state = 'uploaded_data';
+          objectReportResume.percentageCompletition = 100;
+          objectReportResume.counterRows = invoiceSuppliers.length;
+          objectReportResume.message = reportInfo.name;
+          objectReportResume.endDate = new Date();
+          await reportFunctionsUpdate.updateReportUploader(objectReportResume);
+        }
+        finishReport();
       })
       .catch(function(error) {
         summaryLoadedData.message =
@@ -122,6 +202,16 @@ exports.deleteInvoiceSupplier = async (req, res) => {
   try {
     const userInfo = await userService.getUserInfo(req, res);
     await InvoiceSupplier.deleteMany({ companyId: userInfo.companyId });
+    // Defino objeto y variables estandar para el resumen de la carga
+    const objectReportResume = {};
+    objectReportResume.code = 'INSTM';
+    objectReportResume.startDate = null;
+    objectReportResume.state = 'deleted_report';
+    objectReportResume.percentageCompletition = 0;
+    objectReportResume.counterRows = 0;
+    objectReportResume.message = 'Reporte borrado';
+    objectReportResume.endDate = new Date();
+    await reportFunctionsUpdate.updateReportUploader(objectReportResume);
     console.log('All Data successfully deleted');
     return true;
   } catch (err) {

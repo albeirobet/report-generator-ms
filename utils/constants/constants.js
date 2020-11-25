@@ -35,7 +35,7 @@ module.exports = {
     'Reporte de Pagos - Informe abierto por el administrador en centro de trabajo Análisis empresarial.',
   IVA_TEMPLATE_ROW_INIT: 8,
   IVA_TEMPLATE_TITLE: 'Test reporte IVA ',
-  ENTRY_MERCHANDISE_EXTRA_TEMPLATE_ROW_INIT: 6,
+  ENTRY_MERCHANDISE_EXTRA_TEMPLATE_ROW_INIT: 7,
   ENTRY_MERCHANDISE_EXTRA_TEMPLATE_TITLE:
     'Seguimiento de entrada de mercancías',
   PURCHASE_ORDER_TRACKING_TEMPLATE_ROW_INIT: 7,
