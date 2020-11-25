@@ -36,7 +36,7 @@ exports.loadEntryMerchandiseExtraAsync = async (req, res) => {
   try {
     // Defino objeto y variables estandar para el resumen de la carga
     const objectReportResume = {};
-    objectReportResume.code = 'EMER';
+    objectReportResume.code = 'EMETM';
     objectReportResume.startDate = new Date();
 
     const userInfo = await userService.getUserInfo(req, res);

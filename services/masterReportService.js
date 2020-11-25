@@ -36,7 +36,7 @@ exports.loadMasterReportDataAsync = async (req, res) => {
   try {
     // Defino objeto y variables estandar para el resumen de la carga
     const objectReportResume = {};
-    objectReportResume.code = 'MASR';
+    objectReportResume.code = 'MASTM';
     objectReportResume.startDate = new Date();
 
     const userInfo = await userService.getUserInfo(req, res);

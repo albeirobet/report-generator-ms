@@ -26,7 +26,7 @@ const userService = require('./userService');
 exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
   try {
     const objectReportResume = {};
-    objectReportResume.code = 'EOMS';
+    objectReportResume.code = 'EMEGR';
     objectReportResume.startDate = new Date();
 
     console.log('>>>>>>>> TIEMPO DE INICIO');
