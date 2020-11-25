@@ -30,6 +30,7 @@ const reportCreatorRoute = require('./routes/reportCreatorRoute');
 const reportUploaderRoute = require('./routes/reportUploaderRoute');
 const purchaseOrderTrackingRoute = require('./routes/purchaseOrderTrackingRoute');
 const reportDownloaderRoute = require('./routes/reportDownloaderRoute');
+const reportEnableRoute = require('./routes/reportEnableRoute');
 
 const app = express();
 
@@ -122,6 +123,8 @@ app.use('/api/v1/purchaseOrderTracking', purchaseOrderTrackingRoute);
 app.use('/api/v1/reportUploader', reportUploaderRoute);
 // 20. Download Reports
 app.use('/api/v1/reportDownloader', reportDownloaderRoute);
+// 20. Enabled Reports
+app.use('/api/v1/reportEnable', reportEnableRoute);
 // ... End Not Found Route
 app.all('*', notFoundRoute);
 
