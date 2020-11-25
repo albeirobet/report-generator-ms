@@ -14,7 +14,7 @@ const httpCodes = require('../utils/constants/httpCodes');
 const entryMerchandiseAndServicesReportService = require('./entryMerchandiseAndServicesReportService');
 const userService = require('./userService');
 
-// =========== Function to count records of reports
+// =========== Function to
 exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
   try {
     entryMerchandiseAndServicesReportService.generateEntryMerchandiseAndServicesReport(
@@ -22,6 +22,19 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
       res
     );
     return 'El reporte está siendo generado. Por favor validar su estado';
+  } catch (error) {
+    throw error;
+  }
+};
+
+// =========== Function to
+exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
+  try {
+    const response = await entryMerchandiseAndServicesReportService.downloadEntryMerchandiseAndServicesReport(
+      req,
+      res
+    );
+    return response;
   } catch (error) {
     throw error;
   }

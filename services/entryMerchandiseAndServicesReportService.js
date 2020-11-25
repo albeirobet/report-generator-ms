@@ -728,3 +728,7 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
     throw err;
   }
 };
+
+exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
+  return 'Hola Mundo';
+};

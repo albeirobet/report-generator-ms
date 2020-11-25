@@ -13,6 +13,13 @@ router.get(
   reportCreatorController.generateEntryMerchandiseAndServicesReport
 );
 
+router.get(
+  '/downloadEntryMerchandiseAndServicesReport',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  reportCreatorController.downloadEntryMerchandiseAndServicesReport
+);
+
 router.post(
   '/create',
   authController.protectPath,
