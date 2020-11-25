@@ -80,11 +80,20 @@ exports.getReport = async (req, res) => {
   return data;
 };
 
-// =========== Function to get all Invoice Clients with filters to the table
 exports.getAllAllReports = async (req, res) => {
   const userInfo = await userService.getUserInfo(req, res);
   const data = await ReportCreator.find({
     companyId: userInfo.companyId
   });
   return data;
+};
+
+exports.deleteReportByCompanyId = async (req, res) => {
+  try {
+    customValidator.validateNotNullParameter(req.params.companyId);
+    await ReportCreator.deleteMany({ companyId: req.params.companyId });
+    return true;
+  } catch (err) {
+    throw err;
+  }
 };

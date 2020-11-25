@@ -56,9 +56,23 @@ exports.getReport = async (req, res) => {
 
 // =========== Function to get all Invoice Clients with filters to the table
 exports.getAllAllReports = async (req, res) => {
-  const userInfo = await userService.getUserInfo(req, res);
-  const data = await ReportUploader.find({
-    companyId: userInfo.companyId
-  });
-  return data;
+  try {
+    const userInfo = await userService.getUserInfo(req, res);
+    const data = await ReportUploader.find({
+      companyId: userInfo.companyId
+    });
+    return data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+exports.deleteReportByCompanyId = async (req, res) => {
+  try {
+    customValidator.validateNotNullParameter(req.params.companyId);
+    await ReportUploader.deleteMany({ companyId: req.params.companyId });
+    return true;
+  } catch (err) {
+    throw err;
+  }
 };

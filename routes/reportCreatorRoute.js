@@ -40,4 +40,10 @@ router.get(
   reportCreatorController.getAllAllReports
 );
 
+router.delete(
+  '/deleteReportByCompanyId/:id',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin'),
+  reportCreatorController.deleteReportByCompanyId
+);
 module.exports = router;
