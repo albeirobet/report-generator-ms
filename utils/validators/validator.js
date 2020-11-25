@@ -36,6 +36,10 @@ exports.validateNotNullParameter = parameter => {
 
 function stringToDate(_date, _format, _delimiter) {
   if (_date) {
+    const formatedD = new Date(_date);
+    if (formatedD.getDate()) {
+      return formatedD;
+    }
     const formatLowerCase = _format.toLowerCase();
     const formatItems = formatLowerCase.split(_delimiter);
     const dateItems = _date.split(_delimiter);
