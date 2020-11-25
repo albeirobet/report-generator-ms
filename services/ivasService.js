@@ -174,16 +174,37 @@ exports.getIvaData = async (req, res) => {
 // =========== Function to get all Clients with filters to the table
 exports.getAllIvaData = async (req, res) => {
   const userInfo = await userService.getUserInfo(req, res);
-  const features = new APIFeatures(
-    Iva.find({ companyId: userInfo.companyId }),
-    req.query
-  )
-    .filterTable()
+  const filterColumns = [
+    'mayorAccountNetId',
+    'mayorAccountNetName',
+    'accountingSeatId',
+    'originalDocumentId',
+    'originalDocumentType',
+    'taxCode',
+    'taxRate',
+    'taxType',
+    'netAmountCompanyCurrency',
+    'deductibleAmountTransactionCurrency',
+    'internalTaxAmountTransactionCurrency',
+    'netAmountTransactionCurrency',
+    'taxAmountTransactionCurrency',
+    'taxBaseAmountTransactionCurrency',
+    'internalTaxAmountTaxDlecarationCurrency',
+    'noDeductibleAmountTransactionCurrency'
+  ];
+  const dataTable = new APIFeatures(Iva.find(), req.query)
+    .filter(userInfo.companyId, false, filterColumns)
     .sort()
     .limitFields()
     .paginate();
-  const total = await Iva.countDocuments({ companyId: userInfo.companyId });
-  const data = await features.query;
-  const dataList = new CommonLst(total, data);
-  return dataList;
+  const counter = new APIFeatures(Iva.find(), req.query).filter(
+    userInfo.companyId,
+    true,
+    filterColumns
+  );
+  const totalCount = await counter.query;
+  const dataPaginate = await dataTable.query;
+  const data = new CommonLst(totalCount, dataPaginate);
+
+  return data;
 };

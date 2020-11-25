@@ -16,6 +16,7 @@ const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const userService = require('./userService');
 const CommonLst = require('../dto/commons/commonLstDTO');
 const APIFeatures = require('../utils/responses/apiFeatures');
+const customValidator = require('../utils/validators/validator');
 
 // =========== Function to loadPurchaseOrders
 exports.loadPurchaseOrders = async (req, res) => {
@@ -76,8 +77,10 @@ exports.loadPurchaseOrders = async (req, res) => {
             purchaseOrderId: currRow.getCell(3).value,
             documentId: currRow.getCell(4).value,
             documentType: currRow.getCell(5).value,
-            invoiceDate: currRow.getCell(6).value,
-            orderDate: currRow.getCell(7).value,
+            invoiceDate: customValidator.dateFromString(
+              currRow.getCell(6).value
+            ),
+            orderDate: customValidator.dateFromString(currRow.getCell(7).value),
             requestedQuantity: currRow.getCell(8).value,
             deliveredQuantity: currRow.getCell(9).value,
             invoicedValue: currRow.getCell(10).value,
@@ -169,18 +172,28 @@ exports.getPurchaseOrder = async (req, res) => {
 // =========== Function to get all Invoice Clients with filters to the table
 exports.getAllPurchaseOrder = async (req, res) => {
   const userInfo = await userService.getUserInfo(req, res);
-  const features = new APIFeatures(
-    PurchaseOrder.find({ companyId: userInfo.companyId }),
-    req.query
-  )
-    .filterTable()
+  const filterColumns = [
+    'state',
+    'purchaseOrderId',
+    'documentId',
+    'documentType',
+    'requestedQuantity',
+    'deliveredQuantity',
+    'invoicedValue'
+  ];
+  const dataTable = new APIFeatures(PurchaseOrder.find(), req.query)
+    .filter(userInfo.companyId, false, filterColumns)
     .sort()
     .limitFields()
     .paginate();
-  const total = await PurchaseOrder.countDocuments({
-    companyId: userInfo.companyId
-  });
-  const data = await features.query;
-  const dataList = new CommonLst(total, data);
-  return dataList;
+  const counter = new APIFeatures(PurchaseOrder.find(), req.query).filter(
+    userInfo.companyId,
+    true,
+    filterColumns
+  );
+  const totalCount = await counter.query;
+  const dataPaginate = await dataTable.query;
+  const data = new CommonLst(totalCount, dataPaginate);
+
+  return data;
 };

@@ -17,7 +17,7 @@ const paymentExtraSchema = new mongoose.Schema({
     uppercase: true
   },
   documentDate: {
-    type: String,
+    type: Date,
     uppercase: true
   },
   documentType: {
@@ -33,7 +33,7 @@ const paymentExtraSchema = new mongoose.Schema({
     uppercase: true
   },
   postingDate: {
-    type: String,
+    type: Date,
     uppercase: true
   },
   accountingSeatId: {

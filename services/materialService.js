@@ -16,6 +16,7 @@ const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const CommonLst = require('../dto/commons/commonLstDTO');
 const APIFeatures = require('../utils/responses/apiFeatures');
 const userService = require('../services/userService');
+const customValidator = require('../utils/validators/validator');
 
 // =========== Function to loadMaterials
 exports.loadMaterials = async (req, res) => {
@@ -77,8 +78,10 @@ exports.loadMaterials = async (req, res) => {
             baseUnitMeasure: currRow.getCell(4).value,
             productCategory: currRow.getCell(5).value,
             type: currRow.getCell(6).value,
-            createdAt: currRow.getCell(7).value,
-            modifiedAt: currRow.getCell(8).value,
+            createdAt: customValidator.dateFromString(currRow.getCell(7).value),
+            modifiedAt: customValidator.dateFromString(
+              currRow.getCell(8).value
+            ),
             companyId: userInfo.companyId,
             userId: userInfo._id
           };
@@ -165,17 +168,26 @@ exports.getMaterial = async (req, res) => {
 // =========== Function to get all
 exports.getAllMaterials = async (req, res) => {
   const userInfo = await userService.getUserInfo(req, res);
-  const features = new APIFeatures(Material.find(), req.query)
-    .filterTableMaterials(userInfo.companyId)
+  const filterColumns = [
+    'materialId',
+    'name',
+    'baseUnitMeasure',
+    'productCategory',
+    'type'
+  ];
+  const dataTable = new APIFeatures(Material.find(), req.query)
+    .filter(userInfo.companyId, false, filterColumns)
     .sort()
     .limitFields()
     .paginate();
-  const total = new APIFeatures(
-    Material.find(),
-    req.query
-  ).filterTableMaterials(userInfo.companyId);
-  const totalCount = await total.query;
-  const dataPaginate = await features.query;
-  const data = new CommonLst(totalCount.length, dataPaginate);
+  const counter = new APIFeatures(Material.find(), req.query).filter(
+    userInfo.companyId,
+    true,
+    filterColumns
+  );
+  const totalCount = await counter.query;
+  const dataPaginate = await dataTable.query;
+  const data = new CommonLst(totalCount, dataPaginate);
+
   return data;
 };

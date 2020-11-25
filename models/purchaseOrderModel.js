@@ -21,11 +21,11 @@ const purchaseOrderSchema = new mongoose.Schema({
     uppercase: true
   },
   invoiceDate: {
-    type: String,
+    type: Date,
     uppercase: true
   },
   orderDate: {
-    type: String,
+    type: Date,
     uppercase: true
   },
   requestedQuantity: {

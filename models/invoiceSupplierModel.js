@@ -17,11 +17,11 @@ const invoiceSupplierSchema = new mongoose.Schema({
     uppercase: true
   },
   documentDate: {
-    type: String,
+    type: Date,
     uppercase: true
   },
   expirationDate: {
-    type: String,
+    type: Date,
     uppercase: true
   },
   invoiceAmount: {

@@ -9,7 +9,7 @@ const assistanReportSchema = new mongoose.Schema({
     uppercase: true
   },
   invoiceDate: {
-    type: String,
+    type: Date,
     uppercase: true
   },
   supplierId: {

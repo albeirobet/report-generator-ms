@@ -16,6 +16,7 @@ const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const CommonLst = require('../dto/commons/commonLstDTO');
 const APIFeatures = require('../utils/responses/apiFeatures');
 const userService = require('../services/userService');
+const customValidator = require('../utils/validators/validator');
 
 // =========== Function to loadSuppliers
 exports.loadAssistantReportData = async (req, res) => {
@@ -73,7 +74,9 @@ exports.loadAssistantReportData = async (req, res) => {
         if (count > constants.ASSISTANT_REPORT_TEMPLATE_ROW_INIT) {
           const report = {
             invoiceId: currRow.getCell(2).value,
-            invoiceDate: currRow.getCell(3).value,
+            invoiceDate: customValidator.dateFromString(
+              currRow.getCell(3).value
+            ),
             supplierId: currRow.getCell(4).value,
             supplierName: currRow.getCell(5).value,
             entryMerchandiseId: currRow.getCell(6).value,
@@ -178,18 +181,35 @@ exports.getAssistantReport = async (req, res) => {
 // =========== Function to get all Assistant Reports Rows with filters to the table
 exports.getAllAssistantReports = async (req, res) => {
   const userInfo = await userService.getUserInfo(req, res);
-  const features = new APIFeatures(
-    AssistantReport.find({ companyId: userInfo.companyId }),
-    req.query
-  )
-    .filterTable()
+  const filterColumns = [
+    'invoiceId',
+    'supplierId',
+    'supplierName',
+    'entryMerchandiseId',
+    'inboundDeliveryConfirmedId',
+    'purchaseOrderId',
+    'supplierCoName',
+    'supplierCoId',
+    'refundCo',
+    'externalDocumentId',
+    'grossAmountCompanyCurrency',
+    'netAmountCompanyCurrency',
+    'grossValue',
+    'netValue'
+  ];
+  const dataTable = new APIFeatures(AssistantReport.find(), req.query)
+    .filter(userInfo.companyId, false, filterColumns)
     .sort()
     .limitFields()
     .paginate();
-  const total = await AssistantReport.countDocuments({
-    companyId: userInfo.companyId
-  });
-  const companies = await features.query;
-  const companiesList = new CommonLst(total, companies);
-  return companiesList;
+  const counter = new APIFeatures(AssistantReport.find(), req.query).filter(
+    userInfo.companyId,
+    true,
+    filterColumns
+  );
+  const totalCount = await counter.query;
+  const dataPaginate = await dataTable.query;
+  const data = new CommonLst(totalCount, dataPaginate);
+
+  return data;
 };

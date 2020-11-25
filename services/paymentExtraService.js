@@ -16,6 +16,7 @@ const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const userService = require('./userService');
 const CommonLst = require('../dto/commons/commonLstDTO');
 const APIFeatures = require('../utils/responses/apiFeatures');
+const customValidator = require('../utils/validators/validator');
 
 // =========== Function to loadSuppliers
 exports.loadPaymentExtraData = async (req, res) => {
@@ -75,11 +76,15 @@ exports.loadPaymentExtraData = async (req, res) => {
             businessPartnerId: currRow.getCell(2).value,
             businessPartnerName: currRow.getCell(3).value,
             documentId: currRow.getCell(4).value,
-            documentDate: currRow.getCell(5).value,
+            documentDate: customValidator.dateFromString(
+              currRow.getCell(5).value
+            ),
             documentType: currRow.getCell(6).value,
             originalDocumentId: currRow.getCell(7).value,
             originalDocumentType: currRow.getCell(8).value,
-            postingDate: currRow.getCell(9).value,
+            postingDate: customValidator.dateFromString(
+              currRow.getCell(9).value
+            ),
             accountingSeatId: currRow.getCell(10).value,
             amountCompanyCurrency: currRow.getCell(11).value,
             amountTransactionCurrency: currRow.getCell(12).value,
@@ -172,18 +177,30 @@ exports.getPaymentExtra = async (req, res) => {
 // =========== Function to get all Invoice Clients with filters to the table
 exports.getAllPaymentExtra = async (req, res) => {
   const userInfo = await userService.getUserInfo(req, res);
-  const features = new APIFeatures(
-    PaymentExtra.find({ companyId: userInfo.companyId }),
-    req.query
-  )
-    .filterTable()
+  const filterColumns = [
+    'businessPartnerId',
+    'businessPartnerName',
+    'documentId',
+    'documentType',
+    'originalDocumentId',
+    'originalDocumentType',
+    'accountingSeatId',
+    'amountCompanyCurrency',
+    'amountTransactionCurrency'
+  ];
+  const dataTable = new APIFeatures(PaymentExtra.find(), req.query)
+    .filter(userInfo.companyId, false, filterColumns)
     .sort()
     .limitFields()
     .paginate();
-  const total = await PaymentExtra.countDocuments({
-    companyId: userInfo.companyId
-  });
-  const data = await features.query;
-  const dataList = new CommonLst(total, data);
-  return dataList;
+  const counter = new APIFeatures(PaymentExtra.find(), req.query).filter(
+    userInfo.companyId,
+    true,
+    filterColumns
+  );
+  const totalCount = await counter.query;
+  const dataPaginate = await dataTable.query;
+  const data = new CommonLst(totalCount, dataPaginate);
+
+  return data;
 };

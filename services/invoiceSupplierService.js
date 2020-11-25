@@ -16,6 +16,7 @@ const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const CommonLst = require('../dto/commons/commonLstDTO');
 const APIFeatures = require('../utils/responses/apiFeatures');
 const userService = require('../services/userService');
+const customValidator = require('../utils/validators/validator');
 
 // =========== Function to loadEntryMerchandises
 exports.loadInvoiceSupplier = async (req, res) => {
@@ -74,8 +75,12 @@ exports.loadInvoiceSupplier = async (req, res) => {
             state: currRow.getCell(2).value,
             documentId: currRow.getCell(3).value,
             externalDocumentId: currRow.getCell(4).value,
-            documentDate: currRow.getCell(5).value,
-            expirationDate: currRow.getCell(6).value,
+            documentDate: customValidator.dateFromString(
+              currRow.getCell(5).value
+            ),
+            expirationDate: customValidator.dateFromString(
+              currRow.getCell(6).value
+            ),
             invoiceAmount: currRow.getCell(7).value,
             netAmount: currRow.getCell(8).value,
             taxAmount: currRow.getCell(9).value,
@@ -168,18 +173,29 @@ exports.getInvoiceSupplier = async (req, res) => {
 // =========== Function to get all Invoice Clients with filters to the table
 exports.getAllInvoiceSuppliers = async (req, res) => {
   const userInfo = await userService.getUserInfo(req, res);
-  const features = new APIFeatures(
-    InvoiceSupplier.find({ companyId: userInfo.companyId }),
-    req.query
-  )
-    .filterTable()
+  const filterColumns = [
+    'state',
+    'documentId',
+    'externalDocumentId',
+    'expirationDate',
+    'invoiceAmount',
+    'netAmount',
+    'taxAmount',
+    'grossAmount'
+  ];
+  const dataTable = new APIFeatures(InvoiceSupplier.find(), req.query)
+    .filter(userInfo.companyId, false, filterColumns)
     .sort()
     .limitFields()
     .paginate();
-  const total = await InvoiceSupplier.countDocuments({
-    companyId: userInfo.companyId
-  });
-  const data = await features.query;
-  const dataList = new CommonLst(total, data);
-  return dataList;
+  const counter = new APIFeatures(InvoiceSupplier.find(), req.query).filter(
+    userInfo.companyId,
+    true,
+    filterColumns
+  );
+  const totalCount = await counter.query;
+  const dataPaginate = await dataTable.query;
+  const data = new CommonLst(totalCount, dataPaginate);
+
+  return data;
 };

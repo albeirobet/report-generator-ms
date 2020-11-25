@@ -16,6 +16,7 @@ const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const userService = require('./userService');
 const CommonLst = require('../dto/commons/commonLstDTO');
 const APIFeatures = require('../utils/responses/apiFeatures');
+const customValidator = require('../utils/validators/validator');
 
 // =========== Function to loadSuppliers
 exports.loadPaymentOriginalData = async (req, res) => {
@@ -75,7 +76,7 @@ exports.loadPaymentOriginalData = async (req, res) => {
             state: currRow.getCell(2).value,
             documentId: currRow.getCell(3).value,
             externalReferenceId: currRow.getCell(4).value,
-            createdAt: currRow.getCell(5).value,
+            createdAt: customValidator.dateFromString(currRow.getCell(5).value),
             pyamentMethod: currRow.getCell(6).value,
             businessPartnerName: currRow.getCell(7).value,
             bankAccountId: currRow.getCell(8).value,
@@ -170,18 +171,30 @@ exports.getPaymentOriginal = async (req, res) => {
 // =========== Function to get all Invoice Clients with filters to the table
 exports.getAllPaymentOriginal = async (req, res) => {
   const userInfo = await userService.getUserInfo(req, res);
-  const features = new APIFeatures(
-    PaymentOriginal.find({ companyId: userInfo.companyId }),
-    req.query
-  )
-    .filterTable()
+  const filterColumns = [
+    'state',
+    'documentId',
+    'externalReferenceId',
+    'pyamentMethod',
+    'businessPartnerName',
+    'bankAccountId',
+    'minorExpensesId',
+    'paymentAmount',
+    'companyIdFile'
+  ];
+  const dataTable = new APIFeatures(PaymentOriginal.find(), req.query)
+    .filter(userInfo.companyId, false, filterColumns)
     .sort()
     .limitFields()
     .paginate();
-  const total = await PaymentOriginal.countDocuments({
-    companyId: userInfo.companyId
-  });
-  const data = await features.query;
-  const dataList = new CommonLst(total, data);
-  return dataList;
+  const counter = new APIFeatures(PaymentOriginal.find(), req.query).filter(
+    userInfo.companyId,
+    true,
+    filterColumns
+  );
+  const totalCount = await counter.query;
+  const dataPaginate = await dataTable.query;
+  const data = new CommonLst(totalCount, dataPaginate);
+
+  return data;
 };

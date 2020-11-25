@@ -14,7 +14,7 @@ const masterReportSchema = new mongoose.Schema({
     uppercase: true
   },
   postingDate: {
-    type: String,
+    type: Date,
     uppercase: true
   },
   //Asiento contable

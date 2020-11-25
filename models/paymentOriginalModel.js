@@ -17,7 +17,7 @@ const pyamentOriginalSchema = new mongoose.Schema({
     uppercase: true
   },
   createdAt: {
-    type: String,
+    type: Date,
     uppercase: true
   },
   pyamentMethod: {

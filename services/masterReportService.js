@@ -16,6 +16,7 @@ const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const CommonLst = require('../dto/commons/commonLstDTO');
 const APIFeatures = require('../utils/responses/apiFeatures');
 const userService = require('../services/userService');
+const customValidator = require('../utils/validators/validator');
 
 // =========== Function to loadSuppliers
 exports.loadMasterReportData = async (req, res) => {
@@ -74,7 +75,9 @@ exports.loadMasterReportData = async (req, res) => {
           const report = {
             seniorAccountantId: currRow.getCell(2).value,
             seniorAccountantName: currRow.getCell(3).value,
-            postingDate: currRow.getCell(4).value,
+            postingDate: customValidator.dateFromString(
+              currRow.getCell(4).value
+            ),
             accountingSeat: currRow.getCell(5).value,
             externalReferenceId: currRow.getCell(6).value,
             originalDocumentId: currRow.getCell(7).value,
@@ -173,18 +176,34 @@ exports.getMasterReportRow = async (req, res) => {
 // =========== Function to get all Invoice Clients with filters to the table
 exports.getAllMasterReportRows = async (req, res) => {
   const userInfo = await userService.getUserInfo(req, res);
-  const features = new APIFeatures(
-    MasterReport.find({ companyId: userInfo.companyId }),
-    req.query
-  )
-    .filterTable()
+  const filterColumns = [
+    'seniorAccountantId',
+    'seniorAccountantName',
+    'accountingSeat',
+    'externalReferenceId',
+    'originalDocumentId',
+    'accountingSeatType',
+    'accountingSeatAnnulled',
+    'originalDocumentAnnulledId',
+    'accountingSeatAnnulment',
+    'extraOriginalDocumentAnulledId',
+    'extraOriginalDocumentId',
+    'debtAmountCompanyCurrency',
+    'creditAmountCompanyCurrency'
+  ];
+  const dataTable = new APIFeatures(MasterReport.find(), req.query)
+    .filter(userInfo.companyId, false, filterColumns)
     .sort()
     .limitFields()
     .paginate();
-  const total = await MasterReport.countDocuments({
-    companyId: userInfo.companyId
-  });
-  const data = await features.query;
-  const dataList = new CommonLst(total, data);
-  return dataList;
+  const counter = new APIFeatures(MasterReport.find(), req.query).filter(
+    userInfo.companyId,
+    true,
+    filterColumns
+  );
+  const totalCount = await counter.query;
+  const dataPaginate = await dataTable.query;
+  const data = new CommonLst(totalCount, dataPaginate);
+
+  return data;
 };

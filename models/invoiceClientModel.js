@@ -17,7 +17,7 @@ const invoiceClientSchema = new mongoose.Schema({
     uppercase: true
   },
   invoiceDate: {
-    type: String,
+    type: Date,
     uppercase: true
   },
   grossValueInvoice: {

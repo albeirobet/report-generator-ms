@@ -16,6 +16,7 @@ const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const CommonLst = require('../dto/commons/commonLstDTO');
 const APIFeatures = require('../utils/responses/apiFeatures');
 const userService = require('../services/userService');
+const customValidator = require('../utils/validators/validator');
 
 // =========== Function to loadSuppliers
 exports.loadInvoiceClients = async (req, res) => {
@@ -75,7 +76,9 @@ exports.loadInvoiceClients = async (req, res) => {
             clientName: currRow.getCell(2).value,
             clientId: currRow.getCell(3).value,
             invoiceId: currRow.getCell(4).value,
-            invoiceDate: currRow.getCell(5).value,
+            invoiceDate: customValidator.dateFromString(
+              currRow.getCell(5).value
+            ),
             grossValueInvoice: currRow.getCell(6).value,
             netValueInvoice: currRow.getCell(7).value,
             tax: currRow.getCell(8).value,
@@ -168,18 +171,28 @@ exports.getInvoiceClient = async (req, res) => {
 // =========== Function to get all Invoice Clients with filters to the table
 exports.getAllInvoiceClients = async (req, res) => {
   const userInfo = await userService.getUserInfo(req, res);
-  const features = new APIFeatures(
-    InvoiceClient.find({ companyId: userInfo.companyId }),
-    req.query
-  )
-    .filterTable()
+  const filterColumns = [
+    'clientName',
+    'clientId',
+    'invoiceId',
+    'grossValueInvoice',
+    'netValueInvoice',
+    'tax',
+    'netInvoicedValue'
+  ];
+  const dataTable = new APIFeatures(InvoiceClient.find(), req.query)
+    .filter(userInfo.companyId, false, filterColumns)
     .sort()
     .limitFields()
     .paginate();
-  const total = await InvoiceClient.countDocuments({
-    companyId: userInfo.companyId
-  });
-  const data = await features.query;
-  const dataList = new CommonLst(total, data);
-  return dataList;
+  const counter = new APIFeatures(InvoiceClient.find(), req.query).filter(
+    userInfo.companyId,
+    true,
+    filterColumns
+  );
+  const totalCount = await counter.query;
+  const dataPaginate = await dataTable.query;
+  const data = new CommonLst(totalCount, dataPaginate);
+
+  return data;
 };
