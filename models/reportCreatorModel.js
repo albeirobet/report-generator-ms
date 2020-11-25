@@ -58,7 +58,7 @@ const reportCreatorSchema = new mongoose.Schema({
   }
 });
 
-reportCreatorSchema.index({ companyId: +1 });
+reportCreatorSchema.index({ companyId: +1, code: +1 });
 
 const ReportCreator = mongoose.model('ReportCreator', reportCreatorSchema);
 ReportCreator.ensureIndexes(function(err) {

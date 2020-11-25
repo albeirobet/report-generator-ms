@@ -18,23 +18,9 @@ const PaymentOriginal = require('../models/paymentOriginalModel');
 const PaymentExtra = require('../models/paymentExtraModel');
 const ReportCreator = require('../models/reportCreatorModel');
 const reportGeneratorMessages = require('../utils/constants/reportGeneratorMessages');
+const reportFunctionsUpdate = require('../utils/functions/reportFunctionsUpdate');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const userService = require('./userService');
-
-async function updateReportCreator(objectReportResume) {
-  await ReportCreator.updateOne(
-    { companyId: objectReportResume.companyId, code: objectReportResume.code },
-    {
-      state: objectReportResume.state,
-      percentageCompletition: objectReportResume.percentageCompletition,
-      counterRows: objectReportResume.counterRows,
-      message: objectReportResume.message,
-      startDate: objectReportResume.startDate,
-      endDate: objectReportResume.endDate,
-      generatorUserId: objectReportResume.generatorUserId
-    }
-  );
-}
 
 // =========== Function to count records of reports
 exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
@@ -51,7 +37,7 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
     const reportInfo = await ReportCreator.find({
       companyId: userInfo.companyId,
       code: objectReportResume.code
-    });
+    }).lean();
     if (reportInfo.length === 0) {
       throw new ServiceException(
         commonErrors.E_COMMON_01,
@@ -64,6 +50,10 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
       );
     }
 
+    // Limpiando reporte anterior
+    await EntryMerchandiseAndServicesReportReport.deleteMany({
+      companyId: userInfo.companyId
+    });
     const arrayGenerated = [];
     const objectGenerated = {};
 
@@ -83,7 +73,7 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Procesando Información';
     objectReportResume.endDate = null;
-    await updateReportCreator(objectReportResume);
+    await reportFunctionsUpdate.updateReportCreator(objectReportResume);
 
     // ===== ITERACION SOBRE MASTER REPORT ORIGINAL
     // ===== Paso 1.
@@ -666,18 +656,12 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
     );
     console.log(new Date());
     console.log('Insert Data Init ', arrayGenerated.length);
-
-    await ReportCreator.updateOne(
-      { companyId: userInfo.companyId, code: 'EOMS' },
-      { state: 'entering information', percentageCompletition: 66 }
-    );
-
     // Actualizando información encabezado reporte
     objectReportResume.state = 'entering_information';
     objectReportResume.percentageCompletition = 66;
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Insertando Información';
-    await updateReportCreator(objectReportResume);
+    await reportFunctionsUpdate.updateReportCreator(objectReportResume);
 
     await EntryMerchandiseAndServicesReportReport.insertMany(arrayGenerated)
       .then(function() {
@@ -690,21 +674,9 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
           objectReportResume.state = 'generated_report';
           objectReportResume.percentageCompletition = 100;
           objectReportResume.counterRows = arrayGenerated.length;
-          objectReportResume.message =
-            'El reporte de Entrada de Mercancias y Servicios se generó correctamente';
+          objectReportResume.message = reportInfo.name;
           objectReportResume.endDate = new Date();
-          await updateReportCreator(objectReportResume);
-
-          await ReportCreator.updateOne(
-            { companyId: userInfo.companyId, code: 'EOMS' },
-            {
-              state: 'generated report',
-              percentageCompletition: 100,
-              counterRows: arrayGenerated.length,
-              message:
-                'El reporte de Entrada de Mercancias y Servicios se generó correctamente'
-            }
-          );
+          await reportFunctionsUpdate.updateReportCreator(objectReportResume);
         }
         finishReport();
       })
@@ -715,10 +687,12 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
         async function finishReport() {
           // Actualizando información encabezado reporte
           objectReportResume.state = 'error_report';
+          objectReportResume.percentageCompletition = 0;
+          objectReportResume.counterRows = 0;
           objectReportResume.message =
             'Ocurrió un error al generar el reporte de Entrada de Mercancias y Servicios. Por favor contácte a Sporte Técnico';
           objectReportResume.endDate = new Date();
-          await updateReportCreator(objectReportResume);
+          await reportFunctionsUpdate.updateReportCreator(objectReportResume);
         }
         finishReport();
         console.log(error);
@@ -726,6 +700,32 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
     return summaryLoadedData;
   } catch (err) {
     throw err;
+  }
+};
+
+// =========== Function to delete MasterReport
+exports.deleteEntryMerchandiseAndServicesReport = async (req, res) => {
+  try {
+    const userInfo = await userService.getUserInfo(req, res);
+    await EntryMerchandiseAndServicesReportReport.deleteMany({
+      companyId: userInfo.companyId
+    });
+
+    // Defino objeto y variables estandar para el resumen de la carga
+    const objectReportResume = {};
+    objectReportResume.code = 'EOMS';
+    objectReportResume.startDate = null;
+    objectReportResume.state = 'deleted_report';
+    objectReportResume.percentageCompletition = 0;
+    objectReportResume.counterRows = 0;
+    objectReportResume.message = 'Reporte borrado';
+    objectReportResume.endDate = new Date();
+    await reportFunctionsUpdate.updateReportCreator(objectReportResume);
+
+    console.log('All Data successfully deleted');
+    return true;
+  } catch (err) {
+    console.log(err);
   }
 };
 

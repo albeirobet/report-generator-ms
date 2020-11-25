@@ -3,7 +3,7 @@
 // Company: Runcode Ingeniería SAS
 const mongoose = require('mongoose');
 
-const reportUploaderSchema = new mongoose.Schema({
+const reportDownloaderSchema = new mongoose.Schema({
   name: {
     type: String,
     uppercase: true,
@@ -58,10 +58,13 @@ const reportUploaderSchema = new mongoose.Schema({
   }
 });
 
-reportUploaderSchema.index({ companyId: +1, code: +1 });
+reportDownloaderSchema.index({ companyId: +1, code: +1 });
 
-const ReportUploader = mongoose.model('ReportUploader', reportUploaderSchema);
-ReportUploader.ensureIndexes(function(err) {
+const ReportDownloader = mongoose.model(
+  'ReportDownloader',
+  reportDownloaderSchema
+);
+ReportDownloader.ensureIndexes(function(err) {
   if (err) console.log(err);
 });
-module.exports = ReportUploader;
+module.exports = ReportDownloader;
