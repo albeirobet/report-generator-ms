@@ -54,12 +54,12 @@ exports.getAllAllReports = async (req, res) => {
   return res.status(codeHttp).json(generalResponse);
 };
 
-exports.deleteReportByCompanyId = async (req, res) => {
+exports.deleteReport = async (req, res) => {
   let codeHttp = httpCodes.OK;
   let generalResponse = new GeneralResponse();
   generalResponse.success = true;
   try {
-    const data = await reportUploaderService.deleteReportByCompanyId(req, res);
+    const data = await reportUploaderService.deleteReport(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
     generalResponse = generalResp.generalError(err);

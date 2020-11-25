@@ -10,8 +10,7 @@ const reportUploaderSchema = new mongoose.Schema({
     required: [
       true,
       'Por favor ingrese el nombre del reporte, es un dato obligatorio. '
-    ],
-    unique: true
+    ]
   },
   code: {
     type: String,
@@ -19,8 +18,7 @@ const reportUploaderSchema = new mongoose.Schema({
     required: [
       true,
       'Por favor ingrese el código del reporte, es un dato obligatorio. '
-    ],
-    unique: true
+    ]
   },
   counterRows: {
     type: Number,

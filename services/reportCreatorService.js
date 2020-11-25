@@ -42,9 +42,8 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
 // =========== Function to register a new user
 exports.createReport = async (req, res) => {
   try {
-    // Validate request
     customValidator.validateNotNullRequest(req);
-    const report = await ReportCreator.create(req.body);
+    const report = await ReportCreator.insertMany(req.body);
     return report;
   } catch (error) {
     throw error;
@@ -88,10 +87,14 @@ exports.getAllAllReports = async (req, res) => {
   return data;
 };
 
-exports.deleteReportByCompanyId = async (req, res) => {
+exports.deleteReport = async (req, res) => {
   try {
-    customValidator.validateNotNullParameter(req.params.companyId);
-    await ReportCreator.deleteMany({ companyId: req.params.companyId });
+    customValidator.validateNotNullParameter(req.query.companyId);
+    customValidator.validateNotNullParameter(req.query.code);
+    await ReportCreator.deleteMany({
+      companyId: req.params.companyId,
+      code: req.params.code
+    });
     return true;
   } catch (err) {
     throw err;

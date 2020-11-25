@@ -18,7 +18,7 @@ exports.createReport = async (req, res) => {
   try {
     // Validate request
     customValidator.validateNotNullRequest(req);
-    const report = await ReportDownloader.create(req.body);
+    const report = await ReportDownloader.insertMany(req.body);
     return report;
   } catch (error) {
     throw error;
