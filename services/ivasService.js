@@ -30,7 +30,7 @@ exports.loadIvaData = async (req, res) => {
   }
 };
 
-exports.loadIvaData = async (req, res) => {
+exports.loadIvaDataAsyncy = async (req, res) => {
   try {
     // Defino objeto y variables estandar para el resumen de la carga
     const objectReportResume = {};
@@ -179,7 +179,7 @@ exports.loadIvaData = async (req, res) => {
           objectReportResume.state = 'uploaded_data';
           objectReportResume.percentageCompletition = 100;
           objectReportResume.counterRows = ivaData.length;
-          objectReportResume.message = reportInfo.name;
+          objectReportResume.message = 'Reporte cargado correctamente';
           objectReportResume.endDate = new Date();
           await reportFunctionsUpdate.updateReportUploader(objectReportResume);
         }

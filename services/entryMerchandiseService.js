@@ -175,7 +175,7 @@ exports.loadEntryMerchandisesAsyncy = async (req, res) => {
           objectReportResume.state = 'uploaded_data';
           objectReportResume.percentageCompletition = 100;
           objectReportResume.counterRows = entryMerchandises.length;
-          objectReportResume.message = reportInfo.name;
+          objectReportResume.message = 'Reporte cargado correctamente';
           objectReportResume.endDate = new Date();
           await reportFunctionsUpdate.updateReportUploader(objectReportResume);
         }

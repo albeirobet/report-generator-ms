@@ -174,7 +174,7 @@ exports.loadClientsAsyncy = async (req, res) => {
           objectReportResume.state = 'uploaded_data';
           objectReportResume.percentageCompletition = 100;
           objectReportResume.counterRows = clients.length;
-          objectReportResume.message = reportInfo.name;
+          objectReportResume.message = 'Reporte cargado correctamente';
           objectReportResume.endDate = new Date();
           await reportFunctionsUpdate.updateReportUploader(objectReportResume);
         }

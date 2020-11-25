@@ -674,7 +674,7 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
           objectReportResume.state = 'generated_report';
           objectReportResume.percentageCompletition = 100;
           objectReportResume.counterRows = arrayGenerated.length;
-          objectReportResume.message = reportInfo.name;
+          objectReportResume.message = 'Reporte cargado correctamente';
           objectReportResume.endDate = new Date();
           await reportFunctionsUpdate.updateReportCreator(objectReportResume);
         }
