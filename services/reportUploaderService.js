@@ -69,7 +69,6 @@ exports.getAllAllReports = async (req, res) => {
 
 exports.deleteReport = async (req, res) => {
   try {
-    console.log(req);
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < req.body.length; i++) {
       // eslint-disable-next-line no-await-in-loop
