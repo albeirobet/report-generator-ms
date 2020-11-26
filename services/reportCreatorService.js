@@ -90,7 +90,10 @@ exports.getAllAllReports = async (req, res) => {
 exports.deleteReport = async (req, res) => {
   try {
     req.body.forEach(element => {
-      ReportCreator.findOneAndDelete(element._id);
+      ReportCreator.deleteMany({
+        code: element.code,
+        companyId: element.companyId
+      });
     });
     return true;
   } catch (err) {
