@@ -26,7 +26,7 @@ router.get(
   reportUploaderController.getAllAllReports
 );
 
-router.delete(
+router.post(
   '/deleteReport',
   authController.protectPath,
   authController.protectPathWithRoles('admin'),
