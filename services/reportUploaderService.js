@@ -70,7 +70,7 @@ exports.getAllAllReports = async (req, res) => {
 exports.deleteReport = async (req, res) => {
   try {
     req.body.forEach(element => {
-      ReportUploader.deleteOne(element);
+      ReportUploader.findOneAndDelete(element._id);
     });
     return true;
   } catch (err) {
