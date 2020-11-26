@@ -69,12 +69,7 @@ exports.getAllAllReports = async (req, res) => {
 
 exports.deleteReport = async (req, res) => {
   try {
-    customValidator.validateNotNullParameter(req.query.companyId);
-    customValidator.validateNotNullParameter(req.query.code);
-    await ReportUploader.deleteMany({
-      companyId: req.params.companyId,
-      code: req.params.code
-    });
+    await ReportUploader.deleteMany(req.body);
     return true;
   } catch (err) {
     throw err;
