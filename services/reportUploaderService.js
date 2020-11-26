@@ -69,7 +69,9 @@ exports.getAllAllReports = async (req, res) => {
 
 exports.deleteReport = async (req, res) => {
   try {
-    await ReportUploader.deleteMany(req.body);
+    req.body.forEach(element => {
+      ReportUploader.deleteOne(element);
+    });
     return true;
   } catch (err) {
     throw err;
