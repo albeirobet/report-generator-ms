@@ -40,7 +40,7 @@ router.get(
   reportCreatorController.getAllAllReports
 );
 
-router.delete(
+router.post(
   '/deleteReport',
   authController.protectPath,
   authController.protectPathWithRoles('admin'),
