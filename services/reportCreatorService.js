@@ -13,6 +13,7 @@ const customValidator = require('../utils/validators/validator');
 const httpCodes = require('../utils/constants/httpCodes');
 const entryMerchandiseAndServicesReportService = require('./entryMerchandiseAndServicesReportService');
 const userService = require('./userService');
+const ReportDownloader = require('../models/reportDownloaderModel');
 
 // =========== Function to
 exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
@@ -43,7 +44,8 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
 exports.createReport = async (req, res) => {
   try {
     customValidator.validateNotNullRequest(req);
-    const report = await ReportCreator.insertMany(req.body);
+    let report = await ReportCreator.insertMany(req.body);
+    report = await ReportDownloader.insertMany(req.body);
     return report;
   } catch (error) {
     throw error;
@@ -92,7 +94,12 @@ exports.deleteReport = async (req, res) => {
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < req.body.length; i++) {
       // eslint-disable-next-line no-await-in-loop
-      const deleted = await ReportCreator.deleteMany({
+      let deleted = await ReportCreator.deleteMany({
+        code: req.body[i].code,
+        companyId: req.body[i].companyId
+      });
+      // eslint-disable-next-line no-await-in-loop
+      deleted = await ReportDownloader.deleteMany({
         code: req.body[i].code,
         companyId: req.body[i].companyId
       });
