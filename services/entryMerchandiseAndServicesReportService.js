@@ -909,7 +909,7 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
     objectReportResume.percentageCompletition = 66;
     objectReportResume.counterRows = rowsArray.length;
     objectReportResume.message = 'Insertando Información';
-    await reportFunctionsUpdate.updateReportCreator(objectReportResume);
+    await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
 
     worksheet.addTable({
       name: 'EMEGR',
@@ -991,7 +991,7 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
     objectReportResume.message =
       'Reporte generado correctamente. En proceso de Descarga';
     objectReportResume.endDate = new Date();
-    await reportFunctionsUpdate.updateReportCreator(objectReportResume);
+    await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
     res.setHeader(
       'Content-Type',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -1012,7 +1012,7 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
     objectReportResume.message =
       'Ocurrió un error al generar el reporte de Entrada de Mercancias y Servicios. Por favor contácte a Soporte Técnico';
     objectReportResume.endDate = new Date();
-    await reportFunctionsUpdate.updateReportCreator(objectReportResume);
+    await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
     throw error;
   }
 };
