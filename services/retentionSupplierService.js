@@ -218,7 +218,8 @@ exports.deleteRetentionSupplier = async (req, res) => {
     // Defino objeto y variables estandar para el resumen de la carga
     const objectReportResume = {};
     objectReportResume.code = 'RESTM';
-    objectReportResume.startDate = null;
+    objectReportResume.companyId = userInfo.companyId;
+objectReportResume.startDate = null;
     objectReportResume.state = 'deleted_report';
     objectReportResume.percentageCompletition = 0;
     objectReportResume.counterRows = 0;
