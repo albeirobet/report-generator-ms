@@ -4,7 +4,7 @@
 // Created By Eyder Ascuntar Rosales
 // Mail: eyder.ascuntar@runcode.co
 // Company: Runcode Ingeniería SAS
-
+const ExcelJS = require('exceljs');
 const ApiError = require('../dto/commons/response/apiErrorDTO');
 const ServiceException = require('../utils/errors/serviceException');
 const commonErrors = require('../utils/constants/commonErrors');
@@ -17,10 +17,12 @@ const EntryMerchandiseAndServicesReportReport = require('../models/entryMerchand
 const PaymentOriginal = require('../models/paymentOriginalModel');
 const PaymentExtra = require('../models/paymentExtraModel');
 const ReportCreator = require('../models/reportCreatorModel');
+const ReportDownloader = require('../models/reportDownloaderModel');
 const reportGeneratorMessages = require('../utils/constants/reportGeneratorMessages');
 const reportFunctionsUpdate = require('../utils/functions/reportFunctionsUpdate');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const userService = require('./userService');
+const ReportUploader = require('../models/reportUploaderModel');
 
 // =========== Function to count records of reports
 exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
@@ -61,10 +63,10 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
     let objectInvoicePaymentGenerated = {};
 
     const masterReportData = await MasterReport.find({
-      companyId: userInfo.companyId
-      //,      originalDocumentId: { $in: ['FP-51950'] }
+      companyId: userInfo.companyId,
+      originalDocumentId: { $in: ['FP-51950', 'FP-51959', '32572'] }
     })
-      // .limit(100)
+      //.limit(1000)
       .lean();
 
     // Actualizando información encabezado reporte
@@ -79,12 +81,12 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
     // ===== Paso 1.
     let temporaloriginalDocumentId = null;
     console.log('Cargada información Maestra en Memoria');
-    // let contador = 0;
+    let contador = 0;
     for await (const reportData of masterReportData) {
-      // contador += 1;
-      // console.log(
-      //   `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId}`
-      // );
+      contador += 1;
+      console.log(
+        `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId}`
+      );
       objectGenerated.seniorAccountantId = reportData.seniorAccountantId;
       objectGenerated.seniorAccountantName = reportData.seniorAccountantName;
       objectGenerated.postingDate = reportData.postingDate;
@@ -730,5 +732,267 @@ exports.deleteEntryMerchandiseAndServicesReport = async (req, res) => {
 };
 
 exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
-  return 'Hola Mundo';
+  try {
+    const objectReportResume = {};
+    objectReportResume.code = 'EMEGR';
+    objectReportResume.startDate = new Date();
+
+    console.log('>>>>>>>> TIEMPO DE INICIO');
+    console.log(new Date());
+    const userInfo = await userService.getUserInfo(req, res);
+    objectReportResume.companyId = userInfo.companyId;
+    objectReportResume.generatorUserId = userInfo._id;
+    const reportInfo = await ReportDownloader.find({
+      companyId: userInfo.companyId,
+      code: objectReportResume.code
+    }).lean();
+    if (reportInfo.length === 0) {
+      throw new ServiceException(
+        commonErrors.E_COMMON_01,
+        new ApiError(
+          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_06}`,
+          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_06}`,
+          'E_REPORT_GENERATOR_MS_06',
+          httpCodes.BAD_REQUEST
+        )
+      );
+    }
+
+    const reportData = await EntryMerchandiseAndServicesReportReport.find({
+      companyId: userInfo.companyId
+    }).lean();
+    // console.log(reportData);
+    // Actualizando información encabezado reporte
+    // objectReportResume.state = 'processing';
+    // objectReportResume.percentageCompletition = 33;
+    // objectReportResume.counterRows = 0;
+    // objectReportResume.message = 'Procesando Información';
+    // objectReportResume.endDate = null;
+    // await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
+
+    const nameFile = 'ENTRADAS_DE_MERCANCIAS_Y_SERVICIOS';
+    // NO PUEDE EXCEDER 31 CARACTERES
+    const sheetName = 'HOJA 1';
+    const reportTitle =
+      'REPORTE SEGUIMIENTO ENTRADAS DE MERCANCÍAS Y SERVICIOS';
+    const reportSubtitle = 'Reporte Generado para:  Massy SAS';
+    const reportDate = `Reporte Generado el: ${new Date()}`;
+
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'RunCode Ingeniería SAS';
+    workbook.created = new Date();
+    const worksheet = workbook.addWorksheet(sheetName);
+
+    /*TITLE*/
+    worksheet.mergeCells('A2', 'H2');
+    worksheet.getCell('A2').value = reportTitle;
+    worksheet.getCell('A2').font = {
+      name: 'Arial',
+      size: 14,
+      bold: true
+    };
+
+    /*SUBTITLE*/
+    worksheet.mergeCells('A3', 'H3');
+    worksheet.getCell('A3').value = reportSubtitle;
+    worksheet.getCell('A3').font = {
+      name: 'Arial',
+      size: 11
+    };
+
+    /*DATE*/
+    worksheet.mergeCells('A4', 'H4');
+    worksheet.getCell('A4').value = reportDate;
+    worksheet.getCell('A4').font = {
+      name: 'Arial',
+      size: 11
+    };
+
+    /*MARK*/
+    worksheet.mergeCells('A5', 'H5');
+    worksheet.getCell(
+      'A5'
+    ).value = `RunCode Reports ${new Date().getFullYear()}`;
+    worksheet.getCell('A5').font = {
+      name: 'Arial',
+      size: 9,
+      bold: true
+    };
+
+    const rowsArray = [];
+
+    reportData.forEach(data => {
+      delete data._id;
+      const {
+        seniorAccountantId = '',
+        seniorAccountantName = '',
+        postingDate = '',
+        accountingSeat = '',
+        externalReferenceId = '',
+        originalDocumentId = '',
+        accountingSeatType = '',
+        accountingSeatAnnulled = '',
+        originalDocumentAnnulledId = '',
+        accountingSeatAnnulment = '',
+        extraOriginalDocumentAnulledId = '',
+        extraOriginalDocumentId = '',
+        debtAmountCompanyCurrency = '',
+        creditAmountCompanyCurrency = '',
+        entryMerchandiseIdGenerated = '',
+        entryMerchandiseStateGenerated = '',
+        purchaseOrderIdGenerated = '',
+        requestedAmountGenerated = '',
+        netPriceCompanyCurrencyGenerated = '',
+        deliveredQuantityGenerated = '',
+        deliveredValueGenerated = '',
+        deliveredValueCompanyCurrencyGenerated = '',
+        invoicedAmountGenerated = '',
+        invoicedValueGenerated = '',
+        invoicedValueCompanyCurrencyGenerated = '',
+        balanceQuantityEntryMerchandiseQuantitiesGenerated = '',
+        balanceQuantityEntryMerchandiseCurrenciesGenerated = '',
+        invoiceIdGenerated = '',
+        supplierIdGenerated = '',
+        supplierNameGenerated = '',
+        externalDocumentIdGenerated = '',
+        grossAmountCompanyCurrencyGenerated = '',
+        netAmountCompanyCurrencyGenerated = '',
+        quantityGenerated = '',
+        documentIdGenerated = '',
+        createdAtGenerated = '',
+        pyamentMethodGenerated = '',
+        paymentAmountGenerated = ''
+      } = data;
+      const dataFields = [];
+      dataFields.push(
+        seniorAccountantId,
+        seniorAccountantName,
+        postingDate,
+        accountingSeat,
+        externalReferenceId,
+        originalDocumentId,
+        accountingSeatType,
+        accountingSeatAnnulled,
+        originalDocumentAnnulledId,
+        accountingSeatAnnulment,
+        extraOriginalDocumentAnulledId,
+        extraOriginalDocumentId,
+        debtAmountCompanyCurrency,
+        creditAmountCompanyCurrency,
+        entryMerchandiseIdGenerated,
+        entryMerchandiseStateGenerated,
+        purchaseOrderIdGenerated,
+        requestedAmountGenerated,
+        netPriceCompanyCurrencyGenerated,
+        deliveredQuantityGenerated,
+        deliveredValueGenerated,
+        deliveredValueCompanyCurrencyGenerated,
+        invoicedAmountGenerated,
+        invoicedValueGenerated,
+        invoicedValueCompanyCurrencyGenerated,
+        balanceQuantityEntryMerchandiseQuantitiesGenerated,
+        balanceQuantityEntryMerchandiseCurrenciesGenerated,
+        invoiceIdGenerated,
+        supplierIdGenerated,
+        supplierNameGenerated,
+        externalDocumentIdGenerated,
+        grossAmountCompanyCurrencyGenerated,
+        netAmountCompanyCurrencyGenerated,
+        quantityGenerated,
+        documentIdGenerated,
+        createdAtGenerated,
+        pyamentMethodGenerated,
+        paymentAmountGenerated
+      );
+
+      rowsArray.push(dataFields);
+    });
+    console.log(rowsArray);
+    worksheet.addTable({
+      name: 'EMEGR',
+      ref: 'A7',
+      headerRow: true,
+      style: {
+        theme: 'TableStyleLight9',
+        showRowStripes: true
+      },
+      // Los nombres de las columnas no se puden repetir
+      columns: [
+        { name: 'ID Cuenta de mayor', filterButton: true },
+        { name: 'Nombre Cuenta de mayor', filterButton: true },
+        { name: 'Fecha de contabilización', filterButton: true },
+        { name: 'Asiento contable', filterButton: true },
+        { name: 'ID de referencia externa', filterButton: true },
+        { name: 'ID de documento original', filterButton: true },
+        { name: 'Tipo de asiento contable', filterButton: true },
+        { name: 'Asiento contable anulado', filterButton: true },
+        { name: 'ID de documento anulado', filterButton: true },
+        { name: 'Asiento contable de anulación', filterButton: true },
+        { name: 'ID de documento de anulación', filterButton: true },
+        { name: 'ID doc.original', filterButton: true },
+        { name: 'Importe en debe en moneda de empresa', filterButton: true },
+        { name: 'Importe en haber en moneda de empresa', filterButton: true },
+        { name: 'Id Entrada de Mercancias', filterButton: true },
+        {
+          name: 'Estado Entrada de Mercancias y Servicios',
+          filterButton: true
+        },
+        { name: 'Id pedido de compra', filterButton: true },
+        { name: 'Cantidad Solicitada', filterButton: true },
+        { name: 'Precio Neto en moneda de la empresa', filterButton: true },
+        { name: 'Cantidad Entregada', filterButton: true },
+        { name: 'Valor Entregado', filterButton: true },
+        { name: 'Valor entregado en Moneda de la Empresa', filterButton: true },
+        { name: 'Cantidad Facturada', filterButton: true },
+        { name: 'Valor Facturado', filterButton: true },
+        { name: 'Valor Facturado en Moneda de la Empresa', filterButton: true },
+        {
+          name: 'Saldo de entrada de mercancias y servicios en cantidades',
+          filterButton: true
+        },
+        {
+          name: 'Saldo de entrada de mercancias y servicios en pesos',
+          filterButton: true
+        },
+        { name: 'Id Factura', filterButton: true },
+        { name: 'Id proveedor', filterButton: true },
+        { name: 'Nombre proveedor', filterButton: true },
+        { name: 'Id de documento Externo', filterButton: true },
+        {
+          name: 'Valor bruto factura en Moneda de la empresa',
+          filterButton: true
+        },
+        {
+          name: 'Valor neto factura en Moneda de la empresa',
+          filterButton: true
+        },
+        { name: 'Cantidad Facturada Extra', filterButton: true },
+        { name: 'Id pago', filterButton: true },
+        { name: 'Fecha de pago', filterButton: true },
+        { name: 'Modalidad  de Pago', filterButton: true },
+        { name: 'Valor pagado', filterButton: true }
+      ],
+
+      rows: rowsArray
+    });
+
+    worksheet.columns.forEach(function(column, i) {
+      column.width = 28;
+    });
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=${nameFile}.xlsx`
+    );
+
+    return workbook.xlsx.write(res).then(function() {
+      res.status(200).end();
+    });
+  } catch (error) {
+    throw error;
+  }
 };

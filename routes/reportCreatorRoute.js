@@ -9,14 +9,14 @@ const router = express.Router();
 router.get(
   '/generateEntryMerchandiseAndServicesReport',
   authController.protectPath,
-  authController.protectPathWithRoles('admin'),
+  authController.protectPathWithRoles('admin', 'reports'),
   reportCreatorController.generateEntryMerchandiseAndServicesReport
 );
 
 router.get(
   '/downloadEntryMerchandiseAndServicesReport',
   authController.protectPath,
-  authController.protectPathWithRoles('admin'),
+  authController.protectPathWithRoles('admin', 'reports'),
   reportCreatorController.downloadEntryMerchandiseAndServicesReport
 );
 
@@ -30,13 +30,13 @@ router.post(
 router.get(
   '/getReport/:id',
   authController.protectPath,
-  authController.protectPathWithRoles('admin'),
+  authController.protectPathWithRoles('admin', 'reports'),
   reportCreatorController.getReport
 );
 router.get(
   '/all',
   authController.protectPath,
-  authController.protectPathWithRoles('admin'),
+  authController.protectPathWithRoles('admin', 'reports'),
   reportCreatorController.getAllAllReports
 );
 

@@ -39,6 +39,18 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
     throw error;
   }
 };
+
+exports.deleteEntryMerchandiseAndServicesReport = async (req, res) => {
+  try {
+    const response = await entryMerchandiseAndServicesReportService.deleteEntryMerchandiseAndServicesReport(
+      req,
+      res
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
 // =========== Function to register a new user
 exports.createReport = async (req, res) => {
   try {
