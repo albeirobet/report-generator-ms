@@ -22,6 +22,7 @@ const reportGeneratorMessages = require('../utils/constants/reportGeneratorMessa
 const reportFunctionsUpdate = require('../utils/functions/reportFunctionsUpdate');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const userService = require('./userService');
+const customValidator = require('../utils/validators/validator');
 
 // =========== Function to count records of reports
 exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
@@ -758,6 +759,7 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
     const reportData = await EntryMerchandiseAndServicesReportReport.find({
       companyId: userInfo.companyId
     }).lean();
+    console.log('Cargado información en memoría para generar reporte');
     // console.log(reportData);
     // Actualizando información encabezado reporte
     objectReportResume.state = 'processing';
@@ -772,7 +774,9 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
     const reportTitle =
       'REPORTE SEGUIMIENTO ENTRADAS DE MERCANCÍAS Y SERVICIOS';
     const reportSubtitle = 'Reporte Generado para:  Massy SAS';
-    const reportDate = `Reporte Generado el: ${new Date()}`;
+    const reportDate = `Reporte Generado el:  ${customValidator.stringFromDate(
+      new Date()
+    )}`;
 
     const workbook = new ExcelJS.Workbook();
     workbook.creator = 'RunCode Ingeniería SAS';
@@ -808,7 +812,7 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
     worksheet.mergeCells('A5', 'H5');
     worksheet.getCell(
       'A5'
-    ).value = `RunCode Reports ${new Date().getFullYear()}`;
+    ).value = `Generado en: RunCode Reports ${new Date().getFullYear()}`;
     worksheet.getCell('A5').font = {
       name: 'Arial',
       size: 9,
@@ -816,7 +820,7 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
     };
 
     const rowsArray = [];
-
+    console.log('Armando información para cargar en tabla excel');
     reportData.forEach(data => {
       delete data._id;
       const {
@@ -863,7 +867,7 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
       dataFields.push(
         seniorAccountantId,
         seniorAccountantName,
-        postingDate,
+        customValidator.stringFromDate(postingDate),
         accountingSeat,
         externalReferenceId,
         originalDocumentId,
@@ -896,14 +900,14 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
         netAmountCompanyCurrencyGenerated,
         quantityGenerated,
         documentIdGenerated,
-        createdAtGenerated,
+        customValidator.stringFromDate(createdAtGenerated),
         pyamentMethodGenerated,
         paymentAmountGenerated
       );
 
       rowsArray.push(dataFields);
     });
-
+    console.log('Insertando información  en tabla excel');
     // Actualizando información encabezado reporte
     objectReportResume.state = 'entering_information';
     objectReportResume.percentageCompletition = 66;
@@ -992,6 +996,7 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
       'Reporte generado correctamente. En proceso de Descarga';
     objectReportResume.endDate = new Date();
     await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
+    console.log('Generando archivo excel de respuesta');
     res.setHeader(
       'Content-Type',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'

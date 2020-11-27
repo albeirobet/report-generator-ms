@@ -77,3 +77,16 @@ exports.dateFromString = date => {
   }
   return null;
 };
+
+exports.stringFromDate = date => {
+  const currentDatetime = new Date(date);
+  if (currentDatetime.getDate()) {
+    if (currentDatetime.getDate()) {
+      const formattedDate = `${currentDatetime.getDate()}/${currentDatetime.getMonth() +
+        1}/${currentDatetime.getFullYear()}`;
+      console.log(formattedDate);
+      return formattedDate;
+    }
+  }
+  return null;
+};
