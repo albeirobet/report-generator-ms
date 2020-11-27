@@ -973,7 +973,7 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
           name: 'Valor neto factura en Moneda de la empresa',
           filterButton: true
         },
-        { name: 'Cantidad Facturada Extra', filterButton: true },
+        { name: 'Cantidad Facturada Proveedor', filterButton: true },
         { name: 'Id pago', filterButton: true },
         { name: 'Fecha de pago', filterButton: true },
         { name: 'Modalidad  de Pago', filterButton: true },
