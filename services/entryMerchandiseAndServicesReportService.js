@@ -62,8 +62,8 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
     let objectInvoicePaymentGenerated = {};
 
     const masterReportData = await MasterReport.find({
-      companyId: userInfo.companyId,
-      originalDocumentId: { $in: ['FP-51950', 'FP-51959', '32572'] }
+      companyId: userInfo.companyId
+      //,  originalDocumentId: { $in: ['FP-51950', 'FP-51959', '32572'] }
     })
       //.limit(1000)
       .lean();
