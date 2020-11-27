@@ -22,7 +22,6 @@ const reportGeneratorMessages = require('../utils/constants/reportGeneratorMessa
 const reportFunctionsUpdate = require('../utils/functions/reportFunctionsUpdate');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const userService = require('./userService');
-const ReportUploader = require('../models/reportUploaderModel');
 
 // =========== Function to count records of reports
 exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
@@ -908,7 +907,6 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
 
       rowsArray.push(dataFields);
     });
-    console.log(rowsArray);
     worksheet.addTable({
       name: 'EMEGR',
       ref: 'A7',
