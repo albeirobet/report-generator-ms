@@ -691,7 +691,7 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
           objectReportResume.percentageCompletition = 0;
           objectReportResume.counterRows = 0;
           objectReportResume.message =
-            'Ocurrió un error al generar el reporte de Entrada de Mercancias y Servicios. Por favor contácte a Sporte Técnico';
+            'Ocurrió un error al generar el reporte de Entrada de Mercancias y Servicios. Por favor contácte a Soporte Técnico';
           objectReportResume.endDate = new Date();
           await reportFunctionsUpdate.updateReportCreator(objectReportResume);
         }
@@ -732,13 +732,10 @@ exports.deleteEntryMerchandiseAndServicesReport = async (req, res) => {
 };
 
 exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
+  const objectReportResume = {};
+  objectReportResume.code = 'EMEGR';
   try {
-    const objectReportResume = {};
-    objectReportResume.code = 'EMEGR';
     objectReportResume.startDate = new Date();
-
-    console.log('>>>>>>>> TIEMPO DE INICIO');
-    console.log(new Date());
     const userInfo = await userService.getUserInfo(req, res);
     objectReportResume.companyId = userInfo.companyId;
     objectReportResume.generatorUserId = userInfo._id;
@@ -763,16 +760,15 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
     }).lean();
     // console.log(reportData);
     // Actualizando información encabezado reporte
-    // objectReportResume.state = 'processing';
-    // objectReportResume.percentageCompletition = 33;
-    // objectReportResume.counterRows = 0;
-    // objectReportResume.message = 'Procesando Información';
-    // objectReportResume.endDate = null;
-    // await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
-
+    objectReportResume.state = 'processing';
+    objectReportResume.percentageCompletition = 33;
+    objectReportResume.counterRows = 0;
+    objectReportResume.message = 'Procesando Información';
+    objectReportResume.endDate = null;
+    await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
     const nameFile = 'ENTRADAS_DE_MERCANCIAS_Y_SERVICIOS';
     // NO PUEDE EXCEDER 31 CARACTERES
-    const sheetName = 'HOJA 1';
+    const sheetName = 'MERCANCÍAS Y SERVICIOS';
     const reportTitle =
       'REPORTE SEGUIMIENTO ENTRADAS DE MERCANCÍAS Y SERVICIOS';
     const reportSubtitle = 'Reporte Generado para:  Massy SAS';
@@ -907,6 +903,14 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
 
       rowsArray.push(dataFields);
     });
+
+    // Actualizando información encabezado reporte
+    objectReportResume.state = 'entering_information';
+    objectReportResume.percentageCompletition = 66;
+    objectReportResume.counterRows = rowsArray.length;
+    objectReportResume.message = 'Insertando Información';
+    await reportFunctionsUpdate.updateReportCreator(objectReportResume);
+
     worksheet.addTable({
       name: 'EMEGR',
       ref: 'A7',
@@ -975,10 +979,19 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
       rows: rowsArray
     });
 
+    // eslint-disable-next-line no-unused-vars
     worksheet.columns.forEach(function(column, i) {
       column.width = 28;
     });
 
+    // Actualizando información encabezado reporte
+    objectReportResume.state = 'generated_report';
+    objectReportResume.percentageCompletition = 100;
+    objectReportResume.counterRows = rowsArray.length;
+    objectReportResume.message =
+      'Reporte generado correctamente. En proceso de Descarga';
+    objectReportResume.endDate = new Date();
+    await reportFunctionsUpdate.updateReportCreator(objectReportResume);
     res.setHeader(
       'Content-Type',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -992,6 +1005,14 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
       res.status(200).end();
     });
   } catch (error) {
+    // Actualizando información encabezado reporte
+    objectReportResume.state = 'error_report';
+    objectReportResume.percentageCompletition = 0;
+    objectReportResume.counterRows = 0;
+    objectReportResume.message =
+      'Ocurrió un error al generar el reporte de Entrada de Mercancias y Servicios. Por favor contácte a Soporte Técnico';
+    objectReportResume.endDate = new Date();
+    await reportFunctionsUpdate.updateReportCreator(objectReportResume);
     throw error;
   }
 };

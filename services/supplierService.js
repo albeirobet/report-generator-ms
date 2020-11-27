@@ -193,7 +193,7 @@ exports.loadSuppliersAsyncy = async (req, res) => {
           objectReportResume.percentageCompletition = 0;
           objectReportResume.counterRows = 0;
           objectReportResume.message =
-            'Ocurrió un error al cargar el archivo. Por favor contácte a Sporte Técnico';
+            'Ocurrió un error al cargar el archivo. Por favor contácte a Soporte Técnico';
           objectReportResume.endDate = new Date();
           await reportFunctionsUpdate.updateReportUploader(objectReportResume);
         }
@@ -218,7 +218,7 @@ exports.deleteSuppliers = async (req, res) => {
     const objectReportResume = {};
     objectReportResume.code = 'SUPTM';
     objectReportResume.companyId = userInfo.companyId;
-objectReportResume.startDate = null;
+    objectReportResume.startDate = null;
     objectReportResume.state = 'deleted_report';
     objectReportResume.percentageCompletition = 0;
     objectReportResume.counterRows = 0;

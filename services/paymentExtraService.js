@@ -195,7 +195,7 @@ exports.loadPaymentExtraDataAsyncy = async (req, res) => {
           objectReportResume.percentageCompletition = 0;
           objectReportResume.counterRows = 0;
           objectReportResume.message =
-            'Ocurrió un error al cargar el archivo. Por favor contácte a Sporte Técnico';
+            'Ocurrió un error al cargar el archivo. Por favor contácte a Soporte Técnico';
           objectReportResume.endDate = new Date();
           await reportFunctionsUpdate.updateReportUploader(objectReportResume);
         }
