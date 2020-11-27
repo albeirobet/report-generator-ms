@@ -69,9 +69,15 @@ exports.getAllAllReports = async (req, res) => {
 
 exports.deleteReport = async (req, res) => {
   try {
-    req.body.forEach(element => {
-      ReportUploader.findOneAndDelete(element._id);
-    });
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < req.body.length; i++) {
+      // eslint-disable-next-line no-await-in-loop
+      const deleted = await ReportUploader.deleteMany({
+        code: req.body[i].code,
+        companyId: req.body[i].companyId
+      });
+      console.log(deleted);
+    }
     return true;
   } catch (err) {
     throw err;
