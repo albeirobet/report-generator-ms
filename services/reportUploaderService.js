@@ -9,6 +9,23 @@ const ApiError = require('../dto/commons/response/apiErrorDTO');
 const ServiceException = require('../utils/errors/serviceException');
 const commonErrors = require('../utils/constants/commonErrors');
 const ReportUploader = require('../models/reportUploaderModel');
+const AssistantReport = require('../models/assistantReportModel');
+const Client = require('../models/clientModel');
+const EntryMerchandiseExtra = require('../models/entryMerchandiseExtraModel');
+const EntryMerchandise = require('../models/entryMerchandiseExtraModel');
+const InvoiceClient = require('../models/invoiceClientModel');
+const InvoiceSupplier = require('../models/invoiceSupplierModel');
+const Iva = require('../models/ivaModel');
+const MasterReport = require('../models/masterReportModel');
+const Material = require('../models/materialModel');
+const PaymentExtra = require('../models/paymentExtraModel');
+const PaymentOriginal = require('../models/paymentOriginalModel');
+const PurchaseOrder = require('../models/purchaseOrderModel');
+const PurchaseOrderTracking = require('../models/purchaseOrderTrackingModel');
+const RetentionSupplier = require('../models/retentionSupplierModel');
+const Service = require('../models/serviceModel');
+const Supplier = require('../models/supplierModel');
+
 const customValidator = require('../utils/validators/validator');
 const httpCodes = require('../utils/constants/httpCodes');
 const userService = require('./userService');
@@ -76,6 +93,106 @@ exports.deleteReport = async (req, res) => {
         code: req.body[i].code,
         companyId: req.body[i].companyId
       });
+      switch (req.body[i].code) {
+        case 'ASITM':
+          // eslint-disable-next-line no-await-in-loop
+          await AssistantReport.deleteMany({
+            companyId: req.body[i].companyId
+          });
+          break;
+        case 'CLITM':
+          // eslint-disable-next-line no-await-in-loop
+          await Client.deleteMany({
+            companyId: req.body[i].companyId
+          });
+          break;
+        case 'EMETM':
+          // eslint-disable-next-line no-await-in-loop
+          await EntryMerchandiseExtra.deleteMany({
+            companyId: req.body[i].companyId
+          });
+          break;
+        case 'EMSTM':
+          // eslint-disable-next-line no-await-in-loop
+          await EntryMerchandise.deleteMany({
+            companyId: req.body[i].companyId
+          });
+          break;
+        case 'INCTM':
+          // eslint-disable-next-line no-await-in-loop
+          await InvoiceClient.deleteMany({
+            companyId: req.body[i].companyId
+          });
+          break;
+        case 'INSTM':
+          // eslint-disable-next-line no-await-in-loop
+          await InvoiceSupplier.deleteMany({
+            companyId: req.body[i].companyId
+          });
+          break;
+        case 'IVATM':
+          // eslint-disable-next-line no-await-in-loop
+          await Iva.deleteMany({
+            companyId: req.body[i].companyId
+          });
+          break;
+        case 'MASTM':
+          // eslint-disable-next-line no-await-in-loop
+          await MasterReport.deleteMany({
+            companyId: req.body[i].companyId
+          });
+          break;
+        case 'MATTM':
+          // eslint-disable-next-line no-await-in-loop
+          await Material.deleteMany({
+            companyId: req.body[i].companyId
+          });
+          break;
+        case 'PAETM':
+          // eslint-disable-next-line no-await-in-loop
+          await PaymentExtra.deleteMany({
+            companyId: req.body[i].companyId
+          });
+          break;
+        case 'PAOTM':
+          // eslint-disable-next-line no-await-in-loop
+          await PaymentOriginal.deleteMany({
+            companyId: req.body[i].companyId
+          });
+          break;
+        case 'PORTM':
+          // eslint-disable-next-line no-await-in-loop
+          await PurchaseOrder.deleteMany({
+            companyId: req.body[i].companyId
+          });
+          break;
+        case 'POTTM':
+          // eslint-disable-next-line no-await-in-loop
+          await PurchaseOrderTracking.deleteMany({
+            companyId: req.body[i].companyId
+          });
+          break;
+        case 'RESTM':
+          // eslint-disable-next-line no-await-in-loop
+          await RetentionSupplier.deleteMany({
+            companyId: req.body[i].companyId
+          });
+          break;
+        case 'SERTM':
+          // eslint-disable-next-line no-await-in-loop
+          await Service.deleteMany({
+            companyId: req.body[i].companyId
+          });
+          break;
+        case 'SUPTM':
+          // eslint-disable-next-line no-await-in-loop
+          await Supplier.deleteMany({
+            companyId: req.body[i].companyId
+          });
+          break;
+        default:
+          break;
+      }
       console.log(deleted);
     }
     return true;

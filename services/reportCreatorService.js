@@ -14,6 +14,7 @@ const httpCodes = require('../utils/constants/httpCodes');
 const entryMerchandiseAndServicesReportService = require('./entryMerchandiseAndServicesReportService');
 const userService = require('./userService');
 const ReportDownloader = require('../models/reportDownloaderModel');
+const EntryMerchandiseAndServicesReportReport = require('../models/entryMerchandiseAndServicesReportReportModel');
 
 // =========== Function to
 exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
@@ -115,6 +116,12 @@ exports.deleteReport = async (req, res) => {
         code: req.body[i].code,
         companyId: req.body[i].companyId
       });
+      if (req.body[i].code === 'EMEGR') {
+        // eslint-disable-next-line no-await-in-loop
+        await EntryMerchandiseAndServicesReportReport.deleteMany({
+          companyId: req.body[i].companyId
+        });
+      }
       console.log(deleted);
     }
     return true;
