@@ -84,7 +84,6 @@ exports.stringFromDate = date => {
     if (currentDatetime.getDate()) {
       const formattedDate = `${currentDatetime.getDate()}/${currentDatetime.getMonth() +
         1}/${currentDatetime.getFullYear()}`;
-      console.log(formattedDate);
       return formattedDate;
     }
   }
