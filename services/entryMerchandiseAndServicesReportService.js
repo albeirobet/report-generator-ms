@@ -892,13 +892,13 @@ exports.generateInMemory = async (req, res) => {
     let objectInvoicePaymentGenerated = {};
 
     console.log(' =========  Cargando en memoria MasterReport');
-    const masterReportData = await MasterReport.find({
+    let masterReportData = await MasterReport.find({
       companyId: userInfo.companyId
       // ,      originalDocumentId: { $in: ['1681'] }
     }).lean();
 
     console.log(' =========  Cargando en memoria EntryMerchandiseExtra');
-    const entryMerchandiseExtraDataMemory = await EntryMerchandiseExtra.find({
+    let entryMerchandiseExtraDataMemory = await EntryMerchandiseExtra.find({
       companyId: userInfo.companyId
     })
       .select({
@@ -909,7 +909,7 @@ exports.generateInMemory = async (req, res) => {
       .lean();
 
     console.log(' =========  Cargando en memoria PurchaseOrderTracking');
-    const purchaseOrderTrackingDataMemory = await PurchaseOrderTracking.find({
+    let purchaseOrderTrackingDataMemory = await PurchaseOrderTracking.find({
       companyId: userInfo.companyId
     })
       .select({
@@ -926,7 +926,7 @@ exports.generateInMemory = async (req, res) => {
       .lean();
 
     console.log(' =========  Cargando en memoria AssistantReport');
-    const assistantReportDataEMMemory = await AssistantReport.find({
+    let assistantReportDataEMMemory = await AssistantReport.find({
       companyId: userInfo.companyId
     })
       .select({
@@ -942,7 +942,7 @@ exports.generateInMemory = async (req, res) => {
       .lean();
 
     console.log(' =========  Cargando en memoria PaymentExtra');
-    const paymentExtraDataMemory = await PaymentExtra.find({
+    let paymentExtraDataMemory = await PaymentExtra.find({
       companyId: userInfo.companyId
     })
       .select({
@@ -952,7 +952,7 @@ exports.generateInMemory = async (req, res) => {
       .lean();
 
     console.log(' =========  Cargando en memoria PaymentOriginal');
-    const paymentOriginalDataMemory = await PaymentOriginal.find({
+    let paymentOriginalDataMemory = await PaymentOriginal.find({
       companyId: userInfo.companyId
     })
       .select({
@@ -1573,12 +1573,21 @@ exports.generateInMemory = async (req, res) => {
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportCreator(objectReportResume);
 
+    // Limpiando memoria general
+    masterReportData = null;
+    entryMerchandiseExtraDataMemory = null;
+    purchaseOrderTrackingDataMemory = null;
+    assistantReportDataEMMemory = null;
+    paymentExtraDataMemory = null;
+    paymentOriginalDataMemory = null;
+
     EntryMerchandiseAndServicesReportReport.insertMany(arrayGenerated)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
         summaryLoadedData.counter = arrayGenerated.length;
         console.log('Insert Data Finish');
+        this.arrayGenerated = null;
         async function finishReport() {
           // Actualizando información encabezado reporte
           objectReportResume.state = 'generated_report';
@@ -1591,6 +1600,15 @@ exports.generateInMemory = async (req, res) => {
         finishReport();
       })
       .catch(function(error) {
+        // Limpiando memoria general
+        masterReportData = null;
+        entryMerchandiseExtraDataMemory = null;
+        purchaseOrderTrackingDataMemory = null;
+        assistantReportDataEMMemory = null;
+        paymentExtraDataMemory = null;
+        paymentOriginalDataMemory = null;
+        this.arrayGenerated = null;
+
         summaryLoadedData.message =
           reportGeneratorMessages.E_REPORT_GENERATOR_MS_03;
         console.log('Insert Data Finish');
