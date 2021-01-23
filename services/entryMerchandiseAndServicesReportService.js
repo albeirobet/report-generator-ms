@@ -1581,7 +1581,8 @@ exports.generateInMemory = async (req, res) => {
     paymentExtraDataMemory = null;
     paymentOriginalDataMemory = null;
 
-    EntryMerchandiseAndServicesReportReport.insertMany(arrayGenerated)
+    EntryMerchandiseAndServicesReportReport.collection
+      .insertMany(arrayGenerated)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
