@@ -893,21 +893,23 @@ exports.generateInMemory = async (req, res) => {
 
     console.log(' =========  Cargando en memoria MasterReport');
     const masterReportData = await MasterReport.find({
-      companyId: userInfo.companyId
+      companyId: userInfo.companyId,
+      originalDocumentId: { $in: ['1681'] }
     }).lean();
 
     console.log(' =========  Cargando en memoria EntryMerchandiseExtra');
-    const entryMerchandiseExtraData = await EntryMerchandiseExtra.find({
+    const entryMerchandiseExtraDataMemory = await EntryMerchandiseExtra.find({
       companyId: userInfo.companyId
     })
       .select({
         purchaseOrderId: 1,
-        entryMerchandiseState: 1
+        entryMerchandiseState: 1,
+        entryMerchandiseId: 1
       })
       .lean();
 
     console.log(' =========  Cargando en memoria PurchaseOrderTracking');
-    const purchaseOrderTrackingData = await PurchaseOrderTracking.find({
+    const purchaseOrderTrackingDataMemory = await PurchaseOrderTracking.find({
       companyId: userInfo.companyId
     })
       .select({
@@ -918,12 +920,13 @@ exports.generateInMemory = async (req, res) => {
         deliveredValueCompanyCurrency: 1,
         invoicedAmount: 1,
         invoicedValue: 1,
-        invoicedValueCompanyCurrency: 1
+        invoicedValueCompanyCurrency: 1,
+        purchaseOrderId: 1
       })
       .lean();
 
     console.log(' =========  Cargando en memoria AssistantReport');
-    const assistantReportDataEM = await AssistantReport.find({
+    const assistantReportDataEMMemory = await AssistantReport.find({
       companyId: userInfo.companyId
     })
       .select({
@@ -939,16 +942,17 @@ exports.generateInMemory = async (req, res) => {
       .lean();
 
     console.log(' =========  Cargando en memoria PaymentExtra');
-    const paymentExtraData = await PaymentExtra.find({
+    const paymentExtraDataMemory = await PaymentExtra.find({
       companyId: userInfo.companyId
     })
       .select({
-        originalDocumentId: 1
+        originalDocumentId: 1,
+        documentId: 1
       })
       .lean();
 
     console.log(' =========  Cargando en memoria PaymentOriginal');
-    const paymentOriginalData = await PaymentOriginal.find({
+    const paymentOriginalDataMemory = await PaymentOriginal.find({
       companyId: userInfo.companyId
     })
       .select({
@@ -967,8 +971,6 @@ exports.generateInMemory = async (req, res) => {
     objectReportResume.message = 'Procesando Información';
     objectReportResume.endDate = null;
     await reportFunctionsUpdate.updateReportCreator(objectReportResume);
-
-    /**
 
     // ===== ITERACION SOBRE MASTER REPORT ORIGINAL
     // ===== Paso 1.
@@ -1089,15 +1091,9 @@ exports.generateInMemory = async (req, res) => {
         reportData.originalDocumentId !== ''
       ) {
         // ===== Buscar Entrada de mercancias con el id Documento Original
-        const entryMerchandiseExtraData = await EntryMerchandiseExtra.find({
-          companyId: userInfo.companyId,
-          entryMerchandiseId: reportData.originalDocumentId
-        })
-          .select({
-            purchaseOrderId: 1,
-            entryMerchandiseState: 1
-          })
-          .lean();
+        const entryMerchandiseExtraData = entryMerchandiseExtraDataMemory.filter(
+          el => el.entryMerchandiseId === reportData.originalDocumentId
+        );
         // ===== Comprobar si encontró mercancias con el id Documento original proporcionado
         if (entryMerchandiseExtraData && entryMerchandiseExtraData.length > 0) {
           // ===== Iteracion sobre la entrada de mercancias
@@ -1114,23 +1110,10 @@ exports.generateInMemory = async (req, res) => {
               reportData.purchaseOrderId !== '#' &&
               reportData.purchaseOrderId !== ''
             ) {
-              const purchaseOrderTrackingData = await PurchaseOrderTracking.find(
-                {
-                  companyId: userInfo.companyId,
-                  purchaseOrderId: entryMerchandise.purchaseOrderId
-                }
-              )
-                .select({
-                  requestedAmount: 1,
-                  netPriceCompanyCurrency: 1,
-                  deliveredQuantity: 1,
-                  deliveredValue: 1,
-                  deliveredValueCompanyCurrency: 1,
-                  invoicedAmount: 1,
-                  invoicedValue: 1,
-                  invoicedValueCompanyCurrency: 1
-                })
-                .lean();
+              const purchaseOrderTrackingData = purchaseOrderTrackingDataMemory.filter(
+                el => el.purchaseOrderId === entryMerchandise.purchaseOrderId
+              );
+
               if (
                 purchaseOrderTrackingData &&
                 purchaseOrderTrackingData.length > 0
@@ -1209,21 +1192,11 @@ exports.generateInMemory = async (req, res) => {
                   // ====== Importante, Comprobamos primero si existe el registro por entrada de mercancias, en caso contrario por factura
                   // ====== CASO A
                   let assistantReportFull = null;
-                  const assistantReportDataEM = await AssistantReport.find({
-                    companyId: userInfo.companyId,
-                    entryMerchandiseId: reportData.originalDocumentId
-                  })
-                    .select({
-                      invoiceId: 1,
-                      supplierId: 1,
-                      supplierName: 1,
-                      externalDocumentId: 1,
-                      entryMerchandiseId: 1,
-                      grossAmountCompanyCurrency: 1,
-                      netAmountCompanyCurrency: 1,
-                      quantity: 1
-                    })
-                    .lean();
+                  const assistantReportDataEM = assistantReportDataEMMemory.filter(
+                    el =>
+                      el.entryMerchandiseId === reportData.originalDocumentId
+                  );
+
                   if (
                     assistantReportDataEM &&
                     assistantReportDataEM.length > 0
@@ -1231,21 +1204,9 @@ exports.generateInMemory = async (req, res) => {
                     assistantReportFull = assistantReportDataEM;
                   } else {
                     // ====== CASO B
-                    const assistantReportDataF = await AssistantReport.find({
-                      companyId: userInfo.companyId,
-                      invoiceId: reportData.originalDocumentId
-                    })
-                      .select({
-                        invoiceId: 1,
-                        supplierId: 1,
-                        supplierName: 1,
-                        externalDocumentId: 1,
-                        entryMerchandiseId: 1,
-                        grossAmountCompanyCurrency: 1,
-                        netAmountCompanyCurrency: 1,
-                        quantity: 1
-                      })
-                      .lean();
+                    const assistantReportDataF = assistantReportDataEMMemory.filter(
+                      el => el.invoiceId === reportData.originalDocumentId
+                    );
                     if (
                       assistantReportDataF &&
                       assistantReportDataF.length > 0
@@ -1280,14 +1241,9 @@ exports.generateInMemory = async (req, res) => {
                         assistantReport.invoiceId !== '#' &&
                         assistantReport.invoiceId !== ''
                       ) {
-                        const paymentExtraData = await PaymentExtra.find({
-                          companyId: userInfo.companyId,
-                          documentId: assistantReport.invoiceId
-                        })
-                          .select({
-                            originalDocumentId: 1
-                          })
-                          .lean();
+                        const paymentExtraData = paymentExtraDataMemory.filter(
+                          el => el.documentId === assistantReport.invoiceId
+                        );
 
                         // Iterar sobre los pagos que están asociados a esta factura
                         for await (const paymentExtra of paymentExtraData) {
@@ -1298,20 +1254,11 @@ exports.generateInMemory = async (req, res) => {
                             paymentExtra.originalDocumentId !== '#' &&
                             paymentExtra.originalDocumentId !== ''
                           ) {
-                            const paymentOriginalData = await PaymentOriginal.find(
-                              {
-                                companyId: userInfo.companyId,
-                                documentId: paymentExtra.originalDocumentId
-                              }
-                            )
-                              .select({
-                                documentId: 1,
-                                createdAt: 1,
-                                pyamentMethod: 1,
-                                businessPartnerName: 1,
-                                paymentAmount: 1
-                              })
-                              .lean();
+                            const paymentOriginalData = paymentOriginalDataMemory.filter(
+                              el =>
+                                el.documentId ===
+                                paymentExtra.originalDocumentId
+                            );
                             // Iterar sobre la información completa del pago
                             if (
                               paymentOriginalData &&
@@ -1358,40 +1305,16 @@ exports.generateInMemory = async (req, res) => {
                 // ====== Importante, Comprobamos primero si existe el registro por entrada de mercancias, en caso contrario por factura
                 // ====== CASO A
                 let assistantReportFull = null;
-                const assistantReportDataEM = await AssistantReport.find({
-                  companyId: userInfo.companyId,
-                  entryMerchandiseId: reportData.originalDocumentId
-                })
-                  .select({
-                    invoiceId: 1,
-                    supplierId: 1,
-                    supplierName: 1,
-                    externalDocumentId: 1,
-                    entryMerchandiseId: 1,
-                    grossAmountCompanyCurrency: 1,
-                    netAmountCompanyCurrency: 1,
-                    quantity: 1
-                  })
-                  .lean();
+                const assistantReportDataEM = assistantReportDataEMMemory.filter(
+                  el => el.entryMerchandiseId === reportData.originalDocumentId
+                );
                 if (assistantReportDataEM && assistantReportDataEM.length > 0) {
                   assistantReportFull = assistantReportDataEM;
                 } else {
                   // ====== CASO B
-                  const assistantReportDataF = await AssistantReport.find({
-                    companyId: userInfo.companyId,
-                    invoiceId: reportData.originalDocumentId
-                  })
-                    .select({
-                      invoiceId: 1,
-                      supplierId: 1,
-                      supplierName: 1,
-                      externalDocumentId: 1,
-                      entryMerchandiseId: 1,
-                      grossAmountCompanyCurrency: 1,
-                      netAmountCompanyCurrency: 1,
-                      quantity: 1
-                    })
-                    .lean();
+                  const assistantReportDataF = assistantReportDataEMMemory.filter(
+                    el => el.invoiceId === reportData.originalDocumentId
+                  );
                   if (assistantReportDataF && assistantReportDataF.length > 0) {
                     assistantReportFull = assistantReportDataF;
                   }
@@ -1423,14 +1346,9 @@ exports.generateInMemory = async (req, res) => {
                       assistantReport.invoiceId !== '#' &&
                       assistantReport.invoiceId !== ''
                     ) {
-                      const paymentExtraData = await PaymentExtra.find({
-                        companyId: userInfo.companyId,
-                        documentId: assistantReport.invoiceId
-                      })
-                        .select({
-                          originalDocumentId: 1
-                        })
-                        .lean();
+                      const paymentExtraData = paymentExtraDataMemory.filter(
+                        el => el.documentId === assistantReport.invoiceId
+                      );
 
                       // Iterar sobre los pagos que están asociados a esta factura
                       for await (const paymentExtra of paymentExtraData) {
@@ -1441,20 +1359,10 @@ exports.generateInMemory = async (req, res) => {
                           paymentExtra.originalDocumentId !== '#' &&
                           paymentExtra.originalDocumentId !== ''
                         ) {
-                          const paymentOriginalData = await PaymentOriginal.find(
-                            {
-                              companyId: userInfo.companyId,
-                              documentId: paymentExtra.originalDocumentId
-                            }
-                          )
-                            .select({
-                              documentId: 1,
-                              createdAt: 1,
-                              pyamentMethod: 1,
-                              businessPartnerName: 1,
-                              paymentAmount: 1
-                            })
-                            .lean();
+                          const paymentOriginalData = paymentOriginalDataMemory.filter(
+                            el =>
+                              el.documentId === paymentExtra.originalDocumentId
+                          );
                           // Iterar sobre la información completa del pago
                           if (
                             paymentOriginalData &&
@@ -1502,40 +1410,16 @@ exports.generateInMemory = async (req, res) => {
           // ====== Importante, Comprobamos primero si existe el registro por entrada de mercancias, en caso contrario por factura
           // ====== CASO A
           let assistantReportFull = null;
-          const assistantReportDataEM = await AssistantReport.find({
-            companyId: userInfo.companyId,
-            entryMerchandiseId: reportData.originalDocumentId
-          })
-            .select({
-              invoiceId: 1,
-              supplierId: 1,
-              supplierName: 1,
-              externalDocumentId: 1,
-              entryMerchandiseId: 1,
-              grossAmountCompanyCurrency: 1,
-              netAmountCompanyCurrency: 1,
-              quantity: 1
-            })
-            .lean();
+          const assistantReportDataEM = assistantReportDataEMMemory.filter(
+            el => el.entryMerchandiseId === reportData.originalDocumentId
+          );
           if (assistantReportDataEM && assistantReportDataEM.length > 0) {
             assistantReportFull = assistantReportDataEM;
           } else {
             // ====== CASO B
-            const assistantReportDataF = await AssistantReport.find({
-              companyId: userInfo.companyId,
-              invoiceId: reportData.originalDocumentId
-            })
-              .select({
-                invoiceId: 1,
-                supplierId: 1,
-                supplierName: 1,
-                externalDocumentId: 1,
-                entryMerchandiseId: 1,
-                grossAmountCompanyCurrency: 1,
-                netAmountCompanyCurrency: 1,
-                quantity: 1
-              })
-              .lean();
+            const assistantReportDataF = assistantReportDataEMMemory.filter(
+              el => el.invoiceId === reportData.originalDocumentId
+            );
             if (assistantReportDataF && assistantReportDataF.length > 0) {
               assistantReportFull = assistantReportDataF;
             }
@@ -1567,14 +1451,9 @@ exports.generateInMemory = async (req, res) => {
                 assistantReport.invoiceId !== '#' &&
                 assistantReport.invoiceId !== ''
               ) {
-                const paymentExtraData = await PaymentExtra.find({
-                  companyId: userInfo.companyId,
-                  documentId: assistantReport.invoiceId
-                })
-                  .select({
-                    originalDocumentId: 1
-                  })
-                  .lean();
+                const paymentExtraData = paymentExtraDataMemory.filter(
+                  el => el.documentId === assistantReport.invoiceId
+                );
 
                 // Iterar sobre los pagos que están asociados a esta factura
                 for await (const paymentExtra of paymentExtraData) {
@@ -1585,18 +1464,9 @@ exports.generateInMemory = async (req, res) => {
                     paymentExtra.originalDocumentId !== '#' &&
                     paymentExtra.originalDocumentId !== ''
                   ) {
-                    const paymentOriginalData = await PaymentOriginal.find({
-                      companyId: userInfo.companyId,
-                      documentId: paymentExtra.originalDocumentId
-                    })
-                      .select({
-                        documentId: 1,
-                        createdAt: 1,
-                        pyamentMethod: 1,
-                        businessPartnerName: 1,
-                        paymentAmount: 1
-                      })
-                      .lean();
+                    const paymentOriginalData = paymentOriginalDataMemory.filter(
+                      el => el.documentId === paymentExtra.originalDocumentId
+                    );
                     // Iterar sobre la información completa del pago
                     if (paymentOriginalData && paymentOriginalData.length > 0) {
                       for await (const paymentOriginal of paymentOriginalData) {
@@ -1739,12 +1609,6 @@ exports.generateInMemory = async (req, res) => {
       });
     console.log('Insertando en background');
     return summaryLoadedData;
-*/
-    console.log(
-      '>>>>>>>>> TIEMPO DE FINALIZACIÓN DE PROCESAMIENTO INFORMACION'
-    );
-    console.log(new Date());
-    return 'OK RunCode';
   } catch (err) {
     throw err;
   }
