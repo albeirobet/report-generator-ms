@@ -87,7 +87,7 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
     for await (const reportData of masterReportData) {
       objectGenerated = {};
       contador += 1;
-      if (contador % 500 === 0) {
+      if (contador % 1000 === 0) {
         console.log(
           `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId}`
         );
@@ -812,7 +812,7 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportCreator(objectReportResume);
 
-    await EntryMerchandiseAndServicesReportReport.insertMany(arrayGenerated)
+    EntryMerchandiseAndServicesReportReport.insertMany(arrayGenerated)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
@@ -846,6 +846,7 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
         finishReport();
         console.log(error);
       });
+    console.log('Insertando en background');
     return summaryLoadedData;
   } catch (err) {
     throw err;
