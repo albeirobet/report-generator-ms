@@ -64,9 +64,9 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
     let objectInvoicePaymentGenerated = {};
 
     const masterReportData = await MasterReport.find({
-      companyId: userInfo.companyId
+      companyId: userInfo.companyId,
       //,      originalDocumentId: { $in: ['FP-51950', 'FP-51959', '32380'] }
-      //originalDocumentId: { $in: ['32380'] }
+      originalDocumentId: { $in: ['1681'] }
     })
       //.limit(1000)
       .lean();
@@ -1153,13 +1153,14 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
       'Content-Disposition',
       `attachment; filename=${nameFile}.xlsx`
     );
-    console.log('Voy a escribir en el archivo ');
-    // ONLY TEST
-    // __dirname, '../resources/uploads/'
-    workbook.xlsx.writeFile('este-es-un-test.xlsx').then(function() {
-      console.log('Terminé de escribir el archivo');
-    });
-    // END ONLY TEST
+
+    // console.log('Voy a escribir en el archivo ');
+    // // ONLY TEST
+    // // __dirname, '../resources/uploads/'
+    // workbook.xlsx.writeFile('este-es-un-test.xlsx').then(function() {
+    //   console.log('Terminé de escribir el archivo');
+    // });
+    // // END ONLY TEST
 
     console.log('Terminé de escribir el archivo');
 

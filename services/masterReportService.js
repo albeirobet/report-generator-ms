@@ -224,7 +224,7 @@ exports.deleteMasterReport = async (req, res) => {
     const objectReportResume = {};
     objectReportResume.code = 'MASTM';
     objectReportResume.companyId = userInfo.companyId;
-objectReportResume.startDate = null;
+    objectReportResume.startDate = null;
     objectReportResume.state = 'deleted_report';
     objectReportResume.percentageCompletition = 0;
     objectReportResume.counterRows = 0;
