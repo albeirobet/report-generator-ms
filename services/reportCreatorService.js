@@ -19,10 +19,7 @@ const EntryMerchandiseAndServicesReportReport = require('../models/entryMerchand
 // =========== Function to
 exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
   try {
-    entryMerchandiseAndServicesReportService.generateEntryMerchandiseAndServicesReport(
-      req,
-      res
-    );
+    entryMerchandiseAndServicesReportService.generateInMemory(req, res);
     return 'El reporte está siendo generado. Por favor validar su estado';
   } catch (error) {
     throw error;
