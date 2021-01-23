@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-restricted-globals */
 /* eslint-disable no-continue */
@@ -86,9 +87,11 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
     for await (const reportData of masterReportData) {
       objectGenerated = {};
       contador += 1;
-      console.log(
-        `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId}`
-      );
+      if (contador % 500 === 0) {
+        console.log(
+          `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId}`
+        );
+      }
       objectGenerated.seniorAccountantId = reportData.seniorAccountantId;
       objectGenerated.seniorAccountantName = reportData.seniorAccountantName;
       objectGenerated.postingDate = reportData.postingDate;
@@ -454,7 +457,7 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
                   break;
                 }
               } else {
-                console.log('No encontré seguimiento ');
+                //console.log('No encontré seguimiento ');
                 //  =============================================================
                 //  ================== IMPORTANTE ES UNA VARIANTE DEL CASO 4 Y ES COPIA DEL CODIGO ANTERIOR
 
@@ -1149,6 +1152,15 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
       'Content-Disposition',
       `attachment; filename=${nameFile}.xlsx`
     );
+    console.log('Voy a escribir en el archivo ');
+    // ONLY TEST
+    // __dirname, '../resources/uploads/'
+    workbook.xlsx.writeFile('este-es-un-test.xlsx').then(function() {
+      console.log('Terminé de escribir el archivo');
+    });
+    // END ONLY TEST
+
+    console.log('Terminé de escribir el archivo');
 
     return workbook.xlsx.write(res).then(function() {
       res.status(200).end();

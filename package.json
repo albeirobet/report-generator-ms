@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node --optimize_for_size --max_old_space_size=8400 server.js",
-    "dev": "nodemon server.js",
+    "dev": "nodemon --optimize_for_size --max-old-space-size=8400 server.js",
     "test": "node --optimize_for_size --max_old_space_size=8400 server.js",
     "start:prod": "NODE_ENV=production nodemon server.js",
     "debug": "ndb server.js"
