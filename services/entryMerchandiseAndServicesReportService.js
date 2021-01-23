@@ -893,8 +893,8 @@ exports.generateInMemory = async (req, res) => {
 
     console.log(' =========  Cargando en memoria MasterReport');
     const masterReportData = await MasterReport.find({
-      companyId: userInfo.companyId,
-      originalDocumentId: { $in: ['1681'] }
+      companyId: userInfo.companyId
+      // ,      originalDocumentId: { $in: ['1681'] }
     }).lean();
 
     console.log(' =========  Cargando en memoria EntryMerchandiseExtra');
@@ -980,11 +980,11 @@ exports.generateInMemory = async (req, res) => {
     for await (const reportData of masterReportData) {
       objectGenerated = {};
       contador += 1;
-      // if (contador % 1000 === 0) {
-      console.log(
-        `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId}`
-      );
-      // }
+      if (contador % 1000 === 0) {
+        console.log(
+          `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId}`
+        );
+      }
       objectGenerated.seniorAccountantId = reportData.seniorAccountantId;
       objectGenerated.seniorAccountantName = reportData.seniorAccountantName;
       objectGenerated.postingDate = reportData.postingDate;
