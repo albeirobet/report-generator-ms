@@ -29,11 +29,11 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
 // =========== Function to
 exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
   try {
-    const response = await entryMerchandiseAndServicesReportService.downloadEntryMerchandiseAndServicesReport(
+    entryMerchandiseAndServicesReportService.downloadEntryMerchandiseAndServicesReport(
       req,
       res
     );
-    return response;
+    return 'El reporte se está volcando a la plantilla. Por favor validar su estado';
   } catch (error) {
     throw error;
   }

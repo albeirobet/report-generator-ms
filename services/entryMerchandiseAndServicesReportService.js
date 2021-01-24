@@ -6,6 +6,8 @@
 // Mail: eyder.ascuntar@runcode.co
 // Company: Runcode Ingeniería SAS
 const ExcelJS = require('exceljs');
+const path = require('path');
+const fs = require('fs');
 const ApiError = require('../dto/commons/response/apiErrorDTO');
 const ServiceException = require('../utils/errors/serviceException');
 const commonErrors = require('../utils/constants/commonErrors');
@@ -23,6 +25,7 @@ const reportGeneratorMessages = require('../utils/constants/reportGeneratorMessa
 const reportFunctionsUpdate = require('../utils/functions/reportFunctionsUpdate');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const userService = require('./userService');
+const email = require('./../utils/email');
 const customValidator = require('../utils/validators/validator');
 
 // =========== Function to count records of reports
@@ -1686,6 +1689,7 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
 
     const reportData = await EntryMerchandiseAndServicesReportReport.find({
       companyId: userInfo.companyId
+      // ,  originalDocumentId: { $in: ['1681'] }
     }).lean();
     console.log('Cargado información en memoría para generar reporte');
     // console.log(reportData);
@@ -1696,7 +1700,7 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
     objectReportResume.message = 'Procesando Información';
     objectReportResume.endDate = null;
     await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
-    const nameFile = 'ENTRADAS_DE_MERCANCIAS_Y_SERVICIOS';
+    const nameFile = 'ENTRADAS DE MERCANCIAS Y SERVICIOS';
     // NO PUEDE EXCEDER 31 CARACTERES
     const sheetName = 'MERCANCÍAS Y SERVICIOS';
     const reportTitle =
@@ -1921,32 +1925,48 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
     objectReportResume.percentageCompletition = 100;
     objectReportResume.counterRows = rowsArray.length;
     objectReportResume.message =
-      'Reporte generado correctamente. En proceso de Descarga';
+      'Reporte generado correctamente. Volcando información a plantilla';
     objectReportResume.endDate = new Date();
     await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
     console.log('Generando archivo excel de respuesta');
-    res.setHeader(
-      'Content-Type',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    );
-    res.setHeader(
-      'Content-Disposition',
-      `attachment; filename=${nameFile}.xlsx`
-    );
 
-    // console.log('Voy a escribir en el archivo ');
-    // // ONLY TEST
-    // // __dirname, '../resources/uploads/'
-    // workbook.xlsx.writeFile('este-es-un-test.xlsx').then(function() {
-    //   console.log('Terminé de escribir el archivo');
-    // });
-    // // END ONLY TEST
+    const pathTmp = path.resolve(__dirname, '../resources/uploads/');
+    const pathx = `${pathTmp}//${nameFile}.xlsx`;
+    workbook.xlsx.writeFile(pathx).then(function() {
+      console.log('Terminé de escribir el archivo');
+      objectReportResume.state = 'report_send';
+      objectReportResume.percentageCompletition = 100;
+      objectReportResume.counterRows = rowsArray.length;
+      objectReportResume.message =
+        'Reporte enviado a correo electrónico del usuario';
+      objectReportResume.endDate = new Date();
+      reportFunctionsUpdate.updateReportDownloader(objectReportResume);
 
-    // console.log('Terminé de escribir el archivo');
-
-    return workbook.xlsx.write(res).then(function() {
-      res.status(200).end();
+      let message = '';
+      try {
+        message = fs.readFileSync(
+          path.resolve(
+            __dirname,
+            '../utils/emailTemplates/reportGenerator.html'
+          ),
+          'utf8'
+        );
+        message = message.replace(
+          '$#$#$#USER#$#$#$',
+          `${userInfo.name} ${userInfo.lastname}`
+        );
+        message = message.replace('$#$#$#REPORT_NAME#$#$#$', `${nameFile}`);
+      } catch (err) {
+        console.error(err);
+      }
+      email.sendEmailWithAttachments({
+        email: 'eyder.ascuntar@runcode.co',
+        subject: 'Generación de Reportes',
+        message: message,
+        path: pathx
+      });
     });
+    return true;
   } catch (error) {
     // Actualizando información encabezado reporte
     objectReportResume.state = 'error_report';

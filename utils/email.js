@@ -2,8 +2,9 @@
 // Mail: eyder.ascuntar@runcode.co
 // Company: Runcode Ingeniería SAS
 const nodemailer = require('nodemailer');
+const fs = require('fs');
 
-const sendEmail = async options => {
+exports.sendEmail = async options => {
   // 1) Create a transporter
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
@@ -11,7 +12,8 @@ const sendEmail = async options => {
     auth: {
       user: process.env.EMAIL_USERNAME,
       pass: process.env.EMAIL_PASSWORD
-    }
+    },
+    secure: true
   });
 
   // 2) Define the email options
@@ -27,4 +29,33 @@ const sendEmail = async options => {
   await transporter.sendMail(mailOptions);
 };
 
-module.exports = sendEmail;
+exports.sendEmailWithAttachments = async options => {
+  // 1) Create a transporter
+  const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    auth: {
+      user: process.env.EMAIL_USERNAME,
+      pass: process.env.EMAIL_PASSWORD
+    }
+  });
+
+  // 2) Define the email options
+  const mailOptions = {
+    from: 'RunCode Reports <info@runcode.co>',
+    to: options.email,
+    subject: options.subject,
+    html: options.message,
+    attachments: [
+      {
+        path: options.path
+      }
+    ]
+  };
+
+  // 3) Actually send the email
+  await transporter.sendMail(mailOptions);
+  fs.unlink(options.path, function(err) {
+    if (err) throw err;
+  });
+};
