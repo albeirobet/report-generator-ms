@@ -163,7 +163,8 @@ exports.loadMaterialsAsyncy = async (req, res) => {
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportUploader(objectReportResume);
-    await Material.insertMany(materials)
+    await Material.collection
+      .insertMany(materials)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
@@ -215,7 +216,7 @@ exports.deleteMaterial = async (req, res) => {
     const objectReportResume = {};
     objectReportResume.code = 'MATTM';
     objectReportResume.companyId = userInfo.companyId;
-objectReportResume.startDate = null;
+    objectReportResume.startDate = null;
     objectReportResume.state = 'deleted_report';
     objectReportResume.percentageCompletition = 0;
     objectReportResume.counterRows = 0;

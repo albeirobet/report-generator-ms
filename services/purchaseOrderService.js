@@ -164,7 +164,8 @@ exports.loadPurchaseOrdersAsyncy = async (req, res) => {
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportUploader(objectReportResume);
     console.log('Insert Data Init');
-    await PurchaseOrder.insertMany(purchaseOrders)
+    await PurchaseOrder.collection
+      .insertMany(purchaseOrders)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
@@ -216,7 +217,7 @@ exports.deletePurchaseOrder = async (req, res) => {
     const objectReportResume = {};
     objectReportResume.code = 'PORTM';
     objectReportResume.companyId = userInfo.companyId;
-objectReportResume.startDate = null;
+    objectReportResume.startDate = null;
     objectReportResume.state = 'deleted_report';
     objectReportResume.percentageCompletition = 0;
     objectReportResume.counterRows = 0;

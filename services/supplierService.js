@@ -166,7 +166,8 @@ exports.loadSuppliersAsyncy = async (req, res) => {
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportUploader(objectReportResume);
-    await Supplier.insertMany(suppliers)
+    await Supplier.collection
+      .insertMany(suppliers)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;

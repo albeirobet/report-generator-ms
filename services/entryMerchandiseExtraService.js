@@ -162,7 +162,8 @@ exports.loadEntryMerchandiseExtraAsync = async (req, res) => {
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportUploader(objectReportResume);
-    await EntryMerchandiseExtra.insertMany(entries)
+    await EntryMerchandiseExtra.collection
+      .insertMany(entries)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;

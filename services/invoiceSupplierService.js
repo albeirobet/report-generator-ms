@@ -165,7 +165,8 @@ exports.loadInvoiceSupplierAsyncy = async (req, res) => {
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportUploader(objectReportResume);
-    await InvoiceSupplier.insertMany(invoiceSuppliers)
+    await InvoiceSupplier.collection
+      .insertMany(invoiceSuppliers)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
@@ -206,7 +207,7 @@ exports.deleteInvoiceSupplier = async (req, res) => {
     const objectReportResume = {};
     objectReportResume.code = 'INSTM';
     objectReportResume.companyId = userInfo.companyId;
-objectReportResume.startDate = null;
+    objectReportResume.startDate = null;
     objectReportResume.state = 'deleted_report';
     objectReportResume.percentageCompletition = 0;
     objectReportResume.counterRows = 0;

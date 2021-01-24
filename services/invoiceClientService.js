@@ -162,7 +162,8 @@ exports.loadInvoiceClientsAsyncy = async (req, res) => {
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportUploader(objectReportResume);
-    await InvoiceClient.insertMany(invoiceClients)
+    await InvoiceClient.collection
+      .insertMany(invoiceClients)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;

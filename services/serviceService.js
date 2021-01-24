@@ -162,7 +162,8 @@ exports.loadServicesAsyncy = async (req, res) => {
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportUploader(objectReportResume);
-    await Service.insertMany(services)
+    await Service.collection
+      .insertMany(services)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
@@ -214,7 +215,7 @@ exports.deleteService = async (req, res) => {
     const objectReportResume = {};
     objectReportResume.code = 'SERTM';
     objectReportResume.companyId = userInfo.companyId;
-objectReportResume.startDate = null;
+    objectReportResume.startDate = null;
     objectReportResume.state = 'deleted_report';
     objectReportResume.percentageCompletition = 0;
     objectReportResume.counterRows = 0;

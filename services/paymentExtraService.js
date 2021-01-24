@@ -168,7 +168,8 @@ exports.loadPaymentExtraDataAsyncy = async (req, res) => {
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportUploader(objectReportResume);
-    await PaymentExtra.insertMany(paymentExtraData)
+    await PaymentExtra.collection
+      .insertMany(paymentExtraData)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
@@ -220,7 +221,7 @@ exports.deletePaymentExtra = async (req, res) => {
     const objectReportResume = {};
     objectReportResume.code = 'PAETM';
     objectReportResume.companyId = userInfo.companyId;
-objectReportResume.startDate = null;
+    objectReportResume.startDate = null;
     objectReportResume.state = 'deleted_report';
     objectReportResume.percentageCompletition = 0;
     objectReportResume.counterRows = 0;

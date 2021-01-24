@@ -812,7 +812,8 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportCreator(objectReportResume);
 
-    EntryMerchandiseAndServicesReportReport.insertMany(arrayGenerated)
+    EntryMerchandiseAndServicesReportReport.collection
+      .insertMany(arrayGenerated)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
@@ -1581,7 +1582,7 @@ exports.generateInMemory = async (req, res) => {
     paymentExtraDataMemory = null;
     paymentOriginalDataMemory = null;
 
-    EntryMerchandiseAndServicesReportReport.collection
+    await EntryMerchandiseAndServicesReportReport.collection
       .insertMany(arrayGenerated)
       .then(function() {
         summaryLoadedData.message =
@@ -1626,7 +1627,7 @@ exports.generateInMemory = async (req, res) => {
         finishReport();
         console.log(error);
       });
-    console.log('Insertando en background');
+    console.log(summaryLoadedData);
     return summaryLoadedData;
   } catch (err) {
     throw err;
