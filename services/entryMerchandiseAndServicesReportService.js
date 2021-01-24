@@ -882,7 +882,7 @@ exports.generateInMemory = async (req, res) => {
     }
 
     // Limpiando reporte anterior
-    await EntryMerchandiseAndServicesReportReport.deleteMany({
+    await EntryMerchandiseAndServicesReportReport.collection.deleteMany({
       companyId: userInfo.companyId
     });
     const arrayGenerated = [];
