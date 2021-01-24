@@ -196,6 +196,7 @@ const entryMerchandiseAndServiceReportSchema = new mongoose.Schema({
   }
 });
 
+entryMerchandiseAndServiceReportSchema.index({ companyId: +1 });
 const EntryMerchandiseAndServiceReport = mongoose.model(
   'EntryMerchandiseAndServiceReport',
   entryMerchandiseAndServiceReportSchema

@@ -1627,7 +1627,6 @@ exports.generateInMemory = async (req, res) => {
         finishReport();
         console.log(error);
       });
-    console.log(summaryLoadedData);
     return summaryLoadedData;
   } catch (err) {
     throw err;
@@ -1638,7 +1637,7 @@ exports.generateInMemory = async (req, res) => {
 exports.deleteEntryMerchandiseAndServicesReport = async (req, res) => {
   try {
     const userInfo = await userService.getUserInfo(req, res);
-    await EntryMerchandiseAndServicesReportReport.deleteMany({
+    await EntryMerchandiseAndServicesReportReport.collection.deleteMany({
       companyId: userInfo.companyId
     });
 
@@ -1943,7 +1942,7 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
     // });
     // // END ONLY TEST
 
-    console.log('Terminé de escribir el archivo');
+    // console.log('Terminé de escribir el archivo');
 
     return workbook.xlsx.write(res).then(function() {
       res.status(200).end();
