@@ -1663,10 +1663,11 @@ exports.deleteEntryMerchandiseAndServicesReport = async (req, res) => {
   }
 };
 
-exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
+exports.downloadEntryMerchandiseAndServicesReportTest = async (req, res) => {
   const objectReportResume = {};
   objectReportResume.code = 'EMEGR';
   try {
+    console.log('  >>>>>>>>>>>>>> 1');
     objectReportResume.startDate = new Date();
     const userInfo = await userService.getUserInfo(req, res);
     objectReportResume.companyId = userInfo.companyId;
@@ -1686,7 +1687,190 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
         )
       );
     }
+    console.log(' >>>>>>>>>>>>>>>> 2');
+    const reportData = await EntryMerchandiseAndServicesReportReport.find({
+      companyId: userInfo.companyId
+      // , originalDocumentId: { $in: ['1681'] }
+    }).lean();
+    console.log('Cargado información en memoría para generar reporte');
+    // console.log(reportData);
+    // Actualizando información encabezado reporte
+    objectReportResume.state = 'processing';
+    objectReportResume.percentageCompletition = 33;
+    objectReportResume.counterRows = 0;
+    objectReportResume.message = 'Procesando Información';
+    objectReportResume.endDate = null;
+    await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
+    // const nameFile = 'ENTRADAS DE MERCANCIAS Y SERVICIOS';
+    // // NO PUEDE EXCEDER 31 CARACTERES
+    const sheetName = 'MERCANCÍAS Y SERVICIOS';
+    // const reportTitle =
+    //   'REPORTE SEGUIMIENTO ENTRADAS DE MERCANCÍAS Y SERVICIOS';
+    // const reportSubtitle = 'Reporte Generado para:  Massy SAS';
+    // const reportDate = `Reporte Generado el:  ${customValidator.stringFromDate(
+    //   new Date()
+    // )}`;
 
+    console.log('>>>>>>>>>>> Empezando nueva funcionalidad');
+    res.writeHead(200, {
+      'Content-Disposition':
+        'attachment; filename=ENTRADAS_DE_MERCANCIAS_Y_SERVICIOS.xlsx"',
+      'Content-Type':
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    });
+
+    const options = {
+      useStyles: true,
+      stream: res
+    };
+
+    const workbook = new ExcelJS.stream.xlsx.WorkbookWriter(options);
+    workbook.creator = 'RunCode Ingeniería SAS';
+    workbook.created = new Date();
+    const worksheet = workbook.addWorksheet(sheetName);
+
+    console.log('Insertando información  en tabla excel');
+    // Actualizando información encabezado reporte
+    objectReportResume.state = 'entering_information';
+    objectReportResume.percentageCompletition = 66;
+    // objectReportResume.counterRows = rowsArray.length;
+    objectReportResume.message = 'Insertando Información';
+    await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
+
+    worksheet.addRow([
+      'ID Cuenta de mayor',
+      'Nombre Cuenta de mayor',
+      'Fecha de contabilización',
+      'Asiento contable',
+      'ID de referencia externa',
+      'ID de documento original',
+      'Tipo de asiento contable',
+      'Asiento contable anulado',
+      'ID de documento anulado',
+      'Asiento contable de anulación',
+      'ID de documento de anulación',
+      'ID doc.original',
+      'Importe en debe en moneda de empresa',
+      'Importe en haber en moneda de empresa',
+      'Id Entrada de Mercancias',
+      'Estado Entrada de Mercancias y Servicios',
+      'Id pedido de compra',
+      'Cantidad Solicitada',
+      'Precio Neto en moneda de la empresa',
+      'Cantidad Entregada',
+      'Valor Entregado',
+      'Valor entregado en Moneda de la Empresa',
+      'Cantidad Facturada',
+      'Valor Facturado',
+      'Valor Facturado en Moneda de la Empresa',
+      'Saldo de entrada de mercancias y servicios en cantidades',
+      'Saldo de entrada de mercancias y servicios en pesos',
+      'Id Factura',
+      'Id proveedor',
+      'Nombre proveedor',
+      'Id de documento Externo',
+      'Valor bruto factura en Moneda de la empresa',
+      'Valor neto factura en Moneda de la empresa',
+      'Cantidad Facturada Proveedor',
+      'Id pago',
+      'Fecha de pago',
+      'Modalidad  de Pago',
+      'Valor pagado'
+    ]);
+
+    worksheet.getRow(1).font = {
+      name: 'Calibri',
+      family: 2,
+      size: 11,
+      bold: true
+    };
+
+    reportData.forEach(data => {
+      worksheet.addRow([
+        data.seniorAccountantId,
+        data.seniorAccountantName,
+        customValidator.stringFromDate(data.postingDate),
+        data.accountingSeat,
+        data.externalReferenceId,
+        data.originalDocumentId,
+        data.accountingSeatType,
+        data.accountingSeatAnnulled,
+        data.originalDocumentAnnulledId,
+        data.accountingSeatAnnulment,
+        data.extraOriginalDocumentAnulledId,
+        data.extraOriginalDocumentId,
+        data.debtAmountCompanyCurrency,
+        data.creditAmountCompanyCurrency,
+        data.entryMerchandiseIdGenerated,
+        data.entryMerchandiseStateGenerated,
+        data.purchaseOrderIdGenerated,
+        data.requestedAmountGenerated,
+        data.netPriceCompanyCurrencyGenerated,
+        data.deliveredQuantityGenerated,
+        data.deliveredValueGenerated,
+        data.deliveredValueCompanyCurrencyGenerated,
+        data.invoicedAmountGenerated,
+        data.invoicedValueGenerated,
+        data.invoicedValueCompanyCurrencyGenerated,
+        data.balanceQuantityEntryMerchandiseQuantitiesGenerated,
+        data.balanceQuantityEntryMerchandiseCurrenciesGenerated,
+        data.invoiceIdGenerated,
+        data.supplierIdGenerated,
+        data.supplierNameGenerated,
+        data.externalDocumentIdGenerated,
+        data.grossAmountCompanyCurrencyGenerated,
+        data.netAmountCompanyCurrencyGenerated,
+        data.quantityGenerated,
+        data.documentIdGenerated,
+        customValidator.stringFromDate(data.createdAtGenerated),
+        data.pyamentMethodGenerated,
+        data.paymentAmountGenerated
+      ]);
+    });
+    worksheet.columns.forEach(function(column) {
+      column.width = 30;
+    });
+
+    worksheet.commit();
+    await workbook.commit();
+  } catch (error) {
+    // Actualizando información encabezado reporte
+    objectReportResume.state = 'error_report';
+    objectReportResume.percentageCompletition = 0;
+    objectReportResume.counterRows = 0;
+    objectReportResume.message =
+      'Ocurrió un error al generar el reporte de Entrada de Mercancias y Servicios. Por favor contácte a Soporte Técnico';
+    objectReportResume.endDate = new Date();
+    await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
+    throw error;
+  }
+};
+
+exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
+  const objectReportResume = {};
+  objectReportResume.code = 'EMEGR';
+  try {
+    console.log('  >>>>>>>>>>>>>> 1');
+    objectReportResume.startDate = new Date();
+    const userInfo = await userService.getUserInfo(req, res);
+    objectReportResume.companyId = userInfo.companyId;
+    objectReportResume.generatorUserId = userInfo._id;
+    const reportInfo = await ReportDownloader.find({
+      companyId: userInfo.companyId,
+      code: objectReportResume.code
+    }).lean();
+    if (reportInfo.length === 0) {
+      throw new ServiceException(
+        commonErrors.E_COMMON_01,
+        new ApiError(
+          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_06}`,
+          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_06}`,
+          'E_REPORT_GENERATOR_MS_06',
+          httpCodes.BAD_REQUEST
+        )
+      );
+    }
+    console.log(' >>>>>>>>>>>>>>>> 2');
     const reportData = await EntryMerchandiseAndServicesReportReport.find({
       companyId: userInfo.companyId
       // ,  originalDocumentId: { $in: ['1681'] }
