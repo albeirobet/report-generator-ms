@@ -2201,9 +2201,9 @@ exports.sendReportCSV = async (req, res) => {
     objectReportResume.message = 'Procesando Información';
     objectReportResume.endDate = null;
     await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
-    const nameFile = 'ENTRADAS DE MERCANCIAS Y SERVICIOS';
+    const nameFile = 'ENTRADAS';
     const pathTmp = path.resolve(__dirname, '../resources/uploads/');
-    const pathx = `${pathTmp}/${nameFile}.csv`;
+    const pathx = `${pathTmp}//${nameFile}.csv`;
     const csvWriter = createCsvWriter({
       path: pathx,
       header: [
@@ -2322,6 +2322,14 @@ exports.sendReportCSV = async (req, res) => {
       });
     });
   } catch (error) {
+    // Actualizando información encabezado reporte
+    objectReportResume.state = 'error_report';
+    objectReportResume.percentageCompletition = 0;
+    objectReportResume.counterRows = 0;
+    objectReportResume.message =
+      'Ocurrió un error al generar el reporte de Entrada de Mercancias y Servicios. Por favor contácte a Soporte Técnico';
+    objectReportResume.endDate = new Date();
+    await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
     throw error;
   }
 };
