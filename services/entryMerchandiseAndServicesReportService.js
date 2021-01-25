@@ -2204,7 +2204,6 @@ exports.sendReportCSV = async (req, res) => {
     const nameFile = 'ENTRADAS';
     const pathTmp = path.resolve(__dirname, '../resources/uploads/');
     const pathx = `${pathTmp}//${nameFile}.csv`;
-    console.log('Va a crearlo');
     const csvWriter = createCsvWriter({
       path: pathx,
       header: [
@@ -2288,8 +2287,7 @@ exports.sendReportCSV = async (req, res) => {
       ]
     });
 
-    console.log('Lo creo?');
-    await csvWriter.writeRecords(reportData).then(function() {
+    csvWriter.writeRecords(reportData).then(function() {
       console.log('Terminé de escribir el archivo');
       objectReportResume.state = 'report_send';
       objectReportResume.percentageCompletition = 100;
