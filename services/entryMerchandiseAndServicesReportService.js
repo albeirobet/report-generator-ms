@@ -1632,7 +1632,7 @@ exports.generateInMemory = async (req, res) => {
         console.log(error);
       });
     console.log(summaryLoadedData);
-    if (summaryLoadedData.counterRows > 0) {
+    if (summaryLoadedData.counter > 0) {
       console.log('voy a enviar de una vez la plantilla');
       this.sendReportCSV(req, res);
     }
