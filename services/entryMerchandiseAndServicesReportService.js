@@ -2340,7 +2340,7 @@ exports.sendReportCSV = async (req, res) => {
       }
       console.log('Enviando plantilla a correo electronico');
       email.sendEmailWithAttachments({
-        email: 'eyder.ascuntar@runcode.co',
+        email: userInfo.email,
         subject: 'Generación de Reportes',
         message: message,
         path: pathx

