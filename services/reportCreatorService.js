@@ -29,11 +29,8 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
 // =========== Function to
 exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
   try {
-    const response = await entryMerchandiseAndServicesReportService.downloadEntryMerchandiseAndServicesReportTest(
-      req,
-      res
-    );
-    return response;
+    entryMerchandiseAndServicesReportService.sendReportCSV(req, res);
+    return 'El reporte está siendo generado para enviarlo a su correo electrónico. Por favor validar su estado';
   } catch (error) {
     throw error;
   }

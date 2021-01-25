@@ -30,17 +30,18 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
   let generalResponse = new GeneralResponse();
   generalResponse.success = true;
   try {
-    return await reportCreatorService.downloadEntryMerchandiseAndServicesReport(
+    const data = await reportCreatorService.downloadEntryMerchandiseAndServicesReport(
       req,
       res
     );
+    generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
     generalResponse = generalResp.generalError(err);
     console.error(generalResponse.apiError.messageUser);
     codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
     generalResponse.apiError.codeHTTP = undefined;
-    return res.status(codeHttp).json(generalResponse);
   }
+  return res.status(codeHttp).json(generalResponse);
 };
 
 exports.createReport = async (req, res) => {

@@ -55,6 +55,7 @@ exports.sendEmailWithAttachments = async options => {
 
   // 3) Actually send the email
   await transporter.sendMail(mailOptions);
+  console.log('Correo enviado, eliminando plantilla temporal');
   fs.unlink(options.path, function(err) {
     if (err) throw err;
   });

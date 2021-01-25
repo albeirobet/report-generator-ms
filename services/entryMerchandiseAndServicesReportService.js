@@ -8,6 +8,7 @@
 const ExcelJS = require('exceljs');
 const path = require('path');
 const fs = require('fs');
+const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const ApiError = require('../dto/commons/response/apiErrorDTO');
 const ServiceException = require('../utils/errors/serviceException');
 const commonErrors = require('../utils/constants/commonErrors');
@@ -2160,6 +2161,167 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
       'Ocurrió un error al generar el reporte de Entrada de Mercancias y Servicios. Por favor contácte a Soporte Técnico';
     objectReportResume.endDate = new Date();
     await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
+    throw error;
+  }
+};
+
+exports.sendReportCSV = async (req, res) => {
+  const objectReportResume = {};
+  objectReportResume.code = 'EMEGR';
+  try {
+    console.log('  >>>>>>>>>>>>>> 1');
+    objectReportResume.startDate = new Date();
+    const userInfo = await userService.getUserInfo(req, res);
+    objectReportResume.companyId = userInfo.companyId;
+    objectReportResume.generatorUserId = userInfo._id;
+    const reportInfo = await ReportDownloader.find({
+      companyId: userInfo.companyId,
+      code: objectReportResume.code
+    }).lean();
+    if (reportInfo.length === 0) {
+      throw new ServiceException(
+        commonErrors.E_COMMON_01,
+        new ApiError(
+          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_06}`,
+          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_06}`,
+          'E_REPORT_GENERATOR_MS_06',
+          httpCodes.BAD_REQUEST
+        )
+      );
+    }
+    console.log(' >>>>>>>>>>>>>>>> 2');
+    const reportData = await EntryMerchandiseAndServicesReportReport.find({
+      companyId: userInfo.companyId
+      // , originalDocumentId: { $in: ['1681'] }
+    }).lean();
+    console.log('Cargado información en memoría para generar reporte');
+    objectReportResume.state = 'processing';
+    objectReportResume.percentageCompletition = 33;
+    objectReportResume.counterRows = 0;
+    objectReportResume.message = 'Procesando Información';
+    objectReportResume.endDate = null;
+    await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
+    const nameFile = 'ENTRADAS DE MERCANCIAS Y SERVICIOS';
+    const pathTmp = path.resolve(__dirname, '../resources/uploads/');
+    const pathx = `${pathTmp}//${nameFile}.csv`;
+    const csvWriter = createCsvWriter({
+      path: pathx,
+      header: [
+        { id: 'seniorAccountantId', title: 'ID Cuenta de mayor' },
+        { id: 'seniorAccountantName', title: 'Nombre Cuenta de mayor' },
+        { id: 'postingDate', title: 'Fecha de contabilización' },
+        { id: 'accountingSeat', title: 'Asiento contable' },
+        { id: 'externalReferenceId', title: 'ID de referencia externa' },
+        { id: 'originalDocumentId', title: 'ID de documento original' },
+        { id: 'accountingSeatType', title: 'Tipo de asiento contable' },
+        { id: 'accountingSeatAnnulled', title: 'Asiento contable anulado' },
+        { id: 'originalDocumentAnnulledId', title: 'ID de documento anulado' },
+        {
+          id: 'accountingSeatAnnulment',
+          title: 'Asiento contable de anulación'
+        },
+        {
+          id: 'extraOriginalDocumentAnulledId',
+          title: 'ID de documento de anulación'
+        },
+        { id: 'extraOriginalDocumentId', title: 'ID doc.original' },
+        {
+          id: 'debtAmountCompanyCurrency',
+          title: 'Importe en debe en moneda de empresa'
+        },
+        {
+          id: 'creditAmountCompanyCurrency',
+          title: 'Importe en haber en moneda de empresa'
+        },
+        {
+          id: 'entryMerchandiseIdGenerated',
+          title: 'Id Entrada de Mercancias'
+        },
+        {
+          id: 'entryMerchandiseStateGenerated',
+          title: 'Estado Entrada de Mercancias y Servicios'
+        },
+        { id: 'purchaseOrderIdGenerated', title: 'Id pedido de compra' },
+        { id: 'requestedAmountGenerated', title: 'Cantidad Solicitada' },
+        {
+          id: 'netPriceCompanyCurrencyGenerated',
+          title: 'Precio Neto en moneda de la empresa'
+        },
+        { id: 'deliveredQuantityGenerated', title: 'Cantidad Entregada' },
+        { id: 'deliveredValueGenerated', title: 'Valor Entregado' },
+        {
+          id: 'deliveredValueCompanyCurrencyGenerated',
+          title: 'Valor entregado en Moneda de la Empresa'
+        },
+        { id: 'invoicedAmountGenerated', title: 'Cantidad Facturada' },
+        { id: 'invoicedValueGenerated', title: 'Valor Facturado' },
+        {
+          id: 'invoicedValueCompanyCurrencyGenerated',
+          title: 'Valor Facturado en Moneda de la Empresa'
+        },
+        {
+          id: 'balanceQuantityEntryMerchandiseQuantitiesGenerated',
+          title: 'Saldo de entrada de mercancias y servicios en cantidades'
+        },
+        {
+          id: 'balanceQuantityEntryMerchandiseCurrenciesGenerated',
+          title: 'Saldo de entrada de mercancias y servicios en pesos'
+        },
+        { id: 'invoiceIdGenerated', title: 'Id Factura' },
+        { id: 'supplierIdGenerated', title: 'Id proveedor' },
+        { id: 'supplierNameGenerated', title: 'Nombre proveedor' },
+        { id: 'externalDocumentIdGenerated', title: 'Id de documento Externo' },
+        {
+          id: 'grossAmountCompanyCurrencyGenerated',
+          title: 'Valor bruto factura en Moneda de la empresa'
+        },
+        {
+          id: 'netAmountCompanyCurrencyGenerated',
+          title: 'Valor neto factura en Moneda de la empresa'
+        },
+        { id: 'quantityGenerated', title: 'Cantidad Facturada Proveedor' },
+        { id: 'documentIdGenerated', title: 'Id pago' },
+        { id: 'createdAtGenerated', title: 'Fecha de pago' },
+        { id: 'pyamentMethodGenerated', title: 'Modalidad  de Pago' },
+        { id: 'paymentAmountGenerated', title: 'Valor pagado' }
+      ]
+    });
+
+    csvWriter.writeRecords(reportData).then(function() {
+      console.log('Terminé de escribir el archivo');
+      objectReportResume.state = 'report_send';
+      objectReportResume.percentageCompletition = 100;
+      objectReportResume.message =
+        'Reporte enviado a correo electrónico del usuario';
+      objectReportResume.endDate = new Date();
+      reportFunctionsUpdate.updateReportDownloader(objectReportResume);
+
+      let message = '';
+      try {
+        message = fs.readFileSync(
+          path.resolve(
+            __dirname,
+            '../utils/emailTemplates/reportGenerator.html'
+          ),
+          'utf8'
+        );
+        message = message.replace(
+          '$#$#$#USER#$#$#$',
+          `${userInfo.name} ${userInfo.lastname}`
+        );
+        message = message.replace('$#$#$#REPORT_NAME#$#$#$', `${nameFile}`);
+      } catch (err) {
+        console.error(err);
+      }
+      console.log('Enviando plantilla a correo electronico');
+      email.sendEmailWithAttachments({
+        email: 'eyder.ascuntar@runcode.co',
+        subject: 'Generación de Reportes',
+        message: message,
+        path: pathx
+      });
+    });
+  } catch (error) {
     throw error;
   }
 };
