@@ -816,7 +816,7 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportCreator(objectReportResume);
 
-    await EntryMerchandiseAndServicesReportReport.collection
+    EntryMerchandiseAndServicesReportReport.collection
       .insertMany(arrayGenerated)
       .then(function() {
         summaryLoadedData.message =
@@ -851,11 +851,6 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
         finishReport();
         console.log(error);
       });
-    if (summaryLoadedData.counterRows > 0) {
-      console.log('voy a enviar de una vez la plantilla');
-      this.sendReportCSV(req, res);
-    }
-
     console.log('Insertando en background');
     return summaryLoadedData;
   } catch (err) {
@@ -1636,6 +1631,11 @@ exports.generateInMemory = async (req, res) => {
         finishReport();
         console.log(error);
       });
+    console.log(summaryLoadedData);
+    if (summaryLoadedData.counterRows > 0) {
+      console.log('voy a enviar de una vez la plantilla');
+      this.sendReportCSV(req, res);
+    }
     return summaryLoadedData;
   } catch (err) {
     throw err;
