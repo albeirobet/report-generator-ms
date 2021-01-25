@@ -2203,7 +2203,7 @@ exports.sendReportCSV = async (req, res) => {
     await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
     const nameFile = 'ENTRADAS DE MERCANCIAS Y SERVICIOS';
     const pathTmp = path.resolve(__dirname, '../resources/uploads/');
-    const pathx = `${pathTmp}//${nameFile}.csv`;
+    const pathx = `${pathTmp}/${nameFile}.csv`;
     const csvWriter = createCsvWriter({
       path: pathx,
       header: [
