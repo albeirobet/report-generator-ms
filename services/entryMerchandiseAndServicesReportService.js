@@ -2197,7 +2197,7 @@ exports.sendReportCSV = async (req, res) => {
     console.log(' >>>>>>>>>>>>>>>> 2');
     const reportData = await EntryMerchandiseAndServicesReportReport.find({
       companyId: userInfo.companyId
-      // , originalDocumentId: { $in: ['1681'] }
+      // ,      originalDocumentId: { $in: ['1681'] }
     }).lean();
     console.log('Cargado información en memoría para generar reporte');
     objectReportResume.state = 'processing';
@@ -2292,11 +2292,24 @@ exports.sendReportCSV = async (req, res) => {
       ]
     });
 
-    reportData.forEach(cursor => {
+    // reportData.forEach(cursor => {
+    //   cursor.postingDate = customValidator.stringFromDate(cursor.postingDate);
+    //   cursor.createdAtGenerated = customValidator.stringFromDate(
+    //     cursor.createdAtGenerated
+    //   );
+    //   if (cursor.seniorAccountantId === 'RESULTADO') {
+    //     delete cursor;
+    //   }
+    // });
+
+    reportData.forEach(function(cursor, index, object) {
       cursor.postingDate = customValidator.stringFromDate(cursor.postingDate);
       cursor.createdAtGenerated = customValidator.stringFromDate(
         cursor.createdAtGenerated
       );
+      if (cursor.seniorAccountantId === 'RESULTADO') {
+        object.splice(index, 1);
+      }
     });
 
     csvWriter.writeRecords(reportData).then(function() {
