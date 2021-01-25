@@ -2201,7 +2201,7 @@ exports.sendReportCSV = async (req, res) => {
     objectReportResume.message = 'Procesando Información';
     objectReportResume.endDate = null;
     await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
-    const nameFile = 'ENTRADAS';
+    const nameFile = 'ENTRADAS DE MERCANCIAS Y SERVICIOS';
     const pathTmp = path.resolve(__dirname, '../resources/uploads/');
     const pathx = `${pathTmp}//${nameFile}.csv`;
     const csvWriter = createCsvWriter({
@@ -2285,6 +2285,13 @@ exports.sendReportCSV = async (req, res) => {
         { id: 'pyamentMethodGenerated', title: 'Modalidad  de Pago' },
         { id: 'paymentAmountGenerated', title: 'Valor pagado' }
       ]
+    });
+
+    reportData.forEach(cursor => {
+      cursor.postingDate = customValidator.stringFromDate(cursor.postingDate);
+      cursor.createdAtGenerated = customValidator.stringFromDate(
+        cursor.createdAtGenerated
+      );
     });
 
     csvWriter.writeRecords(reportData).then(function() {
