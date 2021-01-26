@@ -20,7 +20,6 @@ const EntryMerchandiseAndServicesReportReport = require('../models/entryMerchand
 const PaymentOriginal = require('../models/paymentOriginalModel');
 const PaymentExtra = require('../models/paymentExtraModel');
 const ReportCreator = require('../models/reportCreatorModel');
-const ReportDownloader = require('../models/reportDownloaderModel');
 const reportGeneratorMessages = require('../utils/constants/reportGeneratorMessages');
 const reportFunctionsUpdate = require('../utils/functions/reportFunctionsUpdate');
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
@@ -2568,15 +2567,17 @@ exports.deleteEntryMerchandiseAndServicesReport = async (req, res) => {
 };
 
 exports.sendReportCSV = async (req, res) => {
-  const objectReportResume = {};
-  objectReportResume.code = 'EMEGR';
   try {
-    console.log('  >>>>>>>>>>>>>> 1');
+    const objectReportResume = {};
+    objectReportResume.code = 'EMEGR';
     objectReportResume.startDate = new Date();
+
+    console.log('>>>>>>>> TIEMPO DE INICIO xxxx');
+    console.log(new Date());
     const userInfo = await userService.getUserInfo(req, res);
     objectReportResume.companyId = userInfo.companyId;
     objectReportResume.generatorUserId = userInfo._id;
-    const reportInfo = await ReportDownloader.find({
+    const reportInfo = await ReportCreator.find({
       companyId: userInfo.companyId,
       code: objectReportResume.code
     }).lean();
@@ -2591,19 +2592,23 @@ exports.sendReportCSV = async (req, res) => {
         )
       );
     }
+
+    console.log(reportInfo[0]);
+    // Actualizando información encabezado reporte
+    objectReportResume.state = 'email_report_created';
+    objectReportResume.percentageCompletition = 95;
+    objectReportResume.counterRows = reportInfo[0].counterRows;
+    objectReportResume.message =
+      'Creando reporte para envío a correo electrónico';
+    objectReportResume.endDate = null;
+    await reportFunctionsUpdate.updateReportCreator(objectReportResume);
+
     console.log(' >>>>>>>>>>>>>>>> 2');
     const reportData = await EntryMerchandiseAndServicesReportReport.find({
       companyId: userInfo.companyId
       // ,      originalDocumentId: { $in: ['1681'] }
     }).lean();
     console.log('Cargado información en memoría para generar reporte');
-
-    objectReportResume.state = 'email_report_created';
-    objectReportResume.percentageCompletition = 95;
-    objectReportResume.message =
-      'Creando reporte para envío en correo electrónico';
-    objectReportResume.endDate = new Date();
-    await reportFunctionsUpdate.updateReportCreator(objectReportResume);
 
     const nameFile = 'ENTRADAS DE MERCANCIAS Y SERVICIOS';
     const pathTmp = path.resolve(__dirname, '../resources/uploads/');
@@ -2711,6 +2716,7 @@ exports.sendReportCSV = async (req, res) => {
     csvWriter.writeRecords(reportData).then(function() {
       console.log('Terminé de escribir el archivo');
       async function finishReport() {
+        // Actualizando información encabezado reporte
         objectReportResume.state = 'email_send';
         objectReportResume.percentageCompletition = 100;
         objectReportResume.message =
@@ -2745,15 +2751,7 @@ exports.sendReportCSV = async (req, res) => {
         path: pathx
       });
     });
-  } catch (error) {
-    // Actualizando información encabezado reporte
-    objectReportResume.state = 'error_report';
-    objectReportResume.percentageCompletition = 0;
-    objectReportResume.counterRows = 0;
-    objectReportResume.message =
-      'Ocurrió un error al generar el reporte de Entrada de Mercancias y Servicios. Por favor contácte a Soporte Técnico';
-    objectReportResume.endDate = new Date();
-    await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
-    throw error;
+  } catch (err) {
+    throw err;
   }
 };

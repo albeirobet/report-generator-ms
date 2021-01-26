@@ -89,13 +89,10 @@ exports.getReport = async (req, res) => {
 };
 
 exports.getAllAllReports = async (req, res) => {
-  console.log('llegué aquí 1');
   const userInfo = await userService.getUserInfo(req, res);
-  console.log('llegué aquí 2');
   const data = await ReportCreator.find({
     companyId: userInfo.companyId
   }).lean();
-  console.log('llegué aquí 3');
   return data;
 };
 
