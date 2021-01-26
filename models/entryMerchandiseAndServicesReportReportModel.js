@@ -155,6 +155,27 @@ const entryMerchandiseAndServiceReportSchema = new mongoose.Schema({
     type: String,
     uppercase: true
   },
+
+  supplierCoName: {
+    type: String,
+    uppercase: true
+  },
+
+  supplierCoId: {
+    type: String,
+    uppercase: true
+  },
+
+  refundCo: {
+    type: String,
+    uppercase: true
+  },
+
+  ivaCalculated: {
+    type: String,
+    uppercase: true
+  },
+
   documentIdGenerated: {
     type: String,
     uppercase: true

@@ -3,6 +3,8 @@
 // Company: Runcode Ingeniería SAS
 const nodemailer = require('nodemailer');
 const fs = require('fs');
+//Load the library and specify options
+const replace = require('replace-in-file');
 
 exports.sendEmail = async options => {
   // 1) Create a transporter
@@ -54,6 +56,19 @@ exports.sendEmailWithAttachments = async options => {
       }
     ]
   };
+
+  const opt = {
+    files: options.path,
+    from: /\./g,
+    to: ','
+  };
+
+  try {
+    const results = await replace(opt);
+    console.log('Replacement results:', results);
+  } catch (error) {
+    console.error('Error occurred:', error);
+  }
 
   // 3) Actually send the email
   await transporter.sendMail(mailOptions);
