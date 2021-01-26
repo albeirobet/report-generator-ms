@@ -1647,8 +1647,6 @@ exports.generateIvaReport = async (req, res) => {
     objectReportResume.code = 'EMEGR';
     objectReportResume.startDate = new Date();
 
-    console.log('>>>>>>>> TIEMPO DE INICIO xxxx');
-    console.log(new Date());
     const userInfo = await userService.getUserInfo(req, res);
     objectReportResume.companyId = userInfo.companyId;
     objectReportResume.generatorUserId = userInfo._id;
@@ -1686,12 +1684,11 @@ exports.generateIvaReport = async (req, res) => {
     let arrayInvoicePaymentGenerated = [];
     let objectInvoicePaymentGenerated = {};
 
-    console.log(' =========  Cargando en memoria MasterReport');
+    console.log(' =========  Cargando en memoria');
     let masterReportData = await MasterReport.find({
       companyId: userInfo.companyId
     }).lean();
 
-    console.log(' =========  Cargando en memoria EntryMerchandiseExtra');
     let entryMerchandiseExtraDataMemory = await EntryMerchandiseExtra.find({
       companyId: userInfo.companyId
     })
@@ -1702,7 +1699,6 @@ exports.generateIvaReport = async (req, res) => {
       })
       .lean();
 
-    console.log(' =========  Cargando en memoria PurchaseOrderTracking');
     let purchaseOrderTrackingDataMemory = await PurchaseOrderTracking.find({
       companyId: userInfo.companyId
     })
@@ -1719,7 +1715,6 @@ exports.generateIvaReport = async (req, res) => {
       })
       .lean();
 
-    console.log(' =========  Cargando en memoria AssistantReport');
     let assistantReportDataEMMemory = await AssistantReport.find({
       companyId: userInfo.companyId
     })
@@ -1738,7 +1733,6 @@ exports.generateIvaReport = async (req, res) => {
       })
       .lean();
 
-    console.log(' =========  Cargando en memoria PaymentExtra');
     let paymentExtraDataMemory = await PaymentExtra.find({
       companyId: userInfo.companyId
     })
@@ -1748,7 +1742,6 @@ exports.generateIvaReport = async (req, res) => {
       })
       .lean();
 
-    console.log(' =========  Cargando en memoria PaymentOriginal');
     let paymentOriginalDataMemory = await PaymentOriginal.find({
       companyId: userInfo.companyId
     })
@@ -1765,15 +1758,15 @@ exports.generateIvaReport = async (req, res) => {
     // ===== Paso 1.
     let temporaloriginalDocumentId = null;
     console.log('Cargada información Maestra en Memoria');
-    let contador = 0;
+    // let contador = 0;
     for await (const reportData of masterReportData) {
       objectGenerated = {};
-      contador += 1;
-      if (contador % 1000 === 0) {
-        console.log(
-          `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId}`
-        );
-      }
+      // contador += 1;
+      // if (contador % 1000 === 0) {
+      //   console.log(
+      //     `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId}`
+      //   );
+      // }
       objectGenerated.seniorAccountantId = reportData.seniorAccountantId;
       objectGenerated.seniorAccountantName = reportData.seniorAccountantName;
       objectGenerated.postingDate = reportData.postingDate;
@@ -2463,10 +2456,6 @@ exports.generateIvaReport = async (req, res) => {
       }
     }
     const summaryLoadedData = new SummaryLoadedData('', 0);
-    console.log(
-      '>>>>>>>>> TIEMPO DE FINALIZACIÓN DE PROCESAMIENTO INFORMACION'
-    );
-    console.log(new Date());
     console.log('Insert Data Init ', arrayGenerated.length);
     // Actualizando información encabezado reporte
     objectReportResume.state = 'entering_information';
@@ -2593,7 +2582,6 @@ exports.sendReportCSV = async (req, res) => {
       );
     }
 
-    console.log(reportInfo[0]);
     // Actualizando información encabezado reporte
     objectReportResume.state = 'email_report_created';
     objectReportResume.percentageCompletition = 95;
@@ -2603,12 +2591,10 @@ exports.sendReportCSV = async (req, res) => {
     objectReportResume.endDate = null;
     await reportFunctionsUpdate.updateReportCreator(objectReportResume);
 
-    console.log(' >>>>>>>>>>>>>>>> 2');
     const reportData = await EntryMerchandiseAndServicesReportReport.find({
       companyId: userInfo.companyId
       // ,      originalDocumentId: { $in: ['1681'] }
     }).lean();
-    console.log('Cargado información en memoría para generar reporte');
 
     const nameFile = 'ENTRADAS DE MERCANCIAS Y SERVICIOS';
     const pathTmp = path.resolve(__dirname, '../resources/uploads/');
@@ -2743,7 +2729,6 @@ exports.sendReportCSV = async (req, res) => {
       } catch (err) {
         console.error(err);
       }
-      console.log('Enviando plantilla a correo electronico');
       email.sendEmailWithAttachments({
         email: userInfo.email,
         subject: 'Generación de Reportes',
