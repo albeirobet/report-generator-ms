@@ -55,7 +55,7 @@ exports.getReport = async (req, res) => {
       )
     );
   }
-  const data = await ReportUploader.findById(req.params.id);
+  const data = await ReportUploader.findById(req.params.id).lean();
   // CompanyData.findOne({ _id: req.params.id })
   if (!data) {
     throw new ServiceException(
@@ -77,7 +77,7 @@ exports.getAllAllReports = async (req, res) => {
     const userInfo = await userService.getUserInfo(req, res);
     const data = await ReportUploader.find({
       companyId: userInfo.companyId
-    });
+    }).lean();
     return data;
   } catch (err) {
     throw err;

@@ -5,7 +5,6 @@
 // Created By Eyder Ascuntar Rosales
 // Mail: eyder.ascuntar@runcode.co
 // Company: Runcode Ingeniería SAS
-const ExcelJS = require('exceljs');
 const path = require('path');
 const fs = require('fs');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
