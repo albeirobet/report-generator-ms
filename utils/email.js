@@ -64,10 +64,9 @@ exports.sendEmailWithAttachments = async options => {
   };
 
   try {
-    const results = await replace(opt);
-    console.log('Replacement results:', results);
+    await replace(opt);
   } catch (error) {
-    console.error('Error occurred:', error);
+    console.error('Error occurred on Replace point to comma:', error);
   }
 
   // 3) Actually send the email
