@@ -1670,6 +1670,14 @@ exports.generateIvaReport = async (req, res) => {
       );
     }
 
+    // Actualizando información encabezado reporte
+    objectReportResume.state = 'processing';
+    objectReportResume.percentageCompletition = 33;
+    objectReportResume.counterRows = 0;
+    objectReportResume.message = 'Procesando Información';
+    objectReportResume.endDate = null;
+    await reportFunctionsUpdate.updateReportCreator(objectReportResume);
+
     // Limpiando reporte anterior
     await EntryMerchandiseAndServicesReportReport.collection.deleteMany({
       companyId: userInfo.companyId
@@ -1754,14 +1762,6 @@ exports.generateIvaReport = async (req, res) => {
         paymentAmount: 1
       })
       .lean();
-
-    // Actualizando información encabezado reporte
-    objectReportResume.state = 'processing';
-    objectReportResume.percentageCompletition = 33;
-    objectReportResume.counterRows = 0;
-    objectReportResume.message = 'Procesando Información';
-    objectReportResume.endDate = null;
-    await reportFunctionsUpdate.updateReportCreator(objectReportResume);
 
     // ===== ITERACION SOBRE MASTER REPORT ORIGINAL
     // ===== Paso 1.
