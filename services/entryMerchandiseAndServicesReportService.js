@@ -2494,8 +2494,8 @@ exports.generateIvaReport = async (req, res) => {
         this.arrayGenerated = null;
         async function finishReport() {
           // Actualizando información encabezado reporte
-          objectReportResume.state = 'generated_report';
-          objectReportResume.percentageCompletition = 100;
+          objectReportResume.state = 'created_report';
+          objectReportResume.percentageCompletition = 90;
           objectReportResume.counterRows = arrayGenerated.length;
           objectReportResume.message = 'Reporte cargado correctamente';
           objectReportResume.endDate = new Date();
@@ -2597,12 +2597,14 @@ exports.sendReportCSV = async (req, res) => {
       // ,      originalDocumentId: { $in: ['1681'] }
     }).lean();
     console.log('Cargado información en memoría para generar reporte');
-    objectReportResume.state = 'processing';
-    objectReportResume.percentageCompletition = 33;
-    objectReportResume.counterRows = 0;
-    objectReportResume.message = 'Procesando Información';
-    objectReportResume.endDate = null;
-    await reportFunctionsUpdate.updateReportDownloader(objectReportResume);
+
+    objectReportResume.state = 'email_report_created';
+    objectReportResume.percentageCompletition = 95;
+    objectReportResume.message =
+      'Creando reporte para envío en correo electrónico';
+    objectReportResume.endDate = new Date();
+    await reportFunctionsUpdate.updateReportCreator(objectReportResume);
+
     const nameFile = 'ENTRADAS DE MERCANCIAS Y SERVICIOS';
     const pathTmp = path.resolve(__dirname, '../resources/uploads/');
     const pathx = `${pathTmp}//${nameFile}.csv`;
@@ -2708,12 +2710,15 @@ exports.sendReportCSV = async (req, res) => {
 
     csvWriter.writeRecords(reportData).then(function() {
       console.log('Terminé de escribir el archivo');
-      objectReportResume.state = 'report_send';
-      objectReportResume.percentageCompletition = 100;
-      objectReportResume.message =
-        'Reporte enviado a correo electrónico del usuario';
-      objectReportResume.endDate = new Date();
-      reportFunctionsUpdate.updateReportDownloader(objectReportResume);
+      async function finishReport() {
+        objectReportResume.state = 'email_send';
+        objectReportResume.percentageCompletition = 100;
+        objectReportResume.message =
+          'Reporte enviado a correo electrónico del usuario';
+        objectReportResume.endDate = new Date();
+        await reportFunctionsUpdate.updateReportCreator(objectReportResume);
+      }
+      finishReport();
 
       let message = '';
       try {
