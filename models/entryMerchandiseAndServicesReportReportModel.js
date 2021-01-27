@@ -176,6 +176,21 @@ const entryMerchandiseAndServiceReportSchema = new mongoose.Schema({
     uppercase: true
   },
 
+  ivaValueCalculated: {
+    type: String,
+    uppercase: true
+  },
+
+  ipoconsumoCalculated: {
+    type: String,
+    uppercase: true
+  },
+
+  ipoconsumoValueCalculated: {
+    type: String,
+    uppercase: true
+  },
+
   documentIdGenerated: {
     type: String,
     uppercase: true

@@ -15,10 +15,10 @@ const ivaSchema = new mongoose.Schema({
     uppercase: true
   },
   //ID de asiento contable
-  accountingSeatId: {
-    type: String,
-    uppercase: true
-  },
+  // accountingSeatId: {
+  //   type: String,
+  //   uppercase: true
+  // },
   //ID de documento original
   originalDocumentId: {
     type: String,

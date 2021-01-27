@@ -1687,6 +1687,7 @@ exports.generateIvaReport = async (req, res) => {
     console.log(' =========  Cargando en memoria');
     let masterReportData = await MasterReport.find({
       companyId: userInfo.companyId
+      // ,      originalDocumentId: { $in: ['FP-10047'] }
     }).lean();
 
     let entryMerchandiseExtraDataMemory = await EntryMerchandiseExtra.find({
@@ -1857,6 +1858,13 @@ exports.generateIvaReport = async (req, res) => {
             objectGeneratedToSave.refundCo = elementInvoicePayment.refundCo;
             objectGeneratedToSave.ivaCalculated =
               elementInvoicePayment.ivaCalculated;
+            objectGeneratedToSave.ipoconsumoCalculated =
+              elementInvoicePayment.ipoconsumoCalculated;
+
+            objectGeneratedToSave.ivaValueCalculated =
+              elementInvoicePayment.ivaValueCalculated;
+            objectGeneratedToSave.ipoconsumoValueCalculated =
+              elementInvoicePayment.ipoconsumoValueCalculated;
 
             arrayGenerated.push(objectGeneratedToSave);
             objectGeneratedToSave = {};
@@ -2052,9 +2060,22 @@ exports.generateIvaReport = async (req, res) => {
                         !isNaN(grossAmountCompanyCurrency) &&
                         !isNaN(netAmountCompanyCurrency)
                       ) {
-                        objectInvoicePaymentGenerated.ivaCalculated = (
+                        const taxCalculated = (
                           grossAmountCompanyCurrency - netAmountCompanyCurrency
                         ).toFixed(2);
+
+                        // Determinando el porcentage del impuesto
+                        const taxPercent = Math.round(
+                          (taxCalculated * 100) / netAmountCompanyCurrency
+                        );
+
+                        if (taxPercent === 8) {
+                          objectInvoicePaymentGenerated.ipoconsumoCalculated = taxPercent;
+                          objectInvoicePaymentGenerated.ipoconsumoValueCalculated = taxCalculated;
+                        } else {
+                          objectInvoicePaymentGenerated.ivaCalculated = taxPercent;
+                          objectInvoicePaymentGenerated.ivaValueCalculated = taxCalculated;
+                        }
                       }
                       // --- FIN NUEVO AJUSTE
 
@@ -2189,9 +2210,22 @@ exports.generateIvaReport = async (req, res) => {
                       !isNaN(grossAmountCompanyCurrency) &&
                       !isNaN(netAmountCompanyCurrency)
                     ) {
-                      objectInvoicePaymentGenerated.ivaCalculated = (
+                      const taxCalculated = (
                         grossAmountCompanyCurrency - netAmountCompanyCurrency
                       ).toFixed(2);
+
+                      // Determinando el porcentage del impuesto
+                      const taxPercent = Math.round(
+                        (taxCalculated * 100) / netAmountCompanyCurrency
+                      );
+
+                      if (taxPercent === 8) {
+                        objectInvoicePaymentGenerated.ipoconsumoCalculated = taxPercent;
+                        objectInvoicePaymentGenerated.ipoconsumoValueCalculated = taxCalculated;
+                      } else {
+                        objectInvoicePaymentGenerated.ivaCalculated = taxPercent;
+                        objectInvoicePaymentGenerated.ivaValueCalculated = taxCalculated;
+                      }
                     }
                     // --- FIN NUEVO AJUSTE
 
@@ -2325,9 +2359,22 @@ exports.generateIvaReport = async (req, res) => {
                 !isNaN(grossAmountCompanyCurrency) &&
                 !isNaN(netAmountCompanyCurrency)
               ) {
-                objectInvoicePaymentGenerated.ivaCalculated = (
+                const taxCalculated = (
                   grossAmountCompanyCurrency - netAmountCompanyCurrency
                 ).toFixed(2);
+
+                // Determinando el porcentage del impuesto
+                const taxPercent = Math.round(
+                  (taxCalculated * 100) / netAmountCompanyCurrency
+                );
+
+                if (taxPercent === 8) {
+                  objectInvoicePaymentGenerated.ipoconsumoCalculated = taxPercent;
+                  objectInvoicePaymentGenerated.ipoconsumoValueCalculated = taxCalculated;
+                } else {
+                  objectInvoicePaymentGenerated.ivaCalculated = taxPercent;
+                  objectInvoicePaymentGenerated.ivaValueCalculated = taxCalculated;
+                }
               }
               // --- FIN NUEVO AJUSTE
 
@@ -2444,7 +2491,13 @@ exports.generateIvaReport = async (req, res) => {
           objectGeneratedToSave.refundCo = elementInvoicePayment.refundCo;
           objectGeneratedToSave.ivaCalculated =
             elementInvoicePayment.ivaCalculated;
+          objectGeneratedToSave.ipoconsumoCalculated =
+            elementInvoicePayment.ipoconsumoCalculated;
 
+          objectGeneratedToSave.ivaValueCalculated =
+            elementInvoicePayment.ivaValueCalculated;
+          objectGeneratedToSave.ipoconsumoValueCalculated =
+            elementInvoicePayment.ipoconsumoValueCalculated;
           arrayGenerated.push(objectGeneratedToSave);
           objectGeneratedToSave = {};
           count += 1;
@@ -2517,7 +2570,6 @@ exports.generateIvaReport = async (req, res) => {
         finishReport();
         console.log(error);
       });
-    console.log(summaryLoadedData);
     if (summaryLoadedData.counter > 0) {
       console.log('voy a enviar de una vez la plantilla');
       this.sendReportCSV(req, res);
@@ -2680,7 +2732,10 @@ exports.sendReportCSV = async (req, res) => {
         { id: 'supplierCoName', title: 'Reembolso' },
         { id: 'supplierCoId', title: 'Nombre Proveedor' },
         { id: 'refundCo', title: 'Id Proveedor' },
-        { id: 'ivaCalculated', title: 'Iva Calculado' },
+        { id: 'ivaValueCalculated', title: 'Valor Iva' },
+        { id: 'ivaCalculated', title: '% Iva' },
+        { id: 'ipoconsumoValueCalculated', title: 'Valor Ipoconsumo' },
+        { id: 'ipoconsumoCalculated', title: '% Ipoconsumo' },
 
         { id: 'documentIdGenerated', title: 'Id pago' },
         { id: 'createdAtGenerated', title: 'Fecha de pago' },
