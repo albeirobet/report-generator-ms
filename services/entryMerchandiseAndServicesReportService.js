@@ -2629,40 +2629,40 @@ exports.sendReportCSV = async (req, res) => {
           id: 'creditAmountCompanyCurrency',
           title: 'Importe en haber en moneda de empresa'
         },
-        {
-          id: 'entryMerchandiseIdGenerated',
-          title: 'Id Entrada de Mercancias'
-        },
-        {
-          id: 'entryMerchandiseStateGenerated',
-          title: 'Estado Entrada de Mercancias y Servicios'
-        },
-        { id: 'purchaseOrderIdGenerated', title: 'Id pedido de compra' },
-        { id: 'requestedAmountGenerated', title: 'Cantidad Solicitada' },
-        {
-          id: 'netPriceCompanyCurrencyGenerated',
-          title: 'Precio Neto en moneda de la empresa'
-        },
-        { id: 'deliveredQuantityGenerated', title: 'Cantidad Entregada' },
-        { id: 'deliveredValueGenerated', title: 'Valor Entregado' },
-        {
-          id: 'deliveredValueCompanyCurrencyGenerated',
-          title: 'Valor entregado en Moneda de la Empresa'
-        },
-        { id: 'invoicedAmountGenerated', title: 'Cantidad Facturada' },
-        { id: 'invoicedValueGenerated', title: 'Valor Facturado' },
-        {
-          id: 'invoicedValueCompanyCurrencyGenerated',
-          title: 'Valor Facturado en Moneda de la Empresa'
-        },
-        {
-          id: 'balanceQuantityEntryMerchandiseQuantitiesGenerated',
-          title: 'Saldo de entrada de mercancias y servicios en cantidades'
-        },
-        {
-          id: 'balanceQuantityEntryMerchandiseCurrenciesGenerated',
-          title: 'Saldo de entrada de mercancias y servicios en pesos'
-        },
+        // {
+        //   id: 'entryMerchandiseIdGenerated',
+        //   title: 'Id Entrada de Mercancias'
+        // },
+        // {
+        //   id: 'entryMerchandiseStateGenerated',
+        //   title: 'Estado Entrada de Mercancias y Servicios'
+        // },
+        // { id: 'purchaseOrderIdGenerated', title: 'Id pedido de compra' },
+        // { id: 'requestedAmountGenerated', title: 'Cantidad Solicitada' },
+        // {
+        //   id: 'netPriceCompanyCurrencyGenerated',
+        //   title: 'Precio Neto en moneda de la empresa'
+        // },
+        // { id: 'deliveredQuantityGenerated', title: 'Cantidad Entregada' },
+        // { id: 'deliveredValueGenerated', title: 'Valor Entregado' },
+        // {
+        //   id: 'deliveredValueCompanyCurrencyGenerated',
+        //   title: 'Valor entregado en Moneda de la Empresa'
+        // },
+        // { id: 'invoicedAmountGenerated', title: 'Cantidad Facturada' },
+        // { id: 'invoicedValueGenerated', title: 'Valor Facturado' },
+        // {
+        //   id: 'invoicedValueCompanyCurrencyGenerated',
+        //   title: 'Valor Facturado en Moneda de la Empresa'
+        // },
+        // {
+        //   id: 'balanceQuantityEntryMerchandiseQuantitiesGenerated',
+        //   title: 'Saldo de entrada de mercancias y servicios en cantidades'
+        // },
+        // {
+        //   id: 'balanceQuantityEntryMerchandiseCurrenciesGenerated',
+        //   title: 'Saldo de entrada de mercancias y servicios en pesos'
+        // },
         { id: 'invoiceIdGenerated', title: 'Id Factura' },
         { id: 'supplierIdGenerated', title: 'Id proveedor' },
         { id: 'supplierNameGenerated', title: 'Nombre proveedor' },
