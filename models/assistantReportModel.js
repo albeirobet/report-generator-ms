@@ -57,6 +57,10 @@ const assistanReportSchema = new mongoose.Schema({
     type: String,
     uppercase: true
   },
+  originalPosition: {
+    type: String,
+    uppercase: true
+  },
   counter: {
     type: String,
     uppercase: true
