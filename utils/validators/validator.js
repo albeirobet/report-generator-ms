@@ -79,6 +79,9 @@ exports.dateFromString = date => {
 };
 
 exports.stringFromDate = date => {
+  if (date === null) {
+    return null;
+  }
   const currentDatetime = new Date(date);
   if (currentDatetime.getDate()) {
     if (currentDatetime.getDate()) {

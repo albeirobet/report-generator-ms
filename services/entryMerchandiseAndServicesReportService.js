@@ -857,788 +857,788 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
 };
 
 // =========== Function to count records of reports
-exports.generateInMemory = async (req, res) => {
-  try {
-    const objectReportResume = {};
-    objectReportResume.code = 'EMEGR';
-    objectReportResume.startDate = new Date();
+// exports.generateInMemory = async (req, res) => {
+//   try {
+//     const objectReportResume = {};
+//     objectReportResume.code = 'EMEGR';
+//     objectReportResume.startDate = new Date();
 
-    console.log('>>>>>>>> TIEMPO DE INICIO');
-    console.log(new Date());
-    const userInfo = await userService.getUserInfo(req, res);
-    objectReportResume.companyId = userInfo.companyId;
-    objectReportResume.generatorUserId = userInfo._id;
-    const reportInfo = await ReportCreator.find({
-      companyId: userInfo.companyId,
-      code: objectReportResume.code
-    }).lean();
-    if (reportInfo.length === 0) {
-      throw new ServiceException(
-        commonErrors.E_COMMON_01,
-        new ApiError(
-          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_06}`,
-          `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_06}`,
-          'E_REPORT_GENERATOR_MS_06',
-          httpCodes.BAD_REQUEST
-        )
-      );
-    }
+//     console.log('>>>>>>>> TIEMPO DE INICIO');
+//     console.log(new Date());
+//     const userInfo = await userService.getUserInfo(req, res);
+//     objectReportResume.companyId = userInfo.companyId;
+//     objectReportResume.generatorUserId = userInfo._id;
+//     const reportInfo = await ReportCreator.find({
+//       companyId: userInfo.companyId,
+//       code: objectReportResume.code
+//     }).lean();
+//     if (reportInfo.length === 0) {
+//       throw new ServiceException(
+//         commonErrors.E_COMMON_01,
+//         new ApiError(
+//           `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_06}`,
+//           `${reportGeneratorMessages.E_REPORT_GENERATOR_MS_06}`,
+//           'E_REPORT_GENERATOR_MS_06',
+//           httpCodes.BAD_REQUEST
+//         )
+//       );
+//     }
 
-    // Limpiando reporte anterior
-    await EntryMerchandiseAndServicesReportReport.collection.deleteMany({
-      companyId: userInfo.companyId
-    });
-    const arrayGenerated = [];
-    let objectGenerated = {};
+//     // Limpiando reporte anterior
+//     await EntryMerchandiseAndServicesReportReport.collection.deleteMany({
+//       companyId: userInfo.companyId
+//     });
+//     const arrayGenerated = [];
+//     let objectGenerated = {};
 
-    let arrayInvoicePaymentGenerated = [];
-    let objectInvoicePaymentGenerated = {};
+//     let arrayInvoicePaymentGenerated = [];
+//     let objectInvoicePaymentGenerated = {};
 
-    console.log(' =========  Cargando en memoria MasterReport');
-    let masterReportData = await MasterReport.find({
-      companyId: userInfo.companyId
-      // ,      originalDocumentId: { $in: ['1681'] }
-    }).lean();
+//     console.log(' =========  Cargando en memoria MasterReport');
+//     let masterReportData = await MasterReport.find({
+//       companyId: userInfo.companyId
+//       // ,      originalDocumentId: { $in: ['1681'] }
+//     }).lean();
 
-    console.log(' =========  Cargando en memoria EntryMerchandiseExtra');
-    let entryMerchandiseExtraDataMemory = await EntryMerchandiseExtra.find({
-      companyId: userInfo.companyId
-    })
-      .select({
-        purchaseOrderId: 1,
-        entryMerchandiseState: 1,
-        entryMerchandiseId: 1
-      })
-      .lean();
+//     console.log(' =========  Cargando en memoria EntryMerchandiseExtra');
+//     let entryMerchandiseExtraDataMemory = await EntryMerchandiseExtra.find({
+//       companyId: userInfo.companyId
+//     })
+//       .select({
+//         purchaseOrderId: 1,
+//         entryMerchandiseState: 1,
+//         entryMerchandiseId: 1
+//       })
+//       .lean();
 
-    console.log(' =========  Cargando en memoria PurchaseOrderTracking');
-    let purchaseOrderTrackingDataMemory = await PurchaseOrderTracking.find({
-      companyId: userInfo.companyId
-    })
-      .select({
-        requestedAmount: 1,
-        netPriceCompanyCurrency: 1,
-        deliveredQuantity: 1,
-        deliveredValue: 1,
-        deliveredValueCompanyCurrency: 1,
-        invoicedAmount: 1,
-        invoicedValue: 1,
-        invoicedValueCompanyCurrency: 1,
-        purchaseOrderId: 1
-      })
-      .lean();
+//     console.log(' =========  Cargando en memoria PurchaseOrderTracking');
+//     let purchaseOrderTrackingDataMemory = await PurchaseOrderTracking.find({
+//       companyId: userInfo.companyId
+//     })
+//       .select({
+//         requestedAmount: 1,
+//         netPriceCompanyCurrency: 1,
+//         deliveredQuantity: 1,
+//         deliveredValue: 1,
+//         deliveredValueCompanyCurrency: 1,
+//         invoicedAmount: 1,
+//         invoicedValue: 1,
+//         invoicedValueCompanyCurrency: 1,
+//         purchaseOrderId: 1
+//       })
+//       .lean();
 
-    console.log(' =========  Cargando en memoria AssistantReport');
-    let assistantReportDataEMMemory = await AssistantReport.find({
-      companyId: userInfo.companyId
-    })
-      .select({
-        invoiceId: 1,
-        supplierId: 1,
-        supplierName: 1,
-        externalDocumentId: 1,
-        entryMerchandiseId: 1,
-        grossAmountCompanyCurrency: 1,
-        netAmountCompanyCurrency: 1,
-        quantity: 1
-      })
-      .lean();
+//     console.log(' =========  Cargando en memoria AssistantReport');
+//     let assistantReportDataEMMemory = await AssistantReport.find({
+//       companyId: userInfo.companyId
+//     })
+//       .select({
+//         invoiceId: 1,
+//         supplierId: 1,
+//         supplierName: 1,
+//         externalDocumentId: 1,
+//         entryMerchandiseId: 1,
+//         grossAmountCompanyCurrency: 1,
+//         netAmountCompanyCurrency: 1,
+//         quantity: 1
+//       })
+//       .lean();
 
-    console.log(' =========  Cargando en memoria PaymentExtra');
-    let paymentExtraDataMemory = await PaymentExtra.find({
-      companyId: userInfo.companyId
-    })
-      .select({
-        originalDocumentId: 1,
-        documentId: 1
-      })
-      .lean();
+//     console.log(' =========  Cargando en memoria PaymentExtra');
+//     let paymentExtraDataMemory = await PaymentExtra.find({
+//       companyId: userInfo.companyId
+//     })
+//       .select({
+//         originalDocumentId: 1,
+//         documentId: 1
+//       })
+//       .lean();
 
-    console.log(' =========  Cargando en memoria PaymentOriginal');
-    let paymentOriginalDataMemory = await PaymentOriginal.find({
-      companyId: userInfo.companyId
-    })
-      .select({
-        documentId: 1,
-        createdAt: 1,
-        pyamentMethod: 1,
-        businessPartnerName: 1,
-        paymentAmount: 1
-      })
-      .lean();
+//     console.log(' =========  Cargando en memoria PaymentOriginal');
+//     let paymentOriginalDataMemory = await PaymentOriginal.find({
+//       companyId: userInfo.companyId
+//     })
+//       .select({
+//         documentId: 1,
+//         createdAt: 1,
+//         pyamentMethod: 1,
+//         businessPartnerName: 1,
+//         paymentAmount: 1
+//       })
+//       .lean();
 
-    // Actualizando información encabezado reporte
-    objectReportResume.state = 'processing';
-    objectReportResume.percentageCompletition = 33;
-    objectReportResume.counterRows = 0;
-    objectReportResume.message = 'Procesando Información';
-    objectReportResume.endDate = null;
-    await reportFunctionsUpdate.updateReportCreator(objectReportResume);
+//     // Actualizando información encabezado reporte
+//     objectReportResume.state = 'processing';
+//     objectReportResume.percentageCompletition = 33;
+//     objectReportResume.counterRows = 0;
+//     objectReportResume.message = 'Procesando Información';
+//     objectReportResume.endDate = null;
+//     await reportFunctionsUpdate.updateReportCreator(objectReportResume);
 
-    // ===== ITERACION SOBRE MASTER REPORT ORIGINAL
-    // ===== Paso 1.
-    let temporaloriginalDocumentId = null;
-    console.log('Cargada información Maestra en Memoria');
-    let contador = 0;
-    for await (const reportData of masterReportData) {
-      objectGenerated = {};
-      contador += 1;
-      if (contador % 1000 === 0) {
-        console.log(
-          `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId}`
-        );
-      }
-      objectGenerated.seniorAccountantId = reportData.seniorAccountantId;
-      objectGenerated.seniorAccountantName = reportData.seniorAccountantName;
-      objectGenerated.postingDate = reportData.postingDate;
-      objectGenerated.accountingSeat = reportData.accountingSeat;
-      objectGenerated.externalReferenceId = reportData.externalReferenceId;
-      objectGenerated.originalDocumentId = reportData.originalDocumentId;
-      objectGenerated.accountingSeatType = reportData.accountingSeatType;
-      objectGenerated.accountingSeatAnnulled =
-        reportData.accountingSeatAnnulled;
-      objectGenerated.originalDocumentAnnulledId =
-        reportData.originalDocumentAnnulledId;
-      objectGenerated.accountingSeatAnnulment =
-        reportData.accountingSeatAnnulment;
-      objectGenerated.extraOriginalDocumentAnulledId =
-        reportData.extraOriginalDocumentAnulledId;
-      objectGenerated.extraOriginalDocumentId =
-        reportData.extraOriginalDocumentId;
-      objectGenerated.originalDocumentPosition =
-        reportData.originalDocumentPosition;
-      objectGenerated.debtAmountCompanyCurrency =
-        reportData.debtAmountCompanyCurrency;
-      objectGenerated.creditAmountCompanyCurrency =
-        reportData.creditAmountCompanyCurrency;
-      objectGenerated.companyId = userInfo.companyId;
-      objectGenerated.userId = userInfo._id;
+//     // ===== ITERACION SOBRE MASTER REPORT ORIGINAL
+//     // ===== Paso 1.
+//     let temporaloriginalDocumentId = null;
+//     console.log('Cargada información Maestra en Memoria');
+//     let contador = 0;
+//     for await (const reportData of masterReportData) {
+//       objectGenerated = {};
+//       contador += 1;
+//       if (contador % 1000 === 0) {
+//         console.log(
+//           `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId}`
+//         );
+//       }
+//       objectGenerated.seniorAccountantId = reportData.seniorAccountantId;
+//       objectGenerated.seniorAccountantName = reportData.seniorAccountantName;
+//       objectGenerated.postingDate = reportData.postingDate;
+//       objectGenerated.accountingSeat = reportData.accountingSeat;
+//       objectGenerated.externalReferenceId = reportData.externalReferenceId;
+//       objectGenerated.originalDocumentId = reportData.originalDocumentId;
+//       objectGenerated.accountingSeatType = reportData.accountingSeatType;
+//       objectGenerated.accountingSeatAnnulled =
+//         reportData.accountingSeatAnnulled;
+//       objectGenerated.originalDocumentAnnulledId =
+//         reportData.originalDocumentAnnulledId;
+//       objectGenerated.accountingSeatAnnulment =
+//         reportData.accountingSeatAnnulment;
+//       objectGenerated.extraOriginalDocumentAnulledId =
+//         reportData.extraOriginalDocumentAnulledId;
+//       objectGenerated.extraOriginalDocumentId =
+//         reportData.extraOriginalDocumentId;
+//       objectGenerated.originalDocumentPosition =
+//         reportData.originalDocumentPosition;
+//       objectGenerated.debtAmountCompanyCurrency =
+//         reportData.debtAmountCompanyCurrency;
+//       objectGenerated.creditAmountCompanyCurrency =
+//         reportData.creditAmountCompanyCurrency;
+//       objectGenerated.companyId = userInfo.companyId;
+//       objectGenerated.userId = userInfo._id;
 
-      // Comprobamos si no es la primera iteracion para no volver a hacer el proceso
-      if (temporaloriginalDocumentId === null) {
-        temporaloriginalDocumentId = reportData.originalDocumentId;
-      } else if (temporaloriginalDocumentId === reportData.originalDocumentId) {
-        // console.log('Es el mismo no voy a volver a buscar data');
-        //console.log(objectGenerated);
-        //console.table(arrayInvoicePaymentGenerated);
+//       // Comprobamos si no es la primera iteracion para no volver a hacer el proceso
+//       if (temporaloriginalDocumentId === null) {
+//         temporaloriginalDocumentId = reportData.originalDocumentId;
+//       } else if (temporaloriginalDocumentId === reportData.originalDocumentId) {
+//         // console.log('Es el mismo no voy a volver a buscar data');
+//         //console.log(objectGenerated);
+//         //console.table(arrayInvoicePaymentGenerated);
 
-        if (
-          arrayInvoicePaymentGenerated &&
-          arrayInvoicePaymentGenerated.length > 0
-        ) {
-          let count = 0;
-          arrayInvoicePaymentGenerated.forEach(elementInvoicePayment => {
-            let objectGeneratedToSave = { ...objectGenerated };
-            if (count > 0) {
-              objectGeneratedToSave.debtAmountCompanyCurrency = 0;
-              objectGeneratedToSave.creditAmountCompanyCurrency = 0;
+//         if (
+//           arrayInvoicePaymentGenerated &&
+//           arrayInvoicePaymentGenerated.length > 0
+//         ) {
+//           let count = 0;
+//           arrayInvoicePaymentGenerated.forEach(elementInvoicePayment => {
+//             let objectGeneratedToSave = { ...objectGenerated };
+//             if (count > 0) {
+//               objectGeneratedToSave.debtAmountCompanyCurrency = 0;
+//               objectGeneratedToSave.creditAmountCompanyCurrency = 0;
 
-              objectGeneratedToSave.requestedAmountGenerated = 0;
-              objectGeneratedToSave.netPriceCompanyCurrencyGenerated = 0;
-              objectGeneratedToSave.deliveredQuantityGenerated = 0;
-              objectGeneratedToSave.deliveredValueGenerated = 0;
-              objectGeneratedToSave.deliveredValueCompanyCurrencyGenerated = 0;
-              objectGeneratedToSave.invoicedAmountGenerated = 0;
-              objectGeneratedToSave.invoicedValueGenerated = 0;
-              objectGeneratedToSave.invoicedValueCompanyCurrencyGenerated = 0;
-              objectGeneratedToSave.balanceQuantityEntryMerchandiseQuantitiesGenerated = 0;
-              objectGeneratedToSave.balanceQuantityEntryMerchandiseCurrenciesGenerated = 0;
-            }
-            objectGeneratedToSave.invoiceIdGenerated =
-              elementInvoicePayment.invoiceIdGenerated;
-            objectGeneratedToSave.supplierIdGenerated =
-              elementInvoicePayment.supplierIdGenerated;
-            objectGeneratedToSave.supplierNameGenerated =
-              elementInvoicePayment.supplierNameGenerated;
-            objectGeneratedToSave.externalDocumentIdGenerated =
-              elementInvoicePayment.externalDocumentIdGenerated;
-            objectGeneratedToSave.entryMerchandiseIdGenerated =
-              elementInvoicePayment.entryMerchandiseIdGenerated;
-            objectGeneratedToSave.grossAmountCompanyCurrencyGenerated =
-              elementInvoicePayment.grossAmountCompanyCurrencyGenerated;
-            objectGeneratedToSave.netAmountCompanyCurrencyGenerated =
-              elementInvoicePayment.netAmountCompanyCurrencyGenerated;
-            objectGeneratedToSave.quantityGenerated =
-              elementInvoicePayment.quantityGenerated;
-            objectGeneratedToSave.documentIdGenerated =
-              elementInvoicePayment.documentIdGenerated;
-            objectGeneratedToSave.createdAtGenerated =
-              elementInvoicePayment.createdAtGenerated;
-            objectGeneratedToSave.pyamentMethodGenerated =
-              elementInvoicePayment.pyamentMethodGenerated;
-            objectGeneratedToSave.businessPartnerNameGenerated =
-              elementInvoicePayment.businessPartnerNameGenerated;
-            objectGeneratedToSave.paymentAmountGenerated =
-              elementInvoicePayment.paymentAmountGenerated;
-            arrayGenerated.push(objectGeneratedToSave);
-            objectGeneratedToSave = {};
-            count += 1;
-          });
-        } else {
-          let objectGeneratedToSave = { ...objectGenerated };
-          arrayGenerated.push(objectGeneratedToSave);
-          objectGeneratedToSave = {};
-        }
+//               objectGeneratedToSave.requestedAmountGenerated = 0;
+//               objectGeneratedToSave.netPriceCompanyCurrencyGenerated = 0;
+//               objectGeneratedToSave.deliveredQuantityGenerated = 0;
+//               objectGeneratedToSave.deliveredValueGenerated = 0;
+//               objectGeneratedToSave.deliveredValueCompanyCurrencyGenerated = 0;
+//               objectGeneratedToSave.invoicedAmountGenerated = 0;
+//               objectGeneratedToSave.invoicedValueGenerated = 0;
+//               objectGeneratedToSave.invoicedValueCompanyCurrencyGenerated = 0;
+//               objectGeneratedToSave.balanceQuantityEntryMerchandiseQuantitiesGenerated = 0;
+//               objectGeneratedToSave.balanceQuantityEntryMerchandiseCurrenciesGenerated = 0;
+//             }
+//             objectGeneratedToSave.invoiceIdGenerated =
+//               elementInvoicePayment.invoiceIdGenerated;
+//             objectGeneratedToSave.supplierIdGenerated =
+//               elementInvoicePayment.supplierIdGenerated;
+//             objectGeneratedToSave.supplierNameGenerated =
+//               elementInvoicePayment.supplierNameGenerated;
+//             objectGeneratedToSave.externalDocumentIdGenerated =
+//               elementInvoicePayment.externalDocumentIdGenerated;
+//             objectGeneratedToSave.entryMerchandiseIdGenerated =
+//               elementInvoicePayment.entryMerchandiseIdGenerated;
+//             objectGeneratedToSave.grossAmountCompanyCurrencyGenerated =
+//               elementInvoicePayment.grossAmountCompanyCurrencyGenerated;
+//             objectGeneratedToSave.netAmountCompanyCurrencyGenerated =
+//               elementInvoicePayment.netAmountCompanyCurrencyGenerated;
+//             objectGeneratedToSave.quantityGenerated =
+//               elementInvoicePayment.quantityGenerated;
+//             objectGeneratedToSave.documentIdGenerated =
+//               elementInvoicePayment.documentIdGenerated;
+//             objectGeneratedToSave.createdAtGenerated =
+//               elementInvoicePayment.createdAtGenerated;
+//             objectGeneratedToSave.pyamentMethodGenerated =
+//               elementInvoicePayment.pyamentMethodGenerated;
+//             objectGeneratedToSave.businessPartnerNameGenerated =
+//               elementInvoicePayment.businessPartnerNameGenerated;
+//             objectGeneratedToSave.paymentAmountGenerated =
+//               elementInvoicePayment.paymentAmountGenerated;
+//             arrayGenerated.push(objectGeneratedToSave);
+//             objectGeneratedToSave = {};
+//             count += 1;
+//           });
+//         } else {
+//           let objectGeneratedToSave = { ...objectGenerated };
+//           arrayGenerated.push(objectGeneratedToSave);
+//           objectGeneratedToSave = {};
+//         }
 
-        continue;
-      } else {
-        // console.log('Pailas debo iterar nuevamente');
-        arrayInvoicePaymentGenerated = [];
-        // console.log('Finalizando insercion primer registro');
-        // objectGenerated = {};
-      }
+//         continue;
+//       } else {
+//         // console.log('Pailas debo iterar nuevamente');
+//         arrayInvoicePaymentGenerated = [];
+//         // console.log('Finalizando insercion primer registro');
+//         // objectGenerated = {};
+//       }
 
-      if (
-        reportData.originalDocumentId &&
-        reportData.originalDocumentId !== '#' &&
-        reportData.originalDocumentId !== ''
-      ) {
-        // ===== Buscar Entrada de mercancias con el id Documento Original
-        const entryMerchandiseExtraData = entryMerchandiseExtraDataMemory.filter(
-          el => el.entryMerchandiseId === reportData.originalDocumentId
-        );
-        // ===== Comprobar si encontró mercancias con el id Documento original proporcionado
-        if (entryMerchandiseExtraData && entryMerchandiseExtraData.length > 0) {
-          // ===== Iteracion sobre la entrada de mercancias
-          for await (const entryMerchandise of entryMerchandiseExtraData) {
-            objectGenerated.entryMerchandiseStateGenerated =
-              entryMerchandise.entryMerchandiseState;
-            objectGenerated.purchaseOrderIdGenerated =
-              entryMerchandise.purchaseOrderId;
+//       if (
+//         reportData.originalDocumentId &&
+//         reportData.originalDocumentId !== '#' &&
+//         reportData.originalDocumentId !== ''
+//       ) {
+//         // ===== Buscar Entrada de mercancias con el id Documento Original
+//         const entryMerchandiseExtraData = entryMerchandiseExtraDataMemory.filter(
+//           el => el.entryMerchandiseId === reportData.originalDocumentId
+//         );
+//         // ===== Comprobar si encontró mercancias con el id Documento original proporcionado
+//         if (entryMerchandiseExtraData && entryMerchandiseExtraData.length > 0) {
+//           // ===== Iteracion sobre la entrada de mercancias
+//           for await (const entryMerchandise of entryMerchandiseExtraData) {
+//             objectGenerated.entryMerchandiseStateGenerated =
+//               entryMerchandise.entryMerchandiseState;
+//             objectGenerated.purchaseOrderIdGenerated =
+//               entryMerchandise.purchaseOrderId;
 
-            // ===== Buscar Serguimiento de Orden de compra
-            // ===== Paso 2.
-            if (
-              entryMerchandise.purchaseOrderId &&
-              reportData.purchaseOrderId !== '#' &&
-              reportData.purchaseOrderId !== ''
-            ) {
-              const purchaseOrderTrackingData = purchaseOrderTrackingDataMemory.filter(
-                el => el.purchaseOrderId === entryMerchandise.purchaseOrderId
-              );
+//             // ===== Buscar Serguimiento de Orden de compra
+//             // ===== Paso 2.
+//             if (
+//               entryMerchandise.purchaseOrderId &&
+//               reportData.purchaseOrderId !== '#' &&
+//               reportData.purchaseOrderId !== ''
+//             ) {
+//               const purchaseOrderTrackingData = purchaseOrderTrackingDataMemory.filter(
+//                 el => el.purchaseOrderId === entryMerchandise.purchaseOrderId
+//               );
 
-              if (
-                purchaseOrderTrackingData &&
-                purchaseOrderTrackingData.length > 0
-              ) {
-                // Iterar sobre el seguimiento de ordenes de Compra
-                for await (const purchaseOrderTracking of purchaseOrderTrackingData) {
-                  objectGenerated.requestedAmountGenerated =
-                    purchaseOrderTracking.requestedAmount;
-                  objectGenerated.netPriceCompanyCurrencyGenerated =
-                    purchaseOrderTracking.netPriceCompanyCurrency;
-                  objectGenerated.deliveredQuantityGenerated =
-                    purchaseOrderTracking.deliveredQuantity;
-                  objectGenerated.deliveredValueGenerated =
-                    purchaseOrderTracking.deliveredValue;
-                  objectGenerated.deliveredValueCompanyCurrencyGenerated =
-                    purchaseOrderTracking.deliveredValueCompanyCurrency;
-                  objectGenerated.invoicedAmountGenerated =
-                    purchaseOrderTracking.invoicedAmount;
-                  objectGenerated.invoicedValueGenerated =
-                    purchaseOrderTracking.invoicedValue;
-                  objectGenerated.invoicedValueCompanyCurrencyGenerated =
-                    purchaseOrderTracking.invoicedValueCompanyCurrency;
+//               if (
+//                 purchaseOrderTrackingData &&
+//                 purchaseOrderTrackingData.length > 0
+//               ) {
+//                 // Iterar sobre el seguimiento de ordenes de Compra
+//                 for await (const purchaseOrderTracking of purchaseOrderTrackingData) {
+//                   objectGenerated.requestedAmountGenerated =
+//                     purchaseOrderTracking.requestedAmount;
+//                   objectGenerated.netPriceCompanyCurrencyGenerated =
+//                     purchaseOrderTracking.netPriceCompanyCurrency;
+//                   objectGenerated.deliveredQuantityGenerated =
+//                     purchaseOrderTracking.deliveredQuantity;
+//                   objectGenerated.deliveredValueGenerated =
+//                     purchaseOrderTracking.deliveredValue;
+//                   objectGenerated.deliveredValueCompanyCurrencyGenerated =
+//                     purchaseOrderTracking.deliveredValueCompanyCurrency;
+//                   objectGenerated.invoicedAmountGenerated =
+//                     purchaseOrderTracking.invoicedAmount;
+//                   objectGenerated.invoicedValueGenerated =
+//                     purchaseOrderTracking.invoicedValue;
+//                   objectGenerated.invoicedValueCompanyCurrencyGenerated =
+//                     purchaseOrderTracking.invoicedValueCompanyCurrency;
 
-                  // ===== Realizamos los calculos sociitados de sumas en cantidades con redondeo a dos decimales
-                  // ===== Paso 3.
-                  let deliveredQuantityNumber = 0;
-                  let invoicedAmountNumber = 0;
-                  let deliveredValueNumber = 0;
-                  let invoicedValueNumber = 0;
+//                   // ===== Realizamos los calculos sociitados de sumas en cantidades con redondeo a dos decimales
+//                   // ===== Paso 3.
+//                   let deliveredQuantityNumber = 0;
+//                   let invoicedAmountNumber = 0;
+//                   let deliveredValueNumber = 0;
+//                   let invoicedValueNumber = 0;
 
-                  if (objectGenerated.deliveredQuantityGenerated) {
-                    deliveredQuantityNumber = parseFloat(
-                      objectGenerated.deliveredQuantityGenerated
-                    );
-                  }
+//                   if (objectGenerated.deliveredQuantityGenerated) {
+//                     deliveredQuantityNumber = parseFloat(
+//                       objectGenerated.deliveredQuantityGenerated
+//                     );
+//                   }
 
-                  if (objectGenerated.invoicedAmountGenerated) {
-                    invoicedAmountNumber = parseFloat(
-                      objectGenerated.invoicedAmountGenerated
-                    );
-                  }
+//                   if (objectGenerated.invoicedAmountGenerated) {
+//                     invoicedAmountNumber = parseFloat(
+//                       objectGenerated.invoicedAmountGenerated
+//                     );
+//                   }
 
-                  if (objectGenerated.deliveredValueGenerated) {
-                    deliveredValueNumber = parseFloat(
-                      objectGenerated.deliveredValueGenerated
-                    );
-                  }
+//                   if (objectGenerated.deliveredValueGenerated) {
+//                     deliveredValueNumber = parseFloat(
+//                       objectGenerated.deliveredValueGenerated
+//                     );
+//                   }
 
-                  if (objectGenerated.invoicedValueGenerated) {
-                    invoicedValueNumber = parseFloat(
-                      objectGenerated.invoicedValueGenerated
-                    );
-                  }
+//                   if (objectGenerated.invoicedValueGenerated) {
+//                     invoicedValueNumber = parseFloat(
+//                       objectGenerated.invoicedValueGenerated
+//                     );
+//                   }
 
-                  if (
-                    !isNaN(deliveredQuantityNumber) &&
-                    !isNaN(invoicedAmountNumber)
-                  ) {
-                    objectGenerated.balanceQuantityEntryMerchandiseQuantitiesGenerated = (
-                      deliveredQuantityNumber - invoicedAmountNumber
-                    ).toFixed(2);
-                  }
+//                   if (
+//                     !isNaN(deliveredQuantityNumber) &&
+//                     !isNaN(invoicedAmountNumber)
+//                   ) {
+//                     objectGenerated.balanceQuantityEntryMerchandiseQuantitiesGenerated = (
+//                       deliveredQuantityNumber - invoicedAmountNumber
+//                     ).toFixed(2);
+//                   }
 
-                  if (
-                    !isNaN(deliveredValueNumber) &&
-                    !isNaN(invoicedValueNumber)
-                  ) {
-                    objectGenerated.balanceQuantityEntryMerchandiseCurrenciesGenerated = (
-                      deliveredValueNumber - invoicedValueNumber
-                    ).toFixed(2);
-                  }
+//                   if (
+//                     !isNaN(deliveredValueNumber) &&
+//                     !isNaN(invoicedValueNumber)
+//                   ) {
+//                     objectGenerated.balanceQuantityEntryMerchandiseCurrenciesGenerated = (
+//                       deliveredValueNumber - invoicedValueNumber
+//                     ).toFixed(2);
+//                   }
 
-                  // ===== Buscar en el Assistant Report para armar información de facturas y pagos
-                  // ===== Paso 4.
+//                   // ===== Buscar en el Assistant Report para armar información de facturas y pagos
+//                   // ===== Paso 4.
 
-                  // ====== Importante, Comprobamos primero si existe el registro por entrada de mercancias, en caso contrario por factura
-                  // ====== CASO A
-                  let assistantReportFull = null;
-                  const assistantReportDataEM = assistantReportDataEMMemory.filter(
-                    el =>
-                      el.entryMerchandiseId === reportData.originalDocumentId
-                  );
+//                   // ====== Importante, Comprobamos primero si existe el registro por entrada de mercancias, en caso contrario por factura
+//                   // ====== CASO A
+//                   let assistantReportFull = null;
+//                   const assistantReportDataEM = assistantReportDataEMMemory.filter(
+//                     el =>
+//                       el.entryMerchandiseId === reportData.originalDocumentId
+//                   );
 
-                  if (
-                    assistantReportDataEM &&
-                    assistantReportDataEM.length > 0
-                  ) {
-                    assistantReportFull = assistantReportDataEM;
-                  } else {
-                    // ====== CASO B
-                    const assistantReportDataF = assistantReportDataEMMemory.filter(
-                      el => el.invoiceId === reportData.originalDocumentId
-                    );
-                    if (
-                      assistantReportDataF &&
-                      assistantReportDataF.length > 0
-                    ) {
-                      assistantReportFull = assistantReportDataF;
-                    }
-                  }
-                  // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
-                  if (assistantReportFull && assistantReportFull.length > 0) {
-                    // Iterar sobre el seguimiento de ordenes de Compra
-                    for await (const assistantReport of assistantReportFull) {
-                      objectInvoicePaymentGenerated.invoiceIdGenerated =
-                        assistantReport.invoiceId;
-                      objectInvoicePaymentGenerated.supplierIdGenerated =
-                        assistantReport.supplierId;
-                      objectInvoicePaymentGenerated.supplierNameGenerated =
-                        assistantReport.supplierName;
-                      objectInvoicePaymentGenerated.externalDocumentIdGenerated =
-                        assistantReport.externalDocumentId;
-                      objectInvoicePaymentGenerated.entryMerchandiseIdGenerated =
-                        assistantReport.entryMerchandiseId;
-                      objectInvoicePaymentGenerated.grossAmountCompanyCurrencyGenerated =
-                        assistantReport.grossAmountCompanyCurrency;
-                      objectInvoicePaymentGenerated.netAmountCompanyCurrencyGenerated =
-                        assistantReport.netAmountCompanyCurrency;
-                      objectInvoicePaymentGenerated.quantityGenerated =
-                        assistantReport.quantity;
+//                   if (
+//                     assistantReportDataEM &&
+//                     assistantReportDataEM.length > 0
+//                   ) {
+//                     assistantReportFull = assistantReportDataEM;
+//                   } else {
+//                     // ====== CASO B
+//                     const assistantReportDataF = assistantReportDataEMMemory.filter(
+//                       el => el.invoiceId === reportData.originalDocumentId
+//                     );
+//                     if (
+//                       assistantReportDataF &&
+//                       assistantReportDataF.length > 0
+//                     ) {
+//                       assistantReportFull = assistantReportDataF;
+//                     }
+//                   }
+//                   // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
+//                   if (assistantReportFull && assistantReportFull.length > 0) {
+//                     // Iterar sobre el seguimiento de ordenes de Compra
+//                     for await (const assistantReport of assistantReportFull) {
+//                       objectInvoicePaymentGenerated.invoiceIdGenerated =
+//                         assistantReport.invoiceId;
+//                       objectInvoicePaymentGenerated.supplierIdGenerated =
+//                         assistantReport.supplierId;
+//                       objectInvoicePaymentGenerated.supplierNameGenerated =
+//                         assistantReport.supplierName;
+//                       objectInvoicePaymentGenerated.externalDocumentIdGenerated =
+//                         assistantReport.externalDocumentId;
+//                       objectInvoicePaymentGenerated.entryMerchandiseIdGenerated =
+//                         assistantReport.entryMerchandiseId;
+//                       objectInvoicePaymentGenerated.grossAmountCompanyCurrencyGenerated =
+//                         assistantReport.grossAmountCompanyCurrency;
+//                       objectInvoicePaymentGenerated.netAmountCompanyCurrencyGenerated =
+//                         assistantReport.netAmountCompanyCurrency;
+//                       objectInvoicePaymentGenerated.quantityGenerated =
+//                         assistantReport.quantity;
 
-                      // Buscar el Id de la factura en PaymentExtras
-                      if (
-                        assistantReport.invoiceId &&
-                        assistantReport.invoiceId !== '#' &&
-                        assistantReport.invoiceId !== ''
-                      ) {
-                        const paymentExtraData = paymentExtraDataMemory.filter(
-                          el => el.documentId === assistantReport.invoiceId
-                        );
+//                       // Buscar el Id de la factura en PaymentExtras
+//                       if (
+//                         assistantReport.invoiceId &&
+//                         assistantReport.invoiceId !== '#' &&
+//                         assistantReport.invoiceId !== ''
+//                       ) {
+//                         const paymentExtraData = paymentExtraDataMemory.filter(
+//                           el => el.documentId === assistantReport.invoiceId
+//                         );
 
-                        // Iterar sobre los pagos que están asociados a esta factura
-                        for await (const paymentExtra of paymentExtraData) {
-                          // Obtener la información faltante del pago para completar la tabla
+//                         // Iterar sobre los pagos que están asociados a esta factura
+//                         for await (const paymentExtra of paymentExtraData) {
+//                           // Obtener la información faltante del pago para completar la tabla
 
-                          if (
-                            paymentExtra.originalDocumentId &&
-                            paymentExtra.originalDocumentId !== '#' &&
-                            paymentExtra.originalDocumentId !== ''
-                          ) {
-                            const paymentOriginalData = paymentOriginalDataMemory.filter(
-                              el =>
-                                el.documentId ===
-                                paymentExtra.originalDocumentId
-                            );
-                            // Iterar sobre la información completa del pago
-                            if (
-                              paymentOriginalData &&
-                              paymentOriginalData.length > 0
-                            ) {
-                              for await (const paymentOriginal of paymentOriginalData) {
-                                if (
-                                  paymentOriginal.businessPartnerName ===
-                                  assistantReport.supplierName
-                                ) {
-                                  objectInvoicePaymentGenerated.documentIdGenerated =
-                                    paymentOriginal.documentId;
-                                  objectInvoicePaymentGenerated.createdAtGenerated =
-                                    paymentOriginal.createdAt;
-                                  objectInvoicePaymentGenerated.pyamentMethodGenerated =
-                                    paymentOriginal.pyamentMethod;
-                                  objectInvoicePaymentGenerated.businessPartnerNameGenerated =
-                                    paymentOriginal.businessPartnerName;
-                                  objectInvoicePaymentGenerated.paymentAmountGenerated =
-                                    paymentOriginal.paymentAmount;
-                                  break;
-                                }
-                              }
-                            }
-                          }
-                        }
-                        arrayInvoicePaymentGenerated.push(
-                          objectInvoicePaymentGenerated
-                        );
-                        objectInvoicePaymentGenerated = {};
-                      }
-                    }
-                  }
-                  break;
-                }
-              } else {
-                //console.log('No encontré seguimiento ');
-                //  =============================================================
-                //  ================== IMPORTANTE ES UNA VARIANTE DEL CASO 4 Y ES COPIA DEL CODIGO ANTERIOR
+//                           if (
+//                             paymentExtra.originalDocumentId &&
+//                             paymentExtra.originalDocumentId !== '#' &&
+//                             paymentExtra.originalDocumentId !== ''
+//                           ) {
+//                             const paymentOriginalData = paymentOriginalDataMemory.filter(
+//                               el =>
+//                                 el.documentId ===
+//                                 paymentExtra.originalDocumentId
+//                             );
+//                             // Iterar sobre la información completa del pago
+//                             if (
+//                               paymentOriginalData &&
+//                               paymentOriginalData.length > 0
+//                             ) {
+//                               for await (const paymentOriginal of paymentOriginalData) {
+//                                 if (
+//                                   paymentOriginal.businessPartnerName ===
+//                                   assistantReport.supplierName
+//                                 ) {
+//                                   objectInvoicePaymentGenerated.documentIdGenerated =
+//                                     paymentOriginal.documentId;
+//                                   objectInvoicePaymentGenerated.createdAtGenerated =
+//                                     paymentOriginal.createdAt;
+//                                   objectInvoicePaymentGenerated.pyamentMethodGenerated =
+//                                     paymentOriginal.pyamentMethod;
+//                                   objectInvoicePaymentGenerated.businessPartnerNameGenerated =
+//                                     paymentOriginal.businessPartnerName;
+//                                   objectInvoicePaymentGenerated.paymentAmountGenerated =
+//                                     paymentOriginal.paymentAmount;
+//                                   break;
+//                                 }
+//                               }
+//                             }
+//                           }
+//                         }
+//                         arrayInvoicePaymentGenerated.push(
+//                           objectInvoicePaymentGenerated
+//                         );
+//                         objectInvoicePaymentGenerated = {};
+//                       }
+//                     }
+//                   }
+//                   break;
+//                 }
+//               } else {
+//                 //console.log('No encontré seguimiento ');
+//                 //  =============================================================
+//                 //  ================== IMPORTANTE ES UNA VARIANTE DEL CASO 4 Y ES COPIA DEL CODIGO ANTERIOR
 
-                // ===== Buscar en el Assistant Report para armar información de facturas y pagos
-                // ===== Paso 4.
+//                 // ===== Buscar en el Assistant Report para armar información de facturas y pagos
+//                 // ===== Paso 4.
 
-                // ====== Importante, Comprobamos primero si existe el registro por entrada de mercancias, en caso contrario por factura
-                // ====== CASO A
-                let assistantReportFull = null;
-                const assistantReportDataEM = assistantReportDataEMMemory.filter(
-                  el => el.entryMerchandiseId === reportData.originalDocumentId
-                );
-                if (assistantReportDataEM && assistantReportDataEM.length > 0) {
-                  assistantReportFull = assistantReportDataEM;
-                } else {
-                  // ====== CASO B
-                  const assistantReportDataF = assistantReportDataEMMemory.filter(
-                    el => el.invoiceId === reportData.originalDocumentId
-                  );
-                  if (assistantReportDataF && assistantReportDataF.length > 0) {
-                    assistantReportFull = assistantReportDataF;
-                  }
-                }
-                // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
-                if (assistantReportFull && assistantReportFull.length > 0) {
-                  // Iterar sobre el seguimiento de ordenes de Compra
-                  for await (const assistantReport of assistantReportFull) {
-                    objectInvoicePaymentGenerated.invoiceIdGenerated =
-                      assistantReport.invoiceId;
-                    objectInvoicePaymentGenerated.supplierIdGenerated =
-                      assistantReport.supplierId;
-                    objectInvoicePaymentGenerated.supplierNameGenerated =
-                      assistantReport.supplierName;
-                    objectInvoicePaymentGenerated.externalDocumentIdGenerated =
-                      assistantReport.externalDocumentId;
-                    objectInvoicePaymentGenerated.entryMerchandiseIdGenerated =
-                      assistantReport.entryMerchandiseId;
-                    objectInvoicePaymentGenerated.grossAmountCompanyCurrencyGenerated =
-                      assistantReport.grossAmountCompanyCurrency;
-                    objectInvoicePaymentGenerated.netAmountCompanyCurrencyGenerated =
-                      assistantReport.netAmountCompanyCurrency;
-                    objectInvoicePaymentGenerated.quantityGenerated =
-                      assistantReport.quantity;
+//                 // ====== Importante, Comprobamos primero si existe el registro por entrada de mercancias, en caso contrario por factura
+//                 // ====== CASO A
+//                 let assistantReportFull = null;
+//                 const assistantReportDataEM = assistantReportDataEMMemory.filter(
+//                   el => el.entryMerchandiseId === reportData.originalDocumentId
+//                 );
+//                 if (assistantReportDataEM && assistantReportDataEM.length > 0) {
+//                   assistantReportFull = assistantReportDataEM;
+//                 } else {
+//                   // ====== CASO B
+//                   const assistantReportDataF = assistantReportDataEMMemory.filter(
+//                     el => el.invoiceId === reportData.originalDocumentId
+//                   );
+//                   if (assistantReportDataF && assistantReportDataF.length > 0) {
+//                     assistantReportFull = assistantReportDataF;
+//                   }
+//                 }
+//                 // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
+//                 if (assistantReportFull && assistantReportFull.length > 0) {
+//                   // Iterar sobre el seguimiento de ordenes de Compra
+//                   for await (const assistantReport of assistantReportFull) {
+//                     objectInvoicePaymentGenerated.invoiceIdGenerated =
+//                       assistantReport.invoiceId;
+//                     objectInvoicePaymentGenerated.supplierIdGenerated =
+//                       assistantReport.supplierId;
+//                     objectInvoicePaymentGenerated.supplierNameGenerated =
+//                       assistantReport.supplierName;
+//                     objectInvoicePaymentGenerated.externalDocumentIdGenerated =
+//                       assistantReport.externalDocumentId;
+//                     objectInvoicePaymentGenerated.entryMerchandiseIdGenerated =
+//                       assistantReport.entryMerchandiseId;
+//                     objectInvoicePaymentGenerated.grossAmountCompanyCurrencyGenerated =
+//                       assistantReport.grossAmountCompanyCurrency;
+//                     objectInvoicePaymentGenerated.netAmountCompanyCurrencyGenerated =
+//                       assistantReport.netAmountCompanyCurrency;
+//                     objectInvoicePaymentGenerated.quantityGenerated =
+//                       assistantReport.quantity;
 
-                    // Buscar el Id de la factura en PaymentExtras
-                    if (
-                      assistantReport.invoiceId &&
-                      assistantReport.invoiceId !== '#' &&
-                      assistantReport.invoiceId !== ''
-                    ) {
-                      const paymentExtraData = paymentExtraDataMemory.filter(
-                        el => el.documentId === assistantReport.invoiceId
-                      );
+//                     // Buscar el Id de la factura en PaymentExtras
+//                     if (
+//                       assistantReport.invoiceId &&
+//                       assistantReport.invoiceId !== '#' &&
+//                       assistantReport.invoiceId !== ''
+//                     ) {
+//                       const paymentExtraData = paymentExtraDataMemory.filter(
+//                         el => el.documentId === assistantReport.invoiceId
+//                       );
 
-                      // Iterar sobre los pagos que están asociados a esta factura
-                      for await (const paymentExtra of paymentExtraData) {
-                        // Obtener la información faltante del pago para completar la tabla
+//                       // Iterar sobre los pagos que están asociados a esta factura
+//                       for await (const paymentExtra of paymentExtraData) {
+//                         // Obtener la información faltante del pago para completar la tabla
 
-                        if (
-                          paymentExtra.originalDocumentId &&
-                          paymentExtra.originalDocumentId !== '#' &&
-                          paymentExtra.originalDocumentId !== ''
-                        ) {
-                          const paymentOriginalData = paymentOriginalDataMemory.filter(
-                            el =>
-                              el.documentId === paymentExtra.originalDocumentId
-                          );
-                          // Iterar sobre la información completa del pago
-                          if (
-                            paymentOriginalData &&
-                            paymentOriginalData.length > 0
-                          ) {
-                            for await (const paymentOriginal of paymentOriginalData) {
-                              if (
-                                paymentOriginal.businessPartnerName ===
-                                assistantReport.supplierName
-                              ) {
-                                objectInvoicePaymentGenerated.documentIdGenerated =
-                                  paymentOriginal.documentId;
-                                objectInvoicePaymentGenerated.createdAtGenerated =
-                                  paymentOriginal.createdAt;
-                                objectInvoicePaymentGenerated.pyamentMethodGenerated =
-                                  paymentOriginal.pyamentMethod;
-                                objectInvoicePaymentGenerated.businessPartnerNameGenerated =
-                                  paymentOriginal.businessPartnerName;
-                                objectInvoicePaymentGenerated.paymentAmountGenerated =
-                                  paymentOriginal.paymentAmount;
-                                break;
-                              }
-                            }
-                          }
-                        }
-                      }
-                      arrayInvoicePaymentGenerated.push(
-                        objectInvoicePaymentGenerated
-                      );
-                      objectInvoicePaymentGenerated = {};
-                    }
-                  }
-                }
-                // ================================================================
-              }
-            }
-          }
-        } else {
-          //  =============================================================
-          //  ================== IMPORTANTE ES UNA VARIANTE DEL CASO 4 Y ES COPIA DEL CODIGO ANTERIOR
+//                         if (
+//                           paymentExtra.originalDocumentId &&
+//                           paymentExtra.originalDocumentId !== '#' &&
+//                           paymentExtra.originalDocumentId !== ''
+//                         ) {
+//                           const paymentOriginalData = paymentOriginalDataMemory.filter(
+//                             el =>
+//                               el.documentId === paymentExtra.originalDocumentId
+//                           );
+//                           // Iterar sobre la información completa del pago
+//                           if (
+//                             paymentOriginalData &&
+//                             paymentOriginalData.length > 0
+//                           ) {
+//                             for await (const paymentOriginal of paymentOriginalData) {
+//                               if (
+//                                 paymentOriginal.businessPartnerName ===
+//                                 assistantReport.supplierName
+//                               ) {
+//                                 objectInvoicePaymentGenerated.documentIdGenerated =
+//                                   paymentOriginal.documentId;
+//                                 objectInvoicePaymentGenerated.createdAtGenerated =
+//                                   paymentOriginal.createdAt;
+//                                 objectInvoicePaymentGenerated.pyamentMethodGenerated =
+//                                   paymentOriginal.pyamentMethod;
+//                                 objectInvoicePaymentGenerated.businessPartnerNameGenerated =
+//                                   paymentOriginal.businessPartnerName;
+//                                 objectInvoicePaymentGenerated.paymentAmountGenerated =
+//                                   paymentOriginal.paymentAmount;
+//                                 break;
+//                               }
+//                             }
+//                           }
+//                         }
+//                       }
+//                       arrayInvoicePaymentGenerated.push(
+//                         objectInvoicePaymentGenerated
+//                       );
+//                       objectInvoicePaymentGenerated = {};
+//                     }
+//                   }
+//                 }
+//                 // ================================================================
+//               }
+//             }
+//           }
+//         } else {
+//           //  =============================================================
+//           //  ================== IMPORTANTE ES UNA VARIANTE DEL CASO 4 Y ES COPIA DEL CODIGO ANTERIOR
 
-          // ===== Buscar en el Assistant Report para armar información de facturas y pagos
-          // ===== Paso 4.
+//           // ===== Buscar en el Assistant Report para armar información de facturas y pagos
+//           // ===== Paso 4.
 
-          // ====== Importante, Comprobamos primero si existe el registro por entrada de mercancias, en caso contrario por factura
-          // ====== CASO A
-          let assistantReportFull = null;
-          const assistantReportDataEM = assistantReportDataEMMemory.filter(
-            el => el.entryMerchandiseId === reportData.originalDocumentId
-          );
-          if (assistantReportDataEM && assistantReportDataEM.length > 0) {
-            assistantReportFull = assistantReportDataEM;
-          } else {
-            // ====== CASO B
-            const assistantReportDataF = assistantReportDataEMMemory.filter(
-              el => el.invoiceId === reportData.originalDocumentId
-            );
-            if (assistantReportDataF && assistantReportDataF.length > 0) {
-              assistantReportFull = assistantReportDataF;
-            }
-          }
-          // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
-          if (assistantReportFull && assistantReportFull.length > 0) {
-            // Iterar sobre el seguimiento de ordenes de Compra
-            for await (const assistantReport of assistantReportFull) {
-              objectInvoicePaymentGenerated.invoiceIdGenerated =
-                assistantReport.invoiceId;
-              objectInvoicePaymentGenerated.supplierIdGenerated =
-                assistantReport.supplierId;
-              objectInvoicePaymentGenerated.supplierNameGenerated =
-                assistantReport.supplierName;
-              objectInvoicePaymentGenerated.externalDocumentIdGenerated =
-                assistantReport.externalDocumentId;
-              objectInvoicePaymentGenerated.entryMerchandiseIdGenerated =
-                assistantReport.entryMerchandiseId;
-              objectInvoicePaymentGenerated.grossAmountCompanyCurrencyGenerated =
-                assistantReport.grossAmountCompanyCurrency;
-              objectInvoicePaymentGenerated.netAmountCompanyCurrencyGenerated =
-                assistantReport.netAmountCompanyCurrency;
-              objectInvoicePaymentGenerated.quantityGenerated =
-                assistantReport.quantity;
+//           // ====== Importante, Comprobamos primero si existe el registro por entrada de mercancias, en caso contrario por factura
+//           // ====== CASO A
+//           let assistantReportFull = null;
+//           const assistantReportDataEM = assistantReportDataEMMemory.filter(
+//             el => el.entryMerchandiseId === reportData.originalDocumentId
+//           );
+//           if (assistantReportDataEM && assistantReportDataEM.length > 0) {
+//             assistantReportFull = assistantReportDataEM;
+//           } else {
+//             // ====== CASO B
+//             const assistantReportDataF = assistantReportDataEMMemory.filter(
+//               el => el.invoiceId === reportData.originalDocumentId
+//             );
+//             if (assistantReportDataF && assistantReportDataF.length > 0) {
+//               assistantReportFull = assistantReportDataF;
+//             }
+//           }
+//           // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
+//           if (assistantReportFull && assistantReportFull.length > 0) {
+//             // Iterar sobre el seguimiento de ordenes de Compra
+//             for await (const assistantReport of assistantReportFull) {
+//               objectInvoicePaymentGenerated.invoiceIdGenerated =
+//                 assistantReport.invoiceId;
+//               objectInvoicePaymentGenerated.supplierIdGenerated =
+//                 assistantReport.supplierId;
+//               objectInvoicePaymentGenerated.supplierNameGenerated =
+//                 assistantReport.supplierName;
+//               objectInvoicePaymentGenerated.externalDocumentIdGenerated =
+//                 assistantReport.externalDocumentId;
+//               objectInvoicePaymentGenerated.entryMerchandiseIdGenerated =
+//                 assistantReport.entryMerchandiseId;
+//               objectInvoicePaymentGenerated.grossAmountCompanyCurrencyGenerated =
+//                 assistantReport.grossAmountCompanyCurrency;
+//               objectInvoicePaymentGenerated.netAmountCompanyCurrencyGenerated =
+//                 assistantReport.netAmountCompanyCurrency;
+//               objectInvoicePaymentGenerated.quantityGenerated =
+//                 assistantReport.quantity;
 
-              // Buscar el Id de la factura en PaymentExtras
-              if (
-                assistantReport.invoiceId &&
-                assistantReport.invoiceId !== '#' &&
-                assistantReport.invoiceId !== ''
-              ) {
-                const paymentExtraData = paymentExtraDataMemory.filter(
-                  el => el.documentId === assistantReport.invoiceId
-                );
+//               // Buscar el Id de la factura en PaymentExtras
+//               if (
+//                 assistantReport.invoiceId &&
+//                 assistantReport.invoiceId !== '#' &&
+//                 assistantReport.invoiceId !== ''
+//               ) {
+//                 const paymentExtraData = paymentExtraDataMemory.filter(
+//                   el => el.documentId === assistantReport.invoiceId
+//                 );
 
-                // Iterar sobre los pagos que están asociados a esta factura
-                for await (const paymentExtra of paymentExtraData) {
-                  // Obtener la información faltante del pago para completar la tabla
+//                 // Iterar sobre los pagos que están asociados a esta factura
+//                 for await (const paymentExtra of paymentExtraData) {
+//                   // Obtener la información faltante del pago para completar la tabla
 
-                  if (
-                    paymentExtra.originalDocumentId &&
-                    paymentExtra.originalDocumentId !== '#' &&
-                    paymentExtra.originalDocumentId !== ''
-                  ) {
-                    const paymentOriginalData = paymentOriginalDataMemory.filter(
-                      el => el.documentId === paymentExtra.originalDocumentId
-                    );
-                    // Iterar sobre la información completa del pago
-                    if (paymentOriginalData && paymentOriginalData.length > 0) {
-                      for await (const paymentOriginal of paymentOriginalData) {
-                        if (
-                          paymentOriginal.businessPartnerName ===
-                          assistantReport.supplierName
-                        ) {
-                          objectInvoicePaymentGenerated.documentIdGenerated =
-                            paymentOriginal.documentId;
-                          objectInvoicePaymentGenerated.createdAtGenerated =
-                            paymentOriginal.createdAt;
-                          objectInvoicePaymentGenerated.pyamentMethodGenerated =
-                            paymentOriginal.pyamentMethod;
-                          objectInvoicePaymentGenerated.businessPartnerNameGenerated =
-                            paymentOriginal.businessPartnerName;
-                          objectInvoicePaymentGenerated.paymentAmountGenerated =
-                            paymentOriginal.paymentAmount;
-                          break;
-                        }
-                      }
-                    }
-                  }
-                }
-                arrayInvoicePaymentGenerated.push(
-                  objectInvoicePaymentGenerated
-                );
-                objectInvoicePaymentGenerated = {};
-              }
-            }
-          }
-          // ================================================================
-        }
-      }
-      // console.log('Insertando el primer registro');
+//                   if (
+//                     paymentExtra.originalDocumentId &&
+//                     paymentExtra.originalDocumentId !== '#' &&
+//                     paymentExtra.originalDocumentId !== ''
+//                   ) {
+//                     const paymentOriginalData = paymentOriginalDataMemory.filter(
+//                       el => el.documentId === paymentExtra.originalDocumentId
+//                     );
+//                     // Iterar sobre la información completa del pago
+//                     if (paymentOriginalData && paymentOriginalData.length > 0) {
+//                       for await (const paymentOriginal of paymentOriginalData) {
+//                         if (
+//                           paymentOriginal.businessPartnerName ===
+//                           assistantReport.supplierName
+//                         ) {
+//                           objectInvoicePaymentGenerated.documentIdGenerated =
+//                             paymentOriginal.documentId;
+//                           objectInvoicePaymentGenerated.createdAtGenerated =
+//                             paymentOriginal.createdAt;
+//                           objectInvoicePaymentGenerated.pyamentMethodGenerated =
+//                             paymentOriginal.pyamentMethod;
+//                           objectInvoicePaymentGenerated.businessPartnerNameGenerated =
+//                             paymentOriginal.businessPartnerName;
+//                           objectInvoicePaymentGenerated.paymentAmountGenerated =
+//                             paymentOriginal.paymentAmount;
+//                           break;
+//                         }
+//                       }
+//                     }
+//                   }
+//                 }
+//                 arrayInvoicePaymentGenerated.push(
+//                   objectInvoicePaymentGenerated
+//                 );
+//                 objectInvoicePaymentGenerated = {};
+//               }
+//             }
+//           }
+//           // ================================================================
+//         }
+//       }
+//       // console.log('Insertando el primer registro');
 
-      if (
-        arrayInvoicePaymentGenerated &&
-        arrayInvoicePaymentGenerated.length > 0
-      ) {
-        let count = 0;
-        arrayInvoicePaymentGenerated.forEach(elementInvoicePayment => {
-          let objectGeneratedToSave = { ...objectGenerated };
-          if (count > 0) {
-            objectGeneratedToSave.debtAmountCompanyCurrency = 0;
-            objectGeneratedToSave.creditAmountCompanyCurrency = 0;
+//       if (
+//         arrayInvoicePaymentGenerated &&
+//         arrayInvoicePaymentGenerated.length > 0
+//       ) {
+//         let count = 0;
+//         arrayInvoicePaymentGenerated.forEach(elementInvoicePayment => {
+//           let objectGeneratedToSave = { ...objectGenerated };
+//           if (count > 0) {
+//             objectGeneratedToSave.debtAmountCompanyCurrency = 0;
+//             objectGeneratedToSave.creditAmountCompanyCurrency = 0;
 
-            objectGeneratedToSave.requestedAmountGenerated = 0;
-            objectGeneratedToSave.netPriceCompanyCurrencyGenerated = 0;
-            objectGeneratedToSave.deliveredQuantityGenerated = 0;
-            objectGeneratedToSave.deliveredValueGenerated = 0;
-            objectGeneratedToSave.deliveredValueCompanyCurrencyGenerated = 0;
-            objectGeneratedToSave.invoicedAmountGenerated = 0;
-            objectGeneratedToSave.invoicedValueGenerated = 0;
-            objectGeneratedToSave.invoicedValueCompanyCurrencyGenerated = 0;
-            objectGeneratedToSave.balanceQuantityEntryMerchandiseQuantitiesGenerated = 0;
-            objectGeneratedToSave.balanceQuantityEntryMerchandiseCurrenciesGenerated = 0;
-          }
-          objectGeneratedToSave.invoiceIdGenerated =
-            elementInvoicePayment.invoiceIdGenerated;
-          objectGeneratedToSave.supplierIdGenerated =
-            elementInvoicePayment.supplierIdGenerated;
-          objectGeneratedToSave.supplierNameGenerated =
-            elementInvoicePayment.supplierNameGenerated;
-          objectGeneratedToSave.externalDocumentIdGenerated =
-            elementInvoicePayment.externalDocumentIdGenerated;
-          objectGeneratedToSave.entryMerchandiseIdGenerated =
-            elementInvoicePayment.entryMerchandiseIdGenerated;
-          objectGeneratedToSave.grossAmountCompanyCurrencyGenerated =
-            elementInvoicePayment.grossAmountCompanyCurrencyGenerated;
-          objectGeneratedToSave.netAmountCompanyCurrencyGenerated =
-            elementInvoicePayment.netAmountCompanyCurrencyGenerated;
-          objectGeneratedToSave.quantityGenerated =
-            elementInvoicePayment.quantityGenerated;
-          objectGeneratedToSave.documentIdGenerated =
-            elementInvoicePayment.documentIdGenerated;
-          objectGeneratedToSave.createdAtGenerated =
-            elementInvoicePayment.createdAtGenerated;
-          objectGeneratedToSave.pyamentMethodGenerated =
-            elementInvoicePayment.pyamentMethodGenerated;
-          objectGeneratedToSave.businessPartnerNameGenerated =
-            elementInvoicePayment.businessPartnerNameGenerated;
-          objectGeneratedToSave.paymentAmountGenerated =
-            elementInvoicePayment.paymentAmountGenerated;
-          arrayGenerated.push(objectGeneratedToSave);
-          objectGeneratedToSave = {};
-          count += 1;
-        });
-      } else {
-        let objectGeneratedToSave = { ...objectGenerated };
-        arrayGenerated.push(objectGeneratedToSave);
-        objectGeneratedToSave = {};
-      }
-    }
-    const summaryLoadedData = new SummaryLoadedData('', 0);
-    console.log(
-      '>>>>>>>>> TIEMPO DE FINALIZACIÓN DE PROCESAMIENTO INFORMACION'
-    );
-    console.log(new Date());
-    console.log('Insert Data Init ', arrayGenerated.length);
-    // Actualizando información encabezado reporte
-    objectReportResume.state = 'entering_information';
-    objectReportResume.percentageCompletition = 66;
-    objectReportResume.counterRows = 0;
-    objectReportResume.message = 'Insertando Información';
-    await reportFunctionsUpdate.updateReportCreator(objectReportResume);
+//             objectGeneratedToSave.requestedAmountGenerated = 0;
+//             objectGeneratedToSave.netPriceCompanyCurrencyGenerated = 0;
+//             objectGeneratedToSave.deliveredQuantityGenerated = 0;
+//             objectGeneratedToSave.deliveredValueGenerated = 0;
+//             objectGeneratedToSave.deliveredValueCompanyCurrencyGenerated = 0;
+//             objectGeneratedToSave.invoicedAmountGenerated = 0;
+//             objectGeneratedToSave.invoicedValueGenerated = 0;
+//             objectGeneratedToSave.invoicedValueCompanyCurrencyGenerated = 0;
+//             objectGeneratedToSave.balanceQuantityEntryMerchandiseQuantitiesGenerated = 0;
+//             objectGeneratedToSave.balanceQuantityEntryMerchandiseCurrenciesGenerated = 0;
+//           }
+//           objectGeneratedToSave.invoiceIdGenerated =
+//             elementInvoicePayment.invoiceIdGenerated;
+//           objectGeneratedToSave.supplierIdGenerated =
+//             elementInvoicePayment.supplierIdGenerated;
+//           objectGeneratedToSave.supplierNameGenerated =
+//             elementInvoicePayment.supplierNameGenerated;
+//           objectGeneratedToSave.externalDocumentIdGenerated =
+//             elementInvoicePayment.externalDocumentIdGenerated;
+//           objectGeneratedToSave.entryMerchandiseIdGenerated =
+//             elementInvoicePayment.entryMerchandiseIdGenerated;
+//           objectGeneratedToSave.grossAmountCompanyCurrencyGenerated =
+//             elementInvoicePayment.grossAmountCompanyCurrencyGenerated;
+//           objectGeneratedToSave.netAmountCompanyCurrencyGenerated =
+//             elementInvoicePayment.netAmountCompanyCurrencyGenerated;
+//           objectGeneratedToSave.quantityGenerated =
+//             elementInvoicePayment.quantityGenerated;
+//           objectGeneratedToSave.documentIdGenerated =
+//             elementInvoicePayment.documentIdGenerated;
+//           objectGeneratedToSave.createdAtGenerated =
+//             elementInvoicePayment.createdAtGenerated;
+//           objectGeneratedToSave.pyamentMethodGenerated =
+//             elementInvoicePayment.pyamentMethodGenerated;
+//           objectGeneratedToSave.businessPartnerNameGenerated =
+//             elementInvoicePayment.businessPartnerNameGenerated;
+//           objectGeneratedToSave.paymentAmountGenerated =
+//             elementInvoicePayment.paymentAmountGenerated;
+//           arrayGenerated.push(objectGeneratedToSave);
+//           objectGeneratedToSave = {};
+//           count += 1;
+//         });
+//       } else {
+//         let objectGeneratedToSave = { ...objectGenerated };
+//         arrayGenerated.push(objectGeneratedToSave);
+//         objectGeneratedToSave = {};
+//       }
+//     }
+//     const summaryLoadedData = new SummaryLoadedData('', 0);
+//     console.log(
+//       '>>>>>>>>> TIEMPO DE FINALIZACIÓN DE PROCESAMIENTO INFORMACION'
+//     );
+//     console.log(new Date());
+//     console.log('Insert Data Init ', arrayGenerated.length);
+//     // Actualizando información encabezado reporte
+//     objectReportResume.state = 'entering_information';
+//     objectReportResume.percentageCompletition = 66;
+//     objectReportResume.counterRows = 0;
+//     objectReportResume.message = 'Insertando Información';
+//     await reportFunctionsUpdate.updateReportCreator(objectReportResume);
 
-    // Limpiando memoria general
-    masterReportData = null;
-    entryMerchandiseExtraDataMemory = null;
-    purchaseOrderTrackingDataMemory = null;
-    assistantReportDataEMMemory = null;
-    paymentExtraDataMemory = null;
-    paymentOriginalDataMemory = null;
+//     // Limpiando memoria general
+//     masterReportData = null;
+//     entryMerchandiseExtraDataMemory = null;
+//     purchaseOrderTrackingDataMemory = null;
+//     assistantReportDataEMMemory = null;
+//     paymentExtraDataMemory = null;
+//     paymentOriginalDataMemory = null;
 
-    await EntryMerchandiseAndServicesReportReport.collection
-      .insertMany(arrayGenerated)
-      .then(function() {
-        summaryLoadedData.message =
-          reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
-        summaryLoadedData.counter = arrayGenerated.length;
-        console.log('Insert Data Finish');
-        this.arrayGenerated = null;
-        async function finishReport() {
-          // Actualizando información encabezado reporte
-          objectReportResume.state = 'generated_report';
-          objectReportResume.percentageCompletition = 100;
-          objectReportResume.counterRows = arrayGenerated.length;
-          objectReportResume.message = 'Reporte cargado correctamente';
-          objectReportResume.endDate = new Date();
-          await reportFunctionsUpdate.updateReportCreator(objectReportResume);
-        }
-        finishReport();
-      })
-      .catch(function(error) {
-        // Limpiando memoria general
-        masterReportData = null;
-        entryMerchandiseExtraDataMemory = null;
-        purchaseOrderTrackingDataMemory = null;
-        assistantReportDataEMMemory = null;
-        paymentExtraDataMemory = null;
-        paymentOriginalDataMemory = null;
-        this.arrayGenerated = null;
+//     await EntryMerchandiseAndServicesReportReport.collection
+//       .insertMany(arrayGenerated)
+//       .then(function() {
+//         summaryLoadedData.message =
+//           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
+//         summaryLoadedData.counter = arrayGenerated.length;
+//         console.log('Insert Data Finish');
+//         this.arrayGenerated = null;
+//         async function finishReport() {
+//           // Actualizando información encabezado reporte
+//           objectReportResume.state = 'generated_report';
+//           objectReportResume.percentageCompletition = 100;
+//           objectReportResume.counterRows = arrayGenerated.length;
+//           objectReportResume.message = 'Reporte cargado correctamente';
+//           objectReportResume.endDate = new Date();
+//           await reportFunctionsUpdate.updateReportCreator(objectReportResume);
+//         }
+//         finishReport();
+//       })
+//       .catch(function(error) {
+//         // Limpiando memoria general
+//         masterReportData = null;
+//         entryMerchandiseExtraDataMemory = null;
+//         purchaseOrderTrackingDataMemory = null;
+//         assistantReportDataEMMemory = null;
+//         paymentExtraDataMemory = null;
+//         paymentOriginalDataMemory = null;
+//         this.arrayGenerated = null;
 
-        summaryLoadedData.message =
-          reportGeneratorMessages.E_REPORT_GENERATOR_MS_03;
-        console.log('Insert Data Finish');
-        async function finishReport() {
-          // Actualizando información encabezado reporte
-          objectReportResume.state = 'error_report';
-          objectReportResume.percentageCompletition = 0;
-          objectReportResume.counterRows = 0;
-          objectReportResume.message =
-            'Ocurrió un error al generar el reporte de Entrada de Mercancias y Servicios. Por favor contácte a Soporte Técnico';
-          objectReportResume.endDate = new Date();
-          await reportFunctionsUpdate.updateReportCreator(objectReportResume);
-        }
-        finishReport();
-        console.log(error);
-      });
-    console.log(summaryLoadedData);
-    if (summaryLoadedData.counter > 0) {
-      console.log('voy a enviar de una vez la plantilla');
-      this.sendReportCSV(req, res);
-    }
-    return summaryLoadedData;
-  } catch (err) {
-    throw err;
-  }
-};
+//         summaryLoadedData.message =
+//           reportGeneratorMessages.E_REPORT_GENERATOR_MS_03;
+//         console.log('Insert Data Finish');
+//         async function finishReport() {
+//           // Actualizando información encabezado reporte
+//           objectReportResume.state = 'error_report';
+//           objectReportResume.percentageCompletition = 0;
+//           objectReportResume.counterRows = 0;
+//           objectReportResume.message =
+//             'Ocurrió un error al generar el reporte de Entrada de Mercancias y Servicios. Por favor contácte a Soporte Técnico';
+//           objectReportResume.endDate = new Date();
+//           await reportFunctionsUpdate.updateReportCreator(objectReportResume);
+//         }
+//         finishReport();
+//         console.log(error);
+//       });
+//     console.log(summaryLoadedData);
+//     if (summaryLoadedData.counter > 0) {
+//       console.log('voy a enviar de una vez la plantilla');
+//       this.sendReportCSV(req, res);
+//     }
+//     return summaryLoadedData;
+//   } catch (err) {
+//     throw err;
+//   }
+// };
 
 // =========== Function to count records of reports
 exports.generateIvaReport = async (req, res) => {
@@ -1687,7 +1687,7 @@ exports.generateIvaReport = async (req, res) => {
     console.log(' =========  Cargando en memoria');
     let masterReportData = await MasterReport.find({
       companyId: userInfo.companyId
-      // ,      originalDocumentId: { $in: ['FP-10047'] }
+      // ,      originalDocumentId: { $in: ['FP-7321', 'FP-8054', 'FP-10717', 'FP-9124'] }
     }).lean();
 
     let entryMerchandiseExtraDataMemory = await EntryMerchandiseExtra.find({
@@ -1730,7 +1730,8 @@ exports.generateIvaReport = async (req, res) => {
         quantity: 1,
         supplierCoName: 1,
         supplierCoId: 1,
-        refundCo: 1
+        refundCo: 1,
+        originalPosition: 1
       })
       .lean();
 
@@ -1758,16 +1759,17 @@ exports.generateIvaReport = async (req, res) => {
     // ===== ITERACION SOBRE MASTER REPORT ORIGINAL
     // ===== Paso 1.
     let temporaloriginalDocumentId = null;
+    let temporaloriginalPosition = null;
     console.log('Cargada información Maestra en Memoria');
-    // let contador = 0;
+    let contador = 0;
     for await (const reportData of masterReportData) {
       objectGenerated = {};
-      // contador += 1;
-      // if (contador % 1000 === 0) {
-      //   console.log(
-      //     `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId}`
-      //   );
-      // }
+      contador += 1;
+      if (contador % 10000 === 0) {
+        console.log(
+          `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId}`
+        );
+      }
       objectGenerated.seniorAccountantId = reportData.seniorAccountantId;
       objectGenerated.seniorAccountantName = reportData.seniorAccountantName;
       objectGenerated.postingDate = reportData.postingDate;
@@ -1795,9 +1797,16 @@ exports.generateIvaReport = async (req, res) => {
       objectGenerated.userId = userInfo._id;
 
       // Comprobamos si no es la primera iteracion para no volver a hacer el proceso
-      if (temporaloriginalDocumentId === null) {
+      if (
+        temporaloriginalDocumentId === null &&
+        temporaloriginalPosition === null
+      ) {
         temporaloriginalDocumentId = reportData.originalDocumentId;
-      } else if (temporaloriginalDocumentId === reportData.originalDocumentId) {
+        temporaloriginalPosition = reportData.originalPosition;
+      } else if (
+        temporaloriginalDocumentId === reportData.originalDocumentId &&
+        temporaloriginalPosition === reportData.originalPosition
+      ) {
         // console.log('Es el mismo no voy a volver a buscar data');
         //console.log(objectGenerated);
         //console.table(arrayInvoicePaymentGenerated);
@@ -2016,7 +2025,51 @@ exports.generateIvaReport = async (req, res) => {
                   // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
                   if (assistantReportFull && assistantReportFull.length > 0) {
                     // Iterar sobre el seguimiento de ordenes de Compra
+                    let searchPosition = '';
+                    let flagSelectIterate = false;
+                    let flagBreakLoop = false;
                     for await (const assistantReport of assistantReportFull) {
+                      const originalPositionToDestroy =
+                        reportData.originalPosition;
+                      // const originalPositionToDestroy = 'FP-8844-27.1';
+
+                      if (searchPosition === '') {
+                        const arrayOriginalPosition = originalPositionToDestroy.split(
+                          '.'
+                        );
+                        if (arrayOriginalPosition.length > 1) {
+                          flagSelectIterate = true;
+                          const tempPosition = arrayOriginalPosition[0];
+                          for (let i = tempPosition.length - 1; i > 0; i -= 1) {
+                            const temp = tempPosition[i];
+                            if (temp === '-') {
+                              break;
+                            } else {
+                              searchPosition += temp;
+                            }
+                          }
+                          searchPosition = searchPosition
+                            .split('')
+                            .reverse()
+                            .join('');
+                          flagSelectIterate = true;
+                        } else {
+                          flagSelectIterate = false;
+                        }
+                      }
+                      if (flagSelectIterate) {
+                        if (
+                          assistantReport.originalPosition !== searchPosition
+                        ) {
+                          continue;
+                        } else {
+                          searchPosition = '';
+                          flagSelectIterate = false;
+                          flagBreakLoop = true;
+                        }
+                      }
+
+                      //-- FIN AJUSTE POSICIONES DE FACTURA
                       objectInvoicePaymentGenerated.invoiceIdGenerated =
                         assistantReport.invoiceId;
                       objectInvoicePaymentGenerated.supplierIdGenerated =
@@ -2133,6 +2186,10 @@ exports.generateIvaReport = async (req, res) => {
                           objectInvoicePaymentGenerated
                         );
                         objectInvoicePaymentGenerated = {};
+                        if (flagBreakLoop) {
+                          flagBreakLoop = false;
+                          break;
+                        }
                       }
                     }
                   }
@@ -2166,7 +2223,50 @@ exports.generateIvaReport = async (req, res) => {
                 // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
                 if (assistantReportFull && assistantReportFull.length > 0) {
                   // Iterar sobre el seguimiento de ordenes de Compra
+                  let searchPosition = '';
+                  let flagSelectIterate = false;
+                  let flagBreakLoop = false;
                   for await (const assistantReport of assistantReportFull) {
+                    const originalPositionToDestroy =
+                      reportData.originalPosition;
+                    // const originalPositionToDestroy = 'FP-8844-27.1';
+
+                    if (searchPosition === '') {
+                      const arrayOriginalPosition = originalPositionToDestroy.split(
+                        '.'
+                      );
+                      if (arrayOriginalPosition.length > 1) {
+                        flagSelectIterate = true;
+                        const tempPosition = arrayOriginalPosition[0];
+                        for (let i = tempPosition.length - 1; i > 0; i -= 1) {
+                          const temp = tempPosition[i];
+                          if (temp === '-') {
+                            break;
+                          } else {
+                            searchPosition += temp;
+                          }
+                        }
+                        searchPosition = searchPosition
+                          .split('')
+                          .reverse()
+                          .join('');
+                        flagSelectIterate = true;
+                      } else {
+                        flagSelectIterate = false;
+                      }
+                    }
+                    if (flagSelectIterate) {
+                      if (assistantReport.originalPosition !== searchPosition) {
+                        continue;
+                      } else {
+                        searchPosition = '';
+                        flagSelectIterate = false;
+                        flagBreakLoop = true;
+                      }
+                    }
+
+                    //-- FIN AJUSTE POSICIONES DE FACTURA
+
                     objectInvoicePaymentGenerated.invoiceIdGenerated =
                       assistantReport.invoiceId;
                     objectInvoicePaymentGenerated.supplierIdGenerated =
@@ -2282,6 +2382,10 @@ exports.generateIvaReport = async (req, res) => {
                         objectInvoicePaymentGenerated
                       );
                       objectInvoicePaymentGenerated = {};
+                      if (flagBreakLoop) {
+                        flagBreakLoop = false;
+                        break;
+                      }
                     }
                   }
                 }
@@ -2316,7 +2420,49 @@ exports.generateIvaReport = async (req, res) => {
           // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
           if (assistantReportFull && assistantReportFull.length > 0) {
             // Iterar sobre el seguimiento de ordenes de Compra
+            let searchPosition = '';
+            let flagSelectIterate = false;
+            let flagBreakLoop = false;
             for await (const assistantReport of assistantReportFull) {
+              const originalPositionToDestroy = reportData.originalPosition;
+              // const originalPositionToDestroy = 'FP-8844-27.1';
+
+              if (searchPosition === '') {
+                const arrayOriginalPosition = originalPositionToDestroy.split(
+                  '.'
+                );
+                if (arrayOriginalPosition.length > 1) {
+                  flagSelectIterate = true;
+                  const tempPosition = arrayOriginalPosition[0];
+                  for (let i = tempPosition.length - 1; i > 0; i -= 1) {
+                    const temp = tempPosition[i];
+                    if (temp === '-') {
+                      break;
+                    } else {
+                      searchPosition += temp;
+                    }
+                  }
+                  searchPosition = searchPosition
+                    .split('')
+                    .reverse()
+                    .join('');
+                  flagSelectIterate = true;
+                } else {
+                  flagSelectIterate = false;
+                }
+              }
+              if (flagSelectIterate) {
+                if (assistantReport.originalPosition !== searchPosition) {
+                  continue;
+                } else {
+                  searchPosition = '';
+                  flagSelectIterate = false;
+                  flagBreakLoop = true;
+                }
+              }
+
+              //-- FIN AJUSTE POSICIONES DE FACTURA
+
               objectInvoicePaymentGenerated.invoiceIdGenerated =
                 assistantReport.invoiceId;
               objectInvoicePaymentGenerated.supplierIdGenerated =
@@ -2427,6 +2573,10 @@ exports.generateIvaReport = async (req, res) => {
                   objectInvoicePaymentGenerated
                 );
                 objectInvoicePaymentGenerated = {};
+              }
+              if (flagBreakLoop) {
+                flagBreakLoop = false;
+                break;
               }
             }
           }
