@@ -1687,7 +1687,7 @@ exports.generateIvaReport = async (req, res) => {
     console.log(' =========  Cargando en memoria');
     let masterReportData = await MasterReport.find({
       companyId: userInfo.companyId
-      // ,      originalDocumentId: { $in: ['FP-7321', 'FP-8054', 'FP-10717', 'FP-9124'] }
+      // ,       originalDocumentId: { $in: ['3869'] }
     }).lean();
 
     let entryMerchandiseExtraDataMemory = await EntryMerchandiseExtra.find({
