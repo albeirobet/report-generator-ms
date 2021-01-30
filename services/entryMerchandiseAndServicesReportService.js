@@ -1687,7 +1687,7 @@ exports.generateIvaReport = async (req, res) => {
     console.log(' =========  Cargando en memoria');
     let masterReportData = await MasterReport.find({
       companyId: userInfo.companyId
-      // ,       originalDocumentId: { $in: ['3869'] }
+      // ,  originalDocumentId: { $in: ['3869'] }
     }).lean();
 
     let entryMerchandiseExtraDataMemory = await EntryMerchandiseExtra.find({
@@ -1731,7 +1731,8 @@ exports.generateIvaReport = async (req, res) => {
         supplierCoName: 1,
         supplierCoId: 1,
         refundCo: 1,
-        originalPosition: 1
+        originalPosition: 1,
+        purchaseOrderId: 1
       })
       .lean();
 
@@ -1765,11 +1766,11 @@ exports.generateIvaReport = async (req, res) => {
     for await (const reportData of masterReportData) {
       objectGenerated = {};
       contador += 1;
-      if (contador % 10000 === 0) {
-        console.log(
-          `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId}`
-        );
-      }
+      // if (contador % 10000 === 0) {
+      console.log(
+        `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId} -  ${reportData.originalPosition}-  ${reportData.operatingDocumentID} - ${reportData.operatingDocumentCounterpartID} `
+      );
+      // }
       objectGenerated.seniorAccountantId = reportData.seniorAccountantId;
       objectGenerated.seniorAccountantName = reportData.seniorAccountantName;
       objectGenerated.postingDate = reportData.postingDate;
@@ -1808,7 +1809,7 @@ exports.generateIvaReport = async (req, res) => {
         temporaloriginalPosition === reportData.originalPosition
       ) {
         // console.log('Es el mismo no voy a volver a buscar data');
-        //console.log(objectGenerated);
+        console.log(objectGenerated);
         //console.table(arrayInvoicePaymentGenerated);
 
         if (
@@ -1889,6 +1890,7 @@ exports.generateIvaReport = async (req, res) => {
       } else {
         // console.log('Pailas debo iterar nuevamente');
         arrayInvoicePaymentGenerated = [];
+        temporaloriginalPosition = null;
         // console.log('Finalizando insercion primer registro');
         // objectGenerated = {};
       }
@@ -2004,7 +2006,6 @@ exports.generateIvaReport = async (req, res) => {
                     el =>
                       el.entryMerchandiseId === reportData.originalDocumentId
                   );
-
                   if (
                     assistantReportDataEM &&
                     assistantReportDataEM.length > 0
@@ -2012,14 +2013,59 @@ exports.generateIvaReport = async (req, res) => {
                     assistantReportFull = assistantReportDataEM;
                   } else {
                     // ====== CASO B
+                    // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo
+                    let purchaseOrderId = '$$$$$'; // Defino un valor que nunca va a coincidir
+                    const { operatingDocumentID } = reportData;
+                    if (
+                      operatingDocumentID &&
+                      operatingDocumentID !== '#' &&
+                      operatingDocumentID !== ''
+                    ) {
+                      purchaseOrderId = operatingDocumentID;
+                    }
                     const assistantReportDataF = assistantReportDataEMMemory.filter(
-                      el => el.invoiceId === reportData.originalDocumentId
+                      el => el.purchaseOrderId === purchaseOrderId
                     );
                     if (
                       assistantReportDataF &&
                       assistantReportDataF.length > 0
                     ) {
                       assistantReportFull = assistantReportDataF;
+                    } else {
+                      // ====== CASO C
+                      // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo de contrapartida
+                      const { operatingDocumentCounterpartID } = reportData;
+                      if (
+                        operatingDocumentCounterpartID &&
+                        operatingDocumentCounterpartID !== '#' &&
+                        operatingDocumentCounterpartID !== ''
+                      ) {
+                        purchaseOrderId = operatingDocumentCounterpartID;
+                      } else {
+                        purchaseOrderId = '$$$$$';
+                      }
+
+                      const assistantReportDataX = assistantReportDataEMMemory.filter(
+                        el => el.purchaseOrderId === purchaseOrderId
+                      );
+                      if (
+                        assistantReportDataX &&
+                        assistantReportDataX.length > 0
+                      ) {
+                        assistantReportFull = assistantReportDataX;
+                      } else {
+                        // ====== CASO C
+                        // Comprobamos si existe data con el id de factura basado en el id de documento original
+                        const assistantReportDataY = assistantReportDataEMMemory.filter(
+                          el => el.invoiceId === reportData.originalDocumentId
+                        );
+                        if (
+                          assistantReportDataY &&
+                          assistantReportDataY.length > 0
+                        ) {
+                          assistantReportFull = assistantReportDataY;
+                        }
+                      }
                     }
                   }
                   // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
@@ -2034,7 +2080,7 @@ exports.generateIvaReport = async (req, res) => {
                       // const originalPositionToDestroy = 'FP-8844-27.1';
 
                       if (searchPosition === '') {
-                        const arrayOriginalPosition = originalPositionToDestroy.split(
+                        let arrayOriginalPosition = originalPositionToDestroy.split(
                           '.'
                         );
                         if (arrayOriginalPosition.length > 1) {
@@ -2054,7 +2100,15 @@ exports.generateIvaReport = async (req, res) => {
                             .join('');
                           flagSelectIterate = true;
                         } else {
-                          flagSelectIterate = false;
+                          arrayOriginalPosition = originalPositionToDestroy.split(
+                            '-'
+                          );
+                          if (arrayOriginalPosition.length > 1) {
+                            searchPosition = arrayOriginalPosition[1];
+                            flagSelectIterate = true;
+                          } else {
+                            flagSelectIterate = false;
+                          }
                         }
                       }
                       if (flagSelectIterate) {
@@ -2213,11 +2267,56 @@ exports.generateIvaReport = async (req, res) => {
                   assistantReportFull = assistantReportDataEM;
                 } else {
                   // ====== CASO B
+                  // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo
+                  let purchaseOrderId = '$$$$$'; // Defino un valor que nunca va a coincidir
+                  const { operatingDocumentID } = reportData;
+                  if (
+                    operatingDocumentID &&
+                    operatingDocumentID !== '#' &&
+                    operatingDocumentID !== ''
+                  ) {
+                    purchaseOrderId = operatingDocumentID;
+                  }
                   const assistantReportDataF = assistantReportDataEMMemory.filter(
-                    el => el.invoiceId === reportData.originalDocumentId
+                    el => el.purchaseOrderId === purchaseOrderId
                   );
                   if (assistantReportDataF && assistantReportDataF.length > 0) {
                     assistantReportFull = assistantReportDataF;
+                  } else {
+                    // ====== CASO C
+                    // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo de contrapartida
+                    const { operatingDocumentCounterpartID } = reportData;
+                    if (
+                      operatingDocumentCounterpartID &&
+                      operatingDocumentCounterpartID !== '#' &&
+                      operatingDocumentCounterpartID !== ''
+                    ) {
+                      purchaseOrderId = operatingDocumentCounterpartID;
+                    } else {
+                      purchaseOrderId = '$$$$$';
+                    }
+
+                    const assistantReportDataX = assistantReportDataEMMemory.filter(
+                      el => el.purchaseOrderId === purchaseOrderId
+                    );
+                    if (
+                      assistantReportDataX &&
+                      assistantReportDataX.length > 0
+                    ) {
+                      assistantReportFull = assistantReportDataX;
+                    } else {
+                      // ====== CASO C
+                      // Comprobamos si existe data con el id de factura basado en el id de documento original
+                      const assistantReportDataY = assistantReportDataEMMemory.filter(
+                        el => el.invoiceId === reportData.originalDocumentId
+                      );
+                      if (
+                        assistantReportDataY &&
+                        assistantReportDataY.length > 0
+                      ) {
+                        assistantReportFull = assistantReportDataY;
+                      }
+                    }
                   }
                 }
                 // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
@@ -2232,7 +2331,7 @@ exports.generateIvaReport = async (req, res) => {
                     // const originalPositionToDestroy = 'FP-8844-27.1';
 
                     if (searchPosition === '') {
-                      const arrayOriginalPosition = originalPositionToDestroy.split(
+                      let arrayOriginalPosition = originalPositionToDestroy.split(
                         '.'
                       );
                       if (arrayOriginalPosition.length > 1) {
@@ -2252,7 +2351,15 @@ exports.generateIvaReport = async (req, res) => {
                           .join('');
                         flagSelectIterate = true;
                       } else {
-                        flagSelectIterate = false;
+                        arrayOriginalPosition = originalPositionToDestroy.split(
+                          '-'
+                        );
+                        if (arrayOriginalPosition.length > 1) {
+                          searchPosition = arrayOriginalPosition[1];
+                          flagSelectIterate = true;
+                        } else {
+                          flagSelectIterate = false;
+                        }
                       }
                     }
                     if (flagSelectIterate) {
@@ -2410,11 +2517,50 @@ exports.generateIvaReport = async (req, res) => {
             assistantReportFull = assistantReportDataEM;
           } else {
             // ====== CASO B
+            // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo
+            let purchaseOrderId = '$$$$$'; // Defino un valor que nunca va a coincidir
+            const { operatingDocumentID } = reportData;
+            if (
+              operatingDocumentID &&
+              operatingDocumentID !== '#' &&
+              operatingDocumentID !== ''
+            ) {
+              purchaseOrderId = operatingDocumentID;
+            }
             const assistantReportDataF = assistantReportDataEMMemory.filter(
-              el => el.invoiceId === reportData.originalDocumentId
+              el => el.purchaseOrderId === purchaseOrderId
             );
             if (assistantReportDataF && assistantReportDataF.length > 0) {
               assistantReportFull = assistantReportDataF;
+            } else {
+              // ====== CASO C
+              // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo de contrapartida
+              const { operatingDocumentCounterpartID } = reportData;
+              if (
+                operatingDocumentCounterpartID &&
+                operatingDocumentCounterpartID !== '#' &&
+                operatingDocumentCounterpartID !== ''
+              ) {
+                purchaseOrderId = operatingDocumentCounterpartID;
+              } else {
+                purchaseOrderId = '$$$$$';
+              }
+
+              const assistantReportDataX = assistantReportDataEMMemory.filter(
+                el => el.purchaseOrderId === purchaseOrderId
+              );
+              if (assistantReportDataX && assistantReportDataX.length > 0) {
+                assistantReportFull = assistantReportDataX;
+              } else {
+                // ====== CASO C
+                // Comprobamos si existe data con el id de factura basado en el id de documento original
+                const assistantReportDataY = assistantReportDataEMMemory.filter(
+                  el => el.invoiceId === reportData.originalDocumentId
+                );
+                if (assistantReportDataY && assistantReportDataY.length > 0) {
+                  assistantReportFull = assistantReportDataY;
+                }
+              }
             }
           }
           // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
@@ -2428,7 +2574,7 @@ exports.generateIvaReport = async (req, res) => {
               // const originalPositionToDestroy = 'FP-8844-27.1';
 
               if (searchPosition === '') {
-                const arrayOriginalPosition = originalPositionToDestroy.split(
+                let arrayOriginalPosition = originalPositionToDestroy.split(
                   '.'
                 );
                 if (arrayOriginalPosition.length > 1) {
@@ -2448,7 +2594,13 @@ exports.generateIvaReport = async (req, res) => {
                     .join('');
                   flagSelectIterate = true;
                 } else {
-                  flagSelectIterate = false;
+                  arrayOriginalPosition = originalPositionToDestroy.split('-');
+                  if (arrayOriginalPosition.length > 1) {
+                    searchPosition = arrayOriginalPosition[1];
+                    flagSelectIterate = true;
+                  } else {
+                    flagSelectIterate = false;
+                  }
                 }
               }
               if (flagSelectIterate) {
