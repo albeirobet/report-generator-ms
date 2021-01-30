@@ -2969,6 +2969,12 @@ exports.sendReportCSV = async (req, res) => {
         { id: 'externalReferenceId', title: 'ID de referencia externa' },
         { id: 'originalDocumentId', title: 'ID de documento original' },
         { id: 'accountingSeatType', title: 'Tipo de asiento contable' },
+
+        { id: 'thirdId', title: 'ID Tercero' },
+        { id: 'thirdName', title: 'Nombre Tercero' },
+        { id: 'businessPartnerID', title: 'ID Socio Comercial' },
+        { id: 'businessPartnerName', title: 'Nombre Socio Comercial' },
+
         { id: 'accountingSeatAnnulled', title: 'Asiento contable anulado' },
         { id: 'originalDocumentAnnulledId', title: 'ID de documento anulado' },
         {
@@ -3034,7 +3040,7 @@ exports.sendReportCSV = async (req, res) => {
           id: 'netAmountCompanyCurrencyGenerated',
           title: 'Valor neto factura en Moneda de la empresa'
         },
-        { id: 'quantityGenerated', title: 'Cantidad Facturada Proveedor' },
+        // { id: 'quantityGenerated', title: 'Cantidad Facturada Proveedor' },
 
         { id: 'supplierCoName', title: 'Reembolso' },
         { id: 'supplierCoId', title: 'Nombre Proveedor' },

@@ -73,6 +73,24 @@ const masterReportSchema = new mongoose.Schema({
     type: String,
     uppercase: true
   },
+
+  thirdId: {
+    type: String,
+    uppercase: true
+  },
+  thirdName: {
+    type: String,
+    uppercase: true
+  },
+  businessPartnerID: {
+    type: String,
+    uppercase: true
+  },
+  businessPartnerName: {
+    type: String,
+    uppercase: true
+  },
+
   //Importe en debe en moneda de empresa
   debtAmountCompanyCurrency: {
     type: String,
