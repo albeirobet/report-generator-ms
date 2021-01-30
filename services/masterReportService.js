@@ -155,8 +155,9 @@ exports.loadMasterReportDataAsync = async (req, res) => {
             originalDocumentPosition: currRow.getCell(14).value,
             originalPosition: currRow.getCell(15).value,
             operatingDocumentID: currRow.getCell(16).value,
-            debtAmountCompanyCurrency: currRow.getCell(17).value,
-            creditAmountCompanyCurrency: currRow.getCell(18).value,
+            operatingDocumentCounterpartID: currRow.getCell(17).value,
+            debtAmountCompanyCurrency: currRow.getCell(18).value,
+            creditAmountCompanyCurrency: currRow.getCell(19).value,
             companyId: userInfo.companyId,
             userId: userInfo._id
           };
