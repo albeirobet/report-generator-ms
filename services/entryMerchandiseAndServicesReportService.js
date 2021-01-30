@@ -1809,7 +1809,7 @@ exports.generateIvaReport = async (req, res) => {
         temporaloriginalPosition === reportData.originalPosition
       ) {
         // console.log('Es el mismo no voy a volver a buscar data');
-        console.log(objectGenerated);
+        // console.log(objectGenerated);
         //console.table(arrayInvoicePaymentGenerated);
 
         if (
