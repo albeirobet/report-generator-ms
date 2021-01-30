@@ -1890,7 +1890,12 @@ exports.generateIvaReport = async (req, res) => {
       } else {
         // console.log('Pailas debo iterar nuevamente');
         arrayInvoicePaymentGenerated = [];
-        temporaloriginalPosition = null;
+        // temporaloriginalPosition = null;
+
+        // TENTATIVO MEJORAR PROCESAMIENTO
+        temporaloriginalDocumentId = reportData.originalDocumentId;
+        temporaloriginalPosition = reportData.originalPosition;
+
         // console.log('Finalizando insercion primer registro');
         // objectGenerated = {};
       }
