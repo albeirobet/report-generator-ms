@@ -1766,11 +1766,11 @@ exports.generateIvaReport = async (req, res) => {
     for await (const reportData of masterReportData) {
       objectGenerated = {};
       contador += 1;
-      // if (contador % 10000 === 0) {
-      console.log(
-        `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId} -  ${reportData.originalPosition}-  ${reportData.operatingDocumentID} - ${reportData.operatingDocumentCounterpartID} `
-      );
-      // }
+      if (contador % 10000 === 0) {
+        console.log(
+          `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId} -  ${reportData.originalPosition}-  ${reportData.operatingDocumentID} - ${reportData.operatingDocumentCounterpartID} `
+        );
+      }
       objectGenerated.seniorAccountantId = reportData.seniorAccountantId;
       objectGenerated.seniorAccountantName = reportData.seniorAccountantName;
       objectGenerated.postingDate = reportData.postingDate;
