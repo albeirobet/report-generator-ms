@@ -1687,7 +1687,7 @@ exports.generateIvaReport = async (req, res) => {
     console.log(' =========  Cargando en memoria');
     let masterReportData = await MasterReport.find({
       companyId: userInfo.companyId
-      // ,  originalDocumentId: { $in: ['3869'] }
+      // ,       originalDocumentId: { $in: ['4747'] }
     }).lean();
 
     let entryMerchandiseExtraDataMemory = await EntryMerchandiseExtra.find({
@@ -1766,6 +1766,7 @@ exports.generateIvaReport = async (req, res) => {
     for await (const reportData of masterReportData) {
       objectGenerated = {};
       contador += 1;
+
       if (contador % 10000 === 0) {
         console.log(
           `En el registro:  ${contador}  con idDocumento:  ${reportData.originalDocumentId} -  ${reportData.originalPosition}-  ${reportData.operatingDocumentID} - ${reportData.operatingDocumentCounterpartID} `
@@ -1790,6 +1791,16 @@ exports.generateIvaReport = async (req, res) => {
         reportData.extraOriginalDocumentId;
       objectGenerated.originalDocumentPosition =
         reportData.originalDocumentPosition;
+
+      objectGenerated.originalPosition = reportData.originalPosition;
+      objectGenerated.operatingDocumentID = reportData.operatingDocumentID;
+      objectGenerated.operatingDocumentCounterpartID =
+        reportData.operatingDocumentCounterpartID;
+      objectGenerated.thirdId = reportData.thirdId;
+      objectGenerated.thirdName = reportData.thirdName;
+      objectGenerated.businessPartnerID = reportData.businessPartnerID;
+      objectGenerated.businessPartnerName = reportData.businessPartnerName;
+
       objectGenerated.debtAmountCompanyCurrency =
         reportData.debtAmountCompanyCurrency;
       objectGenerated.creditAmountCompanyCurrency =
@@ -2952,7 +2963,7 @@ exports.sendReportCSV = async (req, res) => {
 
     const reportData = await EntryMerchandiseAndServicesReportReport.find({
       companyId: userInfo.companyId
-      // ,      originalDocumentId: { $in: ['1681'] }
+      // ,  originalDocumentId: { $in: ['4747'] }
     }).lean();
 
     const nameFile = 'ENTRADAS DE MERCANCIAS Y SERVICIOS';
