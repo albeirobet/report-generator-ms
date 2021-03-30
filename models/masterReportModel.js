@@ -91,6 +91,20 @@ const masterReportSchema = new mongoose.Schema({
     uppercase: true
   },
 
+  originalDocumentDate: {
+    type: String,
+    uppercase: true
+  },
+  journalEntryHeaderText: {
+    type: String,
+    uppercase: true
+  },
+  accountingEntryItemText: {
+    type: String,
+    uppercase: true
+  },
+
+
   //Importe en debe en moneda de empresa
   debtAmountCompanyCurrency: {
     type: String,
