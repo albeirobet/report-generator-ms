@@ -1801,6 +1801,14 @@ exports.generateIvaReport = async (req, res) => {
       objectGenerated.businessPartnerID = reportData.businessPartnerID;
       objectGenerated.businessPartnerName = reportData.businessPartnerName;
 
+      // NUEVOS CAMPOS DEL REPORT MASTER
+
+      objectGenerated.originalDocumentDate = reportData.originalDocumentDate;
+      objectGenerated.journalEntryHeaderText =
+        reportData.journalEntryHeaderText;
+      objectGenerated.accountingEntryItemText =
+        reportData.accountingEntryItemText;
+
       objectGenerated.debtAmountCompanyCurrency =
         reportData.debtAmountCompanyCurrency;
       objectGenerated.creditAmountCompanyCurrency =
@@ -3075,6 +3083,13 @@ exports.sendReportCSV = async (req, res) => {
       );
       if (cursor.seniorAccountantId === 'RESULTADO') {
         object.splice(index, 1);
+      }
+
+      if (cursor.supplierCoName === 'X') {
+        if (cursor.supplierCoId) {
+          cursor.supplierNameGenerated = cursor.supplierCoId;
+          cursor.supplierIdGenerated = cursor.refundCo;
+        }
       }
     });
 

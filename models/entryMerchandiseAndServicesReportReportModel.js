@@ -234,6 +234,19 @@ const entryMerchandiseAndServiceReportSchema = new mongoose.Schema({
     uppercase: true
   },
 
+  originalDocumentDate: {
+    type: String,
+    uppercase: true
+  },
+  journalEntryHeaderText: {
+    type: String,
+    uppercase: true
+  },
+  accountingEntryItemText: {
+    type: String,
+    uppercase: true
+  },
+
   // Fin ultimos campos agregados
 
   companyId: {

@@ -104,7 +104,6 @@ const masterReportSchema = new mongoose.Schema({
     uppercase: true
   },
 
-
   //Importe en debe en moneda de empresa
   debtAmountCompanyCurrency: {
     type: String,
