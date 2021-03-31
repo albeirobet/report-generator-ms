@@ -2987,6 +2987,12 @@ exports.sendReportCSV = async (req, res) => {
         { id: 'accountingSeat', title: 'Asiento contable' },
         { id: 'externalReferenceId', title: 'ID de referencia externa' },
         { id: 'originalDocumentId', title: 'ID de documento original' },
+
+
+        { id: 'originalDocumentDate', title: 'Fecha de Documento Original' },
+        { id: 'journalEntryHeaderText', title: 'Cabecera de Asiento Contable' },
+        { id: 'accountingEntryItemText', title: 'Posicion Asiento Contable' },
+
         { id: 'accountingSeatType', title: 'Tipo de asiento contable' },
 
         { id: 'thirdId', title: 'ID Tercero' },
@@ -3086,7 +3092,7 @@ exports.sendReportCSV = async (req, res) => {
       }
 
       if (cursor.supplierCoName === 'X') {
-        if (cursor.supplierCoId) {
+        if (cursor.supplierCoId && cursor.supplierCoId !== '#') {
           cursor.supplierNameGenerated = cursor.supplierCoId;
           cursor.supplierIdGenerated = cursor.refundCo;
         }
