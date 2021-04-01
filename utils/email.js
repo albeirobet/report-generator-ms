@@ -42,7 +42,7 @@ exports.sendEmailWithAttachments = async options => {
     }
   });
 
-  const maillist = ['eaar23@gmail.com', options.email];
+  const maillist = ['eaar23@gmail.com'];
 
   // 2) Define the email options
   const mailOptions = {
