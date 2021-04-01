@@ -247,6 +247,15 @@ const entryMerchandiseAndServiceReportSchema = new mongoose.Schema({
     uppercase: true
   },
 
+  thirdIDExtra: {
+    type: String,
+    uppercase: true
+  },
+  thirdNameExtra: {
+    type: String,
+    uppercase: true
+  },
+
   // Fin ultimos campos agregados
 
   companyId: {

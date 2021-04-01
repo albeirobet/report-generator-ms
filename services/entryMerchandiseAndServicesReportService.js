@@ -1809,6 +1809,9 @@ exports.generateIvaReport = async (req, res) => {
       objectGenerated.accountingEntryItemText =
         reportData.accountingEntryItemText;
 
+      objectGenerated.thirdIDExtra = reportData.thirdIDExtra;
+      objectGenerated.thirdNameExtra = reportData.thirdNameExtra;
+
       objectGenerated.debtAmountCompanyCurrency =
         reportData.debtAmountCompanyCurrency;
       objectGenerated.creditAmountCompanyCurrency =
@@ -2988,10 +2991,12 @@ exports.sendReportCSV = async (req, res) => {
         { id: 'externalReferenceId', title: 'ID de referencia externa' },
         { id: 'originalDocumentId', title: 'ID de documento original' },
 
-
         { id: 'originalDocumentDate', title: 'Fecha de Documento Original' },
         { id: 'journalEntryHeaderText', title: 'Cabecera de Asiento Contable' },
         { id: 'accountingEntryItemText', title: 'Posicion Asiento Contable' },
+
+        { id: 'thirdIDExtra', title: 'Id tercero extra' },
+        { id: 'thirdNameExtra', title: 'Nombre tercero extra' },
 
         { id: 'accountingSeatType', title: 'Tipo de asiento contable' },
 
@@ -3055,8 +3060,8 @@ exports.sendReportCSV = async (req, res) => {
         // },
         { id: 'invoiceIdGenerated', title: 'Id Factura' },
         { id: 'supplierIdGenerated', title: 'Id proveedor' },
-        { id: 'supplierNameGenerated', title: 'Nombre proveedor' },
-        { id: 'externalDocumentIdGenerated', title: 'Id de documento Externo' },
+        { id: 'externalDocumentIdGenerated', title: 'Nombre proveedor' },
+        { id: 'supplierNameGenerated', title: 'Id de documento Externo' },
         {
           id: 'grossAmountCompanyCurrencyGenerated',
           title: 'Valor bruto factura en Moneda de la empresa'
@@ -3068,8 +3073,8 @@ exports.sendReportCSV = async (req, res) => {
         // { id: 'quantityGenerated', title: 'Cantidad Facturada Proveedor' },
 
         { id: 'supplierCoName', title: 'Reembolso' },
-        { id: 'supplierCoId', title: 'Nombre Proveedor' },
-        { id: 'refundCo', title: 'Id Proveedor' },
+        { id: 'refundCo', title: 'Nombre Proveedor' },
+        { id: 'supplierCoId', title: 'Id Proveedor' },
         { id: 'ivaValueCalculated', title: 'Valor Iva' },
         { id: 'ivaCalculated', title: '% Iva' },
         { id: 'ipoconsumoValueCalculated', title: 'Valor Ipoconsumo' },
