@@ -3137,7 +3137,7 @@ exports.sendReportCSV = async (req, res) => {
       }
 
       compressing.gzip
-        .compressFile(pathx, `${pathTmp}//${nameFile}.gz`)
+        .compressFile(pathx, `${pathTmp}/${nameFile}.gz`)
         .then(console.log('Terminé de comprimir el archivo'))
         .catch(console.log('ocurrió un error'));
 
