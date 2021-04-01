@@ -5,7 +5,7 @@
 // Created By Eyder Ascuntar Rosales
 // Mail: eyder.ascuntar@runcode.co
 // Company: Runcode Ingeniería SAS
-const AdmZip = require('adm-zip');
+var AdmZip = require('adm-zip');
 const path = require('path');
 const fs = require('fs');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
@@ -2981,9 +2981,6 @@ exports.sendReportCSV = async (req, res) => {
     const nameFile = 'ENTRADAS DE MERCANCIAS Y SERVICIOS';
     const pathTmp = path.resolve(__dirname, '../resources/uploads/');
     const pathx = `${pathTmp}//${nameFile}.csv`;
-
-    const zip = new AdmZip();
-
     const csvWriter = createCsvWriter({
       path: pathx,
       fieldDelimiter: ';',
@@ -3139,15 +3136,16 @@ exports.sendReportCSV = async (req, res) => {
         console.error(err);
       }
 
+      const zip = new AdmZip();
+      // add local file
       zip.addLocalFile(pathx);
-      const pathxZip = `${pathTmp}//${nameFile}.zip`;
-      zip.writeZip(pathxZip);
+      zip.writeZip(`${pathTmp}//${nameFile}.zip`);
 
       email.sendEmailWithAttachments({
         email: userInfo.email,
         subject: 'Generación de Reportes',
         message: message,
-        path: pathxZip
+        path: `${pathTmp}//${nameFile}.zip`
       });
     });
   } catch (err) {
