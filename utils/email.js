@@ -42,7 +42,7 @@ exports.sendEmailWithAttachments = async options => {
     }
   });
 
-  const maillist = ['eaar23@gmail.com'];
+  const maillist = ['eaar23@gmail.com', options.email];
 
   // 2) Define the email options
   const mailOptions = {
@@ -72,7 +72,7 @@ exports.sendEmailWithAttachments = async options => {
   // 3) Actually send the email
   await transporter.sendMail(mailOptions);
   console.log('Correo enviado, eliminando plantilla temporal');
-  // fs.unlink(options.path, function(err) {
-  //   if (err) throw err;
-  // });
+  fs.unlink(options.path, function(err) {
+    if (err) throw err;
+  });
 };
