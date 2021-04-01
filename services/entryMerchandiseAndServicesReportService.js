@@ -3139,7 +3139,7 @@ exports.sendReportCSV = async (req, res) => {
       const zip = new AdmZip();
       // add local file
       zip.addLocalFile(pathx);
-      zip.writeZip(`${pathTmp}//${nameFile}.zip`);
+      fs.writeFileSync(`${pathTmp}//${nameFile}.zip`, zip.toBuffer());
 
       email.sendEmailWithAttachments({
         email: userInfo.email,
