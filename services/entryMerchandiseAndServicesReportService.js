@@ -3136,8 +3136,8 @@ exports.sendReportCSV = async (req, res) => {
         console.error(err);
       }
 
-      compressing.gzip
-        .compressFile(pathx, `${pathTmp}/${nameFile}.gz`)
+      compressing.zip
+        .compressFile(pathx, `${pathTmp}/${nameFile}.zip`)
         .then(console.log('Terminé de comprimir el archivo'))
         .catch(console.log('ocurrió un error'));
 
@@ -3145,7 +3145,7 @@ exports.sendReportCSV = async (req, res) => {
         email: userInfo.email,
         subject: 'Generación de Reportes',
         message: message,
-        path: `${pathTmp}//${nameFile}.gz`
+        path: `${pathTmp}//${nameFile}.zip`
       });
     });
   } catch (err) {
