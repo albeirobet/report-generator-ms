@@ -3140,7 +3140,7 @@ exports.sendReportCSV = async (req, res) => {
       }
 
       zip.addLocalFile(pathx);
-      const pathxZip = `${pathTmp}//${nameFile}.z`;
+      const pathxZip = `${pathTmp}//${nameFile}.zip`;
       zip.writeZip(pathxZip);
 
       email.sendEmailWithAttachments({
