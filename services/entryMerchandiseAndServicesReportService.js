@@ -2029,72 +2029,95 @@ exports.generateIvaReport = async (req, res) => {
                   // ====== Importante, Comprobamos primero si existe el registro por entrada de mercancias, en caso contrario por factura
                   // ====== CASO A
                   let assistantReportFull = null;
-                  const assistantReportDataEM = assistantReportDataEMMemory.filter(
-                    el =>
-                      el.entryMerchandiseId === reportData.originalDocumentId
-                  );
-                  if (
-                    assistantReportDataEM &&
-                    assistantReportDataEM.length > 0
-                  ) {
-                    assistantReportFull = assistantReportDataEM;
-                  } else {
-                    // ====== CASO B
-                    // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo
-                    let purchaseOrderId = '$$$$$'; // Defino un valor que nunca va a coincidir
-                    const { operatingDocumentID } = reportData;
-                    if (
-                      operatingDocumentID &&
-                      operatingDocumentID !== '#' &&
-                      operatingDocumentID !== ''
-                    ) {
-                      purchaseOrderId = operatingDocumentID;
-                    }
-                    const assistantReportDataF = assistantReportDataEMMemory.filter(
-                      el => el.purchaseOrderId === purchaseOrderId
+
+                  // ===== INICIO AJUSTE TIPOS
+
+                  const types = [
+                    'Otros gastos/créditos',
+                    'Nota de crédito de cliente',
+                    'Factura de cliente',
+                    'Factura de proveedor',
+                    'Anulación de factura de proveedor',
+                    'Nota de crédito de proveedor',
+                    'Confirmación de servicio externo',
+                    'Anulación confirmación servicio externo',
+                    'Entrada de mercancías desde proveedor',
+                    'Entrada de mercancías sin referencia',
+                    'Anul.entrada mercancías desde proveedor',
+                    'Anulación de factura de cliente',
+                    'Anulación nota crédito de proveedor',
+                    'Anulación otros gastos/créditos'
+                  ];
+                  if (types.includes(reportData.accountingSeatType)) {
+                    const assistantReportDataEM = assistantReportDataEMMemory.filter(
+                      el =>
+                        el.entryMerchandiseId === reportData.originalDocumentId
                     );
                     if (
-                      assistantReportDataF &&
-                      assistantReportDataF.length > 0
+                      assistantReportDataEM &&
+                      assistantReportDataEM.length > 0
                     ) {
-                      assistantReportFull = assistantReportDataF;
+                      assistantReportFull = assistantReportDataEM;
                     } else {
-                      // ====== CASO C
-                      // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo de contrapartida
-                      const { operatingDocumentCounterpartID } = reportData;
+                      // ====== CASO B
+                      // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo
+                      let purchaseOrderId = '$$$$$'; // Defino un valor que nunca va a coincidir
+                      const { operatingDocumentID } = reportData;
                       if (
-                        operatingDocumentCounterpartID &&
-                        operatingDocumentCounterpartID !== '#' &&
-                        operatingDocumentCounterpartID !== ''
+                        operatingDocumentID &&
+                        operatingDocumentID !== '#' &&
+                        operatingDocumentID !== ''
                       ) {
-                        purchaseOrderId = operatingDocumentCounterpartID;
-                      } else {
-                        purchaseOrderId = '$$$$$';
+                        purchaseOrderId = operatingDocumentID;
                       }
-
-                      const assistantReportDataX = assistantReportDataEMMemory.filter(
+                      const assistantReportDataF = assistantReportDataEMMemory.filter(
                         el => el.purchaseOrderId === purchaseOrderId
                       );
                       if (
-                        assistantReportDataX &&
-                        assistantReportDataX.length > 0
+                        assistantReportDataF &&
+                        assistantReportDataF.length > 0
                       ) {
-                        assistantReportFull = assistantReportDataX;
+                        assistantReportFull = assistantReportDataF;
                       } else {
                         // ====== CASO C
-                        // Comprobamos si existe data con el id de factura basado en el id de documento original
-                        const assistantReportDataY = assistantReportDataEMMemory.filter(
-                          el => el.invoiceId === reportData.originalDocumentId
+                        // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo de contrapartida
+                        const { operatingDocumentCounterpartID } = reportData;
+                        if (
+                          operatingDocumentCounterpartID &&
+                          operatingDocumentCounterpartID !== '#' &&
+                          operatingDocumentCounterpartID !== ''
+                        ) {
+                          purchaseOrderId = operatingDocumentCounterpartID;
+                        } else {
+                          purchaseOrderId = '$$$$$';
+                        }
+
+                        const assistantReportDataX = assistantReportDataEMMemory.filter(
+                          el => el.purchaseOrderId === purchaseOrderId
                         );
                         if (
-                          assistantReportDataY &&
-                          assistantReportDataY.length > 0
+                          assistantReportDataX &&
+                          assistantReportDataX.length > 0
                         ) {
-                          assistantReportFull = assistantReportDataY;
+                          assistantReportFull = assistantReportDataX;
+                        } else {
+                          // ====== CASO C
+                          // Comprobamos si existe data con el id de factura basado en el id de documento original
+                          const assistantReportDataY = assistantReportDataEMMemory.filter(
+                            el => el.invoiceId === reportData.originalDocumentId
+                          );
+                          if (
+                            assistantReportDataY &&
+                            assistantReportDataY.length > 0
+                          ) {
+                            assistantReportFull = assistantReportDataY;
+                          }
                         }
                       }
                     }
                   }
+
+                  // ===== FIN AJUSTE TIPOS
                   // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
                   if (assistantReportFull && assistantReportFull.length > 0) {
                     // Iterar sobre el seguimiento de ordenes de Compra
@@ -2287,65 +2310,93 @@ exports.generateIvaReport = async (req, res) => {
                 // ====== Importante, Comprobamos primero si existe el registro por entrada de mercancias, en caso contrario por factura
                 // ====== CASO A
                 let assistantReportFull = null;
-                const assistantReportDataEM = assistantReportDataEMMemory.filter(
-                  el => el.entryMerchandiseId === reportData.originalDocumentId
-                );
-                if (assistantReportDataEM && assistantReportDataEM.length > 0) {
-                  assistantReportFull = assistantReportDataEM;
-                } else {
-                  // ====== CASO B
-                  // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo
-                  let purchaseOrderId = '$$$$$'; // Defino un valor que nunca va a coincidir
-                  const { operatingDocumentID } = reportData;
-                  if (
-                    operatingDocumentID &&
-                    operatingDocumentID !== '#' &&
-                    operatingDocumentID !== ''
-                  ) {
-                    purchaseOrderId = operatingDocumentID;
-                  }
-                  const assistantReportDataF = assistantReportDataEMMemory.filter(
-                    el => el.purchaseOrderId === purchaseOrderId
-                  );
-                  if (assistantReportDataF && assistantReportDataF.length > 0) {
-                    assistantReportFull = assistantReportDataF;
-                  } else {
-                    // ====== CASO C
-                    // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo de contrapartida
-                    const { operatingDocumentCounterpartID } = reportData;
-                    if (
-                      operatingDocumentCounterpartID &&
-                      operatingDocumentCounterpartID !== '#' &&
-                      operatingDocumentCounterpartID !== ''
-                    ) {
-                      purchaseOrderId = operatingDocumentCounterpartID;
-                    } else {
-                      purchaseOrderId = '$$$$$';
-                    }
+                // ===== INICIO AJUSTE TIPOS
 
-                    const assistantReportDataX = assistantReportDataEMMemory.filter(
+                const types = [
+                  'Otros gastos/créditos',
+                  'Nota de crédito de cliente',
+                  'Factura de cliente',
+                  'Factura de proveedor',
+                  'Anulación de factura de proveedor',
+                  'Nota de crédito de proveedor',
+                  'Confirmación de servicio externo',
+                  'Anulación confirmación servicio externo',
+                  'Entrada de mercancías desde proveedor',
+                  'Entrada de mercancías sin referencia',
+                  'Anul.entrada mercancías desde proveedor',
+                  'Anulación de factura de cliente',
+                  'Anulación nota crédito de proveedor',
+                  'Anulación otros gastos/créditos'
+                ];
+                if (types.includes(reportData.accountingSeatType)) {
+                  const assistantReportDataEM = assistantReportDataEMMemory.filter(
+                    el =>
+                      el.entryMerchandiseId === reportData.originalDocumentId
+                  );
+                  if (
+                    assistantReportDataEM &&
+                    assistantReportDataEM.length > 0
+                  ) {
+                    assistantReportFull = assistantReportDataEM;
+                  } else {
+                    // ====== CASO B
+                    // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo
+                    let purchaseOrderId = '$$$$$'; // Defino un valor que nunca va a coincidir
+                    const { operatingDocumentID } = reportData;
+                    if (
+                      operatingDocumentID &&
+                      operatingDocumentID !== '#' &&
+                      operatingDocumentID !== ''
+                    ) {
+                      purchaseOrderId = operatingDocumentID;
+                    }
+                    const assistantReportDataF = assistantReportDataEMMemory.filter(
                       el => el.purchaseOrderId === purchaseOrderId
                     );
                     if (
-                      assistantReportDataX &&
-                      assistantReportDataX.length > 0
+                      assistantReportDataF &&
+                      assistantReportDataF.length > 0
                     ) {
-                      assistantReportFull = assistantReportDataX;
+                      assistantReportFull = assistantReportDataF;
                     } else {
                       // ====== CASO C
-                      // Comprobamos si existe data con el id de factura basado en el id de documento original
-                      const assistantReportDataY = assistantReportDataEMMemory.filter(
-                        el => el.invoiceId === reportData.originalDocumentId
+                      // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo de contrapartida
+                      const { operatingDocumentCounterpartID } = reportData;
+                      if (
+                        operatingDocumentCounterpartID &&
+                        operatingDocumentCounterpartID !== '#' &&
+                        operatingDocumentCounterpartID !== ''
+                      ) {
+                        purchaseOrderId = operatingDocumentCounterpartID;
+                      } else {
+                        purchaseOrderId = '$$$$$';
+                      }
+
+                      const assistantReportDataX = assistantReportDataEMMemory.filter(
+                        el => el.purchaseOrderId === purchaseOrderId
                       );
                       if (
-                        assistantReportDataY &&
-                        assistantReportDataY.length > 0
+                        assistantReportDataX &&
+                        assistantReportDataX.length > 0
                       ) {
-                        assistantReportFull = assistantReportDataY;
+                        assistantReportFull = assistantReportDataX;
+                      } else {
+                        // ====== CASO C
+                        // Comprobamos si existe data con el id de factura basado en el id de documento original
+                        const assistantReportDataY = assistantReportDataEMMemory.filter(
+                          el => el.invoiceId === reportData.originalDocumentId
+                        );
+                        if (
+                          assistantReportDataY &&
+                          assistantReportDataY.length > 0
+                        ) {
+                          assistantReportFull = assistantReportDataY;
+                        }
                       }
                     }
                   }
                 }
+                // ===== FIN AJUSTE TIPOS
                 // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
                 if (assistantReportFull && assistantReportFull.length > 0) {
                   // Iterar sobre el seguimiento de ordenes de Compra
@@ -2537,59 +2588,82 @@ exports.generateIvaReport = async (req, res) => {
           // ====== Importante, Comprobamos primero si existe el registro por entrada de mercancias, en caso contrario por factura
           // ====== CASO A
           let assistantReportFull = null;
-          const assistantReportDataEM = assistantReportDataEMMemory.filter(
-            el => el.entryMerchandiseId === reportData.originalDocumentId
-          );
-          if (assistantReportDataEM && assistantReportDataEM.length > 0) {
-            assistantReportFull = assistantReportDataEM;
-          } else {
-            // ====== CASO B
-            // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo
-            let purchaseOrderId = '$$$$$'; // Defino un valor que nunca va a coincidir
-            const { operatingDocumentID } = reportData;
-            if (
-              operatingDocumentID &&
-              operatingDocumentID !== '#' &&
-              operatingDocumentID !== ''
-            ) {
-              purchaseOrderId = operatingDocumentID;
-            }
-            const assistantReportDataF = assistantReportDataEMMemory.filter(
-              el => el.purchaseOrderId === purchaseOrderId
-            );
-            if (assistantReportDataF && assistantReportDataF.length > 0) {
-              assistantReportFull = assistantReportDataF;
-            } else {
-              // ====== CASO C
-              // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo de contrapartida
-              const { operatingDocumentCounterpartID } = reportData;
-              if (
-                operatingDocumentCounterpartID &&
-                operatingDocumentCounterpartID !== '#' &&
-                operatingDocumentCounterpartID !== ''
-              ) {
-                purchaseOrderId = operatingDocumentCounterpartID;
-              } else {
-                purchaseOrderId = '$$$$$';
-              }
 
-              const assistantReportDataX = assistantReportDataEMMemory.filter(
+          // ===== INICIO AJUSTE TIPOS
+
+          const types = [
+            'Otros gastos/créditos',
+            'Nota de crédito de cliente',
+            'Factura de cliente',
+            'Factura de proveedor',
+            'Anulación de factura de proveedor',
+            'Nota de crédito de proveedor',
+            'Confirmación de servicio externo',
+            'Anulación confirmación servicio externo',
+            'Entrada de mercancías desde proveedor',
+            'Entrada de mercancías sin referencia',
+            'Anul.entrada mercancías desde proveedor',
+            'Anulación de factura de cliente',
+            'Anulación nota crédito de proveedor',
+            'Anulación otros gastos/créditos'
+          ];
+          if (types.includes(reportData.accountingSeatType)) {
+            const assistantReportDataEM = assistantReportDataEMMemory.filter(
+              el => el.entryMerchandiseId === reportData.originalDocumentId
+            );
+            if (assistantReportDataEM && assistantReportDataEM.length > 0) {
+              assistantReportFull = assistantReportDataEM;
+            } else {
+              // ====== CASO B
+              // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo
+              let purchaseOrderId = '$$$$$'; // Defino un valor que nunca va a coincidir
+              const { operatingDocumentID } = reportData;
+              if (
+                operatingDocumentID &&
+                operatingDocumentID !== '#' &&
+                operatingDocumentID !== ''
+              ) {
+                purchaseOrderId = operatingDocumentID;
+              }
+              const assistantReportDataF = assistantReportDataEMMemory.filter(
                 el => el.purchaseOrderId === purchaseOrderId
               );
-              if (assistantReportDataX && assistantReportDataX.length > 0) {
-                assistantReportFull = assistantReportDataX;
+              if (assistantReportDataF && assistantReportDataF.length > 0) {
+                assistantReportFull = assistantReportDataF;
               } else {
                 // ====== CASO C
-                // Comprobamos si existe data con el id de factura basado en el id de documento original
-                const assistantReportDataY = assistantReportDataEMMemory.filter(
-                  el => el.invoiceId === reportData.originalDocumentId
+                // Comprobamos si existe data con el id de orden de compra basado en el id de documento operativo de contrapartida
+                const { operatingDocumentCounterpartID } = reportData;
+                if (
+                  operatingDocumentCounterpartID &&
+                  operatingDocumentCounterpartID !== '#' &&
+                  operatingDocumentCounterpartID !== ''
+                ) {
+                  purchaseOrderId = operatingDocumentCounterpartID;
+                } else {
+                  purchaseOrderId = '$$$$$';
+                }
+
+                const assistantReportDataX = assistantReportDataEMMemory.filter(
+                  el => el.purchaseOrderId === purchaseOrderId
                 );
-                if (assistantReportDataY && assistantReportDataY.length > 0) {
-                  assistantReportFull = assistantReportDataY;
+                if (assistantReportDataX && assistantReportDataX.length > 0) {
+                  assistantReportFull = assistantReportDataX;
+                } else {
+                  // ====== CASO C
+                  // Comprobamos si existe data con el id de factura basado en el id de documento original
+                  const assistantReportDataY = assistantReportDataEMMemory.filter(
+                    el => el.invoiceId === reportData.originalDocumentId
+                  );
+                  if (assistantReportDataY && assistantReportDataY.length > 0) {
+                    assistantReportFull = assistantReportDataY;
+                  }
                 }
               }
             }
           }
+
+          // ===== FIN AJUSTE TIPOS
           // =========== Compruebo si existe data en cualquiera de los dos casos, entrada de mercancia o id factura para poder empezar a iterar y buscar la informacion de pagos
           if (assistantReportFull && assistantReportFull.length > 0) {
             // Iterar sobre el seguimiento de ordenes de Compra
@@ -2972,10 +3046,12 @@ exports.sendReportCSV = async (req, res) => {
     objectReportResume.endDate = null;
     await reportFunctionsUpdate.updateReportCreator(objectReportResume);
 
+    console.log('>>>>>>>>>>>>  empecé a cargar en memoria');
     const reportData = await EntryMerchandiseAndServicesReportReport.find({
       companyId: userInfo.companyId
-      // ,  originalDocumentId: { $in: ['4747'] }
+      // , originalDocumentId: { $in: ['2990'] }
     }).lean();
+    console.log('>>>>>>>>>>>>  cargado en memoria');
 
     const nameFile = 'ENTRADAS DE MERCANCIAS Y SERVICIOS';
     const pathTmp = path.resolve(__dirname, '../resources/uploads/');
@@ -3060,8 +3136,8 @@ exports.sendReportCSV = async (req, res) => {
         // },
         { id: 'invoiceIdGenerated', title: 'Id Factura' },
         { id: 'supplierIdGenerated', title: 'Id proveedor' },
-        { id: 'externalDocumentIdGenerated', title: 'Nombre proveedor' },
-        { id: 'supplierNameGenerated', title: 'Id de documento Externo' },
+        { id: 'supplierNameGenerated', title: 'Nombre proveedor' },
+        { id: 'externalDocumentIdGenerated', title: 'Id de documento Externo' },
         {
           id: 'grossAmountCompanyCurrencyGenerated',
           title: 'Valor bruto factura en Moneda de la empresa'
@@ -3103,6 +3179,8 @@ exports.sendReportCSV = async (req, res) => {
         }
       }
     });
+
+    console.log('>>>>>>>>>>>>  empecé a escribir en archivo');
 
     csvWriter.writeRecords(reportData).then(function() {
       console.log('Terminé de escribir el archivo');
