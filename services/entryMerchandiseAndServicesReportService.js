@@ -3068,8 +3068,8 @@ exports.sendReportCSV = async (req, res) => {
         { id: 'originalDocumentId', title: 'ID de documento original' },
 
         { id: 'originalDocumentDate', title: 'Fecha de Documento Original' },
-        { id: 'journalEntryHeaderText', title: 'Cabecera de Asiento Contable' },
-        { id: 'accountingEntryItemText', title: 'Posicion Asiento Contable' },
+        // { id: 'journalEntryHeaderText', title: 'Cabecera de Asiento Contable' },
+        // { id: 'accountingEntryItemText', title: 'Posicion Asiento Contable' },
 
         { id: 'thirdIDExtra', title: 'Id tercero extra' },
         { id: 'thirdNameExtra', title: 'Nombre tercero extra' },
