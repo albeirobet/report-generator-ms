@@ -22,7 +22,6 @@ const reportFunctionsUpdate = require('../utils/functions/reportFunctionsUpdate'
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const userService = require('./userService');
 const email = require('../utils/email');
-const customValidator = require('../utils/validators/validator');
 
 // =========== Function to count records of reports
 exports.generateReport = async (req, res) => {
@@ -398,7 +397,6 @@ exports.sendReportCSV = async (req, res) => {
     console.log('>>>>>>>>>>>>  empecé a cargar en memoria');
     const reportData = await Report1001.find({
       companyId: userInfo.companyId
-      // , originalDocumentId: { $in: ['2990'] }
     }).lean();
     console.log('>>>>>>>>>>>>  cargado en memoria');
 
@@ -450,24 +448,10 @@ exports.sendReportCSV = async (req, res) => {
       ]
     });
 
-    reportData.forEach(function(cursor, index, object) {
-      cursor.postingDate = customValidator.stringFromDate(cursor.postingDate);
-      cursor.createdAtGenerated = customValidator.stringFromDate(
-        cursor.createdAtGenerated
-      );
-      if (cursor.seniorAccountantId === 'RESULTADO') {
-        object.splice(index, 1);
-      }
-
-      if (cursor.supplierCoName === 'X') {
-        if (cursor.supplierCoId && cursor.supplierCoId !== '#') {
-          cursor.supplierNameGenerated = cursor.supplierCoId;
-          cursor.supplierIdGenerated = cursor.refundCo;
-        }
-      }
-    });
-
-    console.log('>>>>>>>>>>>>  empecé a escribir en archivo');
+    console.log(
+      '>>>>>>>>>>>>  empecé a escribir en archivo con ',
+      reportData.length
+    );
 
     csvWriter.writeRecords(reportData).then(function() {
       console.log('Terminé de escribir el archivo');
