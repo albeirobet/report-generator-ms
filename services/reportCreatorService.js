@@ -12,6 +12,7 @@ const ReportCreator = require('../models/reportCreatorModel');
 const customValidator = require('../utils/validators/validator');
 const httpCodes = require('../utils/constants/httpCodes');
 const entryMerchandiseAndServicesReportService = require('./entryMerchandiseAndServicesReportService');
+const report1001Service = require('./report1001Service');
 const userService = require('./userService');
 const ReportDownloader = require('../models/reportDownloaderModel');
 const EntryMerchandiseAndServicesReportReport = require('../models/entryMerchandiseAndServicesReportReportModel');
@@ -20,6 +21,16 @@ const EntryMerchandiseAndServicesReportReport = require('../models/entryMerchand
 exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
   try {
     entryMerchandiseAndServicesReportService.generateIvaReport(req, res);
+    return 'El reporte está siendo generado. Por favor validar su estado';
+  } catch (error) {
+    throw error;
+  }
+};
+
+// =========== Function to
+exports.generateReport1001 = async (req, res) => {
+  try {
+    report1001Service.generateReport(req, res);
     return 'El reporte está siendo generado. Por favor validar su estado';
   } catch (error) {
     throw error;

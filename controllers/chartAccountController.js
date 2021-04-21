@@ -2,19 +2,16 @@
 // Mail: eyder.ascuntar@runcode.co
 // Company: Runcode Ingeniería SAS
 const GeneralResponse = require('../dto/commons/response/generalResponseDTO');
-const reportCreatorService = require('../services/reportCreatorService');
+const service = require('../services/chartAccountService');
 const httpCodes = require('../utils/constants/httpCodes');
 const generalResp = require('../utils/responses/generalResp');
 
-exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
+exports.load = async (req, res) => {
   let codeHttp = httpCodes.OK;
   let generalResponse = new GeneralResponse();
   generalResponse.success = true;
   try {
-    const data = await reportCreatorService.generateEntryMerchandiseAndServicesReport(
-      req,
-      res
-    );
+    const data = await service.load(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
     generalResponse = generalResp.generalError(err);
@@ -25,12 +22,12 @@ exports.generateEntryMerchandiseAndServicesReport = async (req, res) => {
   return res.status(codeHttp).json(generalResponse);
 };
 
-exports.generateReport1001 = async (req, res) => {
+exports.delete = async (req, res) => {
   let codeHttp = httpCodes.OK;
   let generalResponse = new GeneralResponse();
   generalResponse.success = true;
   try {
-    const data = await reportCreatorService.generateReport1001(req, res);
+    const data = await service.delete(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
     generalResponse = generalResp.generalError(err);
@@ -41,15 +38,12 @@ exports.generateReport1001 = async (req, res) => {
   return res.status(codeHttp).json(generalResponse);
 };
 
-exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
+exports.count = async (req, res) => {
   let codeHttp = httpCodes.OK;
   let generalResponse = new GeneralResponse();
   generalResponse.success = true;
   try {
-    const data = await reportCreatorService.downloadEntryMerchandiseAndServicesReport(
-      req,
-      res
-    );
+    const data = await service.count(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
     generalResponse = generalResp.generalError(err);
@@ -60,12 +54,12 @@ exports.downloadEntryMerchandiseAndServicesReport = async (req, res) => {
   return res.status(codeHttp).json(generalResponse);
 };
 
-exports.createReport = async (req, res) => {
+exports.get = async (req, res) => {
   let codeHttp = httpCodes.OK;
   let generalResponse = new GeneralResponse();
   generalResponse.success = true;
   try {
-    const data = await reportCreatorService.createReport(req, res);
+    const data = await service.get(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
     generalResponse = generalResp.generalError(err);
@@ -76,44 +70,12 @@ exports.createReport = async (req, res) => {
   return res.status(codeHttp).json(generalResponse);
 };
 
-exports.getReport = async (req, res) => {
+exports.getAll = async (req, res) => {
   let codeHttp = httpCodes.OK;
   let generalResponse = new GeneralResponse();
   generalResponse.success = true;
   try {
-    const data = await reportCreatorService.getReport(req, res);
-    generalResponse = generalResp.generalSuccess(data);
-  } catch (err) {
-    generalResponse = generalResp.generalError(err);
-    console.error(generalResponse.apiError.messageUser);
-    codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
-    generalResponse.apiError.codeHTTP = undefined;
-  }
-  return res.status(codeHttp).json(generalResponse);
-};
-
-exports.getAllAllReports = async (req, res) => {
-  let codeHttp = httpCodes.OK;
-  let generalResponse = new GeneralResponse();
-  generalResponse.success = true;
-  try {
-    const data = await reportCreatorService.getAllAllReports(req, res);
-    generalResponse = generalResp.generalSuccess(data);
-  } catch (err) {
-    generalResponse = generalResp.generalError(err);
-    console.error(generalResponse.apiError.messageUser);
-    codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
-    generalResponse.apiError.codeHTTP = undefined;
-  }
-  return res.status(codeHttp).json(generalResponse);
-};
-
-exports.deleteReport = async (req, res) => {
-  let codeHttp = httpCodes.OK;
-  let generalResponse = new GeneralResponse();
-  generalResponse.success = true;
-  try {
-    const data = await reportCreatorService.deleteReport(req, res);
+    const data = await service.getAll(req, res);
     generalResponse = generalResp.generalSuccess(data);
   } catch (err) {
     generalResponse = generalResp.generalError(err);

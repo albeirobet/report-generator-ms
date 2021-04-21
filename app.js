@@ -31,6 +31,8 @@ const reportUploaderRoute = require('./routes/reportUploaderRoute');
 const purchaseOrderTrackingRoute = require('./routes/purchaseOrderTrackingRoute');
 const reportDownloaderRoute = require('./routes/reportDownloaderRoute');
 const reportEnableRoute = require('./routes/reportEnableRoute');
+const withHoldingNotesRoute = require('./routes/withHoldingNotesRoute');
+const chartAccountRoute = require('./routes/chartAccountRoute');
 
 const app = express();
 
@@ -125,6 +127,11 @@ app.use('/api/v1/reportUploader', reportUploaderRoute);
 app.use('/api/v1/reportDownloader', reportDownloaderRoute);
 // 20. Enabled Reports
 app.use('/api/v1/reportEnable', reportEnableRoute);
+// 21. WithHolding Notes
+app.use('/api/v1/withHoldingNotes', withHoldingNotesRoute);
+// 22. Chart Account
+app.use('/api/v1/chartAccounts', chartAccountRoute);
+
 // ... End Not Found Route
 app.all('*', notFoundRoute);
 
