@@ -80,7 +80,7 @@ exports.generateReport = async (req, res) => {
     console.log('Cargada información Maestra en Memoria');
     for await (const reportData of masterReportData) {
       objectGenerated = {};
-      console.log('CON LA CUENTA', reportData.seniorAccountantId);
+      // console.log('CON LA CUENTA', reportData.seniorAccountantId);
 
       let nroIdentificacion = '';
       let valorReportado = '';
@@ -162,9 +162,9 @@ exports.generateReport = async (req, res) => {
       if (chartAccountData && chartAccountData.length > 0) {
         // RECORRIENDO INFORMACIÓN DE LA CUENTA ASOCIADA AL REGISTRO
         for await (const chartAccountRow of chartAccountData) {
-          console.log(
-            `${chartAccountRow.accountID}  ${chartAccountRow.accountDescription} ${chartAccountRow.accountType} ${chartAccountRow.format} ${chartAccountRow.extraFormat} `
-          );
+          // console.log(
+          //   `${chartAccountRow.accountID}  ${chartAccountRow.accountDescription} ${chartAccountRow.accountType} ${chartAccountRow.format} ${chartAccountRow.extraFormat} `
+          // );
           const {
             format,
             accountType,
