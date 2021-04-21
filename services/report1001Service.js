@@ -79,6 +79,8 @@ exports.generateReport = async (req, res) => {
     console.log('Cargada información Maestra en Memoria');
     for await (const reportData of masterReportData) {
       objectGenerated = {};
+      objectGenerated.companyId = userInfo.companyId;
+      objectGenerated.userId = userInfo._id;
       // console.log('CON LA CUENTA', reportData.seniorAccountantId);
 
       let nroIdentificacion = '';
