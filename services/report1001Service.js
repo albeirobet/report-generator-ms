@@ -367,6 +367,7 @@ exports.sendReportCSV = async (req, res) => {
     console.log('>>>>>>>> TIEMPO DE INICIO xxxx');
     console.log(new Date());
     const userInfo = await userService.getUserInfo(req, res);
+    console.log(userInfo);
     objectReportResume.companyId = userInfo.companyId;
     objectReportResume.generatorUserId = userInfo._id;
     const reportInfo = await ReportCreator.find({
@@ -398,6 +399,7 @@ exports.sendReportCSV = async (req, res) => {
     const reportData = await Report1001.find({
       companyId: userInfo.companyId
     }).lean();
+    console.log(`ES ESTO? ${reportData.length}`);
     console.log('>>>>>>>>>>>>  cargado en memoria');
 
     const nameFile = 'REPORTE 1001';
