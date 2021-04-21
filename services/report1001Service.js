@@ -323,7 +323,8 @@ exports.generateReport = async (req, res) => {
         console.log(error);
       });
     if (summaryLoadedData.counter > 0) {
-      console.log('Terminé con el resumen');
+      console.log('voy a enviar de una vez la plantilla');
+      this.sendReportCSV(req, res);
     }
     return summaryLoadedData;
   } catch (err) {
@@ -332,16 +333,16 @@ exports.generateReport = async (req, res) => {
 };
 
 // =========== Function to delete MasterReport
-exports.deleteEntryMerchandiseAndServicesReport = async (req, res) => {
+exports.deleteReport = async (req, res) => {
   try {
     const userInfo = await userService.getUserInfo(req, res);
-    await EntryMerchandiseAndServicesReportReport.collection.deleteMany({
+    await Report1001.collection.deleteMany({
       companyId: userInfo.companyId
     });
 
     // Defino objeto y variables estandar para el resumen de la carga
     const objectReportResume = {};
-    objectReportResume.code = 'EOMS';
+    objectReportResume.code = '1001GR';
     objectReportResume.companyId = userInfo.companyId;
     objectReportResume.startDate = null;
     objectReportResume.state = 'deleted_report';
@@ -361,7 +362,7 @@ exports.deleteEntryMerchandiseAndServicesReport = async (req, res) => {
 exports.sendReportCSV = async (req, res) => {
   try {
     const objectReportResume = {};
-    objectReportResume.code = 'EMEGR';
+    objectReportResume.code = '1001GR';
     objectReportResume.startDate = new Date();
 
     console.log('>>>>>>>> TIEMPO DE INICIO xxxx');
@@ -395,119 +396,57 @@ exports.sendReportCSV = async (req, res) => {
     await reportFunctionsUpdate.updateReportCreator(objectReportResume);
 
     console.log('>>>>>>>>>>>>  empecé a cargar en memoria');
-    const reportData = await EntryMerchandiseAndServicesReportReport.find({
+    const reportData = await Report1001.find({
       companyId: userInfo.companyId
       // , originalDocumentId: { $in: ['2990'] }
     }).lean();
     console.log('>>>>>>>>>>>>  cargado en memoria');
 
-    const nameFile = 'ENTRADAS DE MERCANCIAS Y SERVICIOS';
+    const nameFile = 'REPORTE 1001';
     const pathTmp = path.resolve(__dirname, '../resources/uploads/');
     const pathx = `${pathTmp}//${nameFile}.csv`;
     const csvWriter = createCsvWriter({
       path: pathx,
       fieldDelimiter: ';',
       header: [
-        { id: 'seniorAccountantId', title: 'ID Cuenta de mayor' },
-        { id: 'seniorAccountantName', title: 'Nombre Cuenta de mayor' },
-        { id: 'postingDate', title: 'Fecha de contabilización' },
-        { id: 'accountingSeat', title: 'Asiento contable' },
-        { id: 'externalReferenceId', title: 'ID de referencia externa' },
-        { id: 'originalDocumentId', title: 'ID de documento original' },
-
-        { id: 'originalDocumentDate', title: 'Fecha de Documento Original' },
-        // { id: 'journalEntryHeaderText', title: 'Cabecera de Asiento Contable' },
-        // { id: 'accountingEntryItemText', title: 'Posicion Asiento Contable' },
-
-        { id: 'thirdIDExtra', title: 'Id tercero extra' },
-        { id: 'thirdNameExtra', title: 'Nombre tercero extra' },
-
-        { id: 'accountingSeatType', title: 'Tipo de asiento contable' },
-
-        { id: 'thirdId', title: 'ID Tercero' },
-        { id: 'thirdName', title: 'Nombre Tercero' },
-        { id: 'businessPartnerID', title: 'ID Socio Comercial' },
-        { id: 'businessPartnerName', title: 'Nombre Socio Comercial' },
-
-        { id: 'accountingSeatAnnulled', title: 'Asiento contable anulado' },
-        { id: 'originalDocumentAnnulledId', title: 'ID de documento anulado' },
+        { id: 'concepto', title: 'Concepto' },
+        { id: 'tipoDocumento', title: 'Tipo Documento' },
         {
-          id: 'accountingSeatAnnulment',
-          title: 'Asiento contable de anulación'
+          id: 'nroIdentificacion',
+          title: 'Número de Identificación del Informado'
+        },
+        { id: 'primerApellido', title: 'Primer apellido del informado' },
+        { id: 'segundoApellido', title: 'Segundo apellido del informado' },
+        { id: 'primerNombre', title: 'Primer nombre del informado' },
+        { id: 'segundoNombre', title: 'Otros nombres del informado' },
+        { id: 'razonSocial', title: 'Razon social informado' },
+        { id: 'direccion', title: 'Dirección' },
+        { id: 'codigoDepto', title: 'Codigo Dpto' },
+        { id: 'codigoMpo', title: 'Codigo cp' },
+        { id: 'paisResidencia', title: 'Pais de residencia o domicilio' },
+        { id: 'pagoDeducible', title: 'Pago o abono en cuenta deducible' },
+        { id: 'pagoNoDeducible', title: 'Pago o abono en cuenta no deducible' },
+        { id: 'ivaDeducible', title: 'IVA mayor del costo o gasto deducible' },
+        {
+          id: 'ivaNoDeducible',
+          title: 'IVA mayor del costo o gasto no deducible'
         },
         {
-          id: 'extraOriginalDocumentAnulledId',
-          title: 'ID de documento de anulación'
-        },
-        { id: 'extraOriginalDocumentId', title: 'ID doc.original' },
-        {
-          id: 'debtAmountCompanyCurrency',
-          title: 'Importe en debe en moneda de empresa'
+          id: 'retencionFuentePracticada',
+          title: 'Retencion en la fuente practicada en renta'
         },
         {
-          id: 'creditAmountCompanyCurrency',
-          title: 'Importe en haber en moneda de empresa'
-        },
-        // {
-        //   id: 'entryMerchandiseIdGenerated',
-        //   title: 'Id Entrada de Mercancias'
-        // },
-        // {
-        //   id: 'entryMerchandiseStateGenerated',
-        //   title: 'Estado Entrada de Mercancias y Servicios'
-        // },
-        // { id: 'purchaseOrderIdGenerated', title: 'Id pedido de compra' },
-        // { id: 'requestedAmountGenerated', title: 'Cantidad Solicitada' },
-        // {
-        //   id: 'netPriceCompanyCurrencyGenerated',
-        //   title: 'Precio Neto en moneda de la empresa'
-        // },
-        // { id: 'deliveredQuantityGenerated', title: 'Cantidad Entregada' },
-        // { id: 'deliveredValueGenerated', title: 'Valor Entregado' },
-        // {
-        //   id: 'deliveredValueCompanyCurrencyGenerated',
-        //   title: 'Valor entregado en Moneda de la Empresa'
-        // },
-        // { id: 'invoicedAmountGenerated', title: 'Cantidad Facturada' },
-        // { id: 'invoicedValueGenerated', title: 'Valor Facturado' },
-        // {
-        //   id: 'invoicedValueCompanyCurrencyGenerated',
-        //   title: 'Valor Facturado en Moneda de la Empresa'
-        // },
-        // {
-        //   id: 'balanceQuantityEntryMerchandiseQuantitiesGenerated',
-        //   title: 'Saldo de entrada de mercancias y servicios en cantidades'
-        // },
-        // {
-        //   id: 'balanceQuantityEntryMerchandiseCurrenciesGenerated',
-        //   title: 'Saldo de entrada de mercancias y servicios en pesos'
-        // },
-        { id: 'invoiceIdGenerated', title: 'Id Factura' },
-        { id: 'supplierIdGenerated', title: 'Id proveedor' },
-        { id: 'supplierNameGenerated', title: 'Nombre proveedor' },
-        { id: 'externalDocumentIdGenerated', title: 'Id de documento Externo' },
-        {
-          id: 'grossAmountCompanyCurrencyGenerated',
-          title: 'Valor bruto factura en Moneda de la empresa'
+          id: 'retencionFuenteAsumida',
+          title: 'Retencion en la fuente asumida en renta'
         },
         {
-          id: 'netAmountCompanyCurrencyGenerated',
-          title: 'Valor neto factura en Moneda de la empresa'
+          id: 'retencionFuenteIvaRegimenComun',
+          title: 'Retencion en la fuente practicada IVA regimen comun'
         },
-        // { id: 'quantityGenerated', title: 'Cantidad Facturada Proveedor' },
-
-        { id: 'supplierCoName', title: 'Reembolso' },
-        { id: 'refundCo', title: 'Nombre Proveedor' },
-        { id: 'supplierCoId', title: 'Id Proveedor' },
-        { id: 'ivaValueCalculated', title: 'Valor Iva' },
-        { id: 'ivaCalculated', title: '% Iva' },
-        { id: 'ipoconsumoValueCalculated', title: 'Valor Ipoconsumo' },
-        { id: 'ipoconsumoCalculated', title: '% Ipoconsumo' },
-
-        { id: 'documentIdGenerated', title: 'Id pago' },
-        { id: 'createdAtGenerated', title: 'Fecha de pago' },
-        { id: 'pyamentMethodGenerated', title: 'Modalidad  de Pago' },
-        { id: 'paymentAmountGenerated', title: 'Valor pagado' }
+        {
+          id: 'retencionFuenteIvaNoDomiciliados',
+          title: 'Retencion en la fuente practicada IVA no domiciliados'
+        }
       ]
     });
 
