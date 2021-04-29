@@ -3148,8 +3148,8 @@ exports.sendReportCSV = async (req, res) => {
         },
         // { id: 'quantityGenerated', title: 'Cantidad Facturada Proveedor' },
 
-        { id: 'supplierCoName', title: 'Reembolso' },
-        { id: 'refundCo', title: 'Nombre Proveedor' },
+        { id: 'refundCo', title: 'Reembolso' },
+        { id: 'supplierCoName', title: 'Nombre Proveedor' },
         { id: 'supplierCoId', title: 'Id Proveedor' },
         { id: 'ivaValueCalculated', title: 'Valor Iva' },
         { id: 'ivaCalculated', title: '% Iva' },
