@@ -161,7 +161,6 @@ exports.generateReport = async (req, res) => {
       // );
 
       objectGenerated.seniorAccountantId = reportData.seniorAccountantId.toString();
-      console.log(objectGenerated.seniorAccountantId);
       const chartAccountData = chartAccount.filter(el => {
         return (
           el.accountID.toString() === reportData.seniorAccountantId.toString()
