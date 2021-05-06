@@ -167,7 +167,6 @@ exports.generateReport = async (req, res) => {
       });
 
       if (chartAccountData && chartAccountData.length > 0) {
-        console.log('Entré por  lo menos una vez?');
         // RECORRIENDO INFORMACIÓN DE LA CUENTA ASOCIADA AL REGISTRO
         for await (const chartAccountRow of chartAccountData) {
           // console.log(
