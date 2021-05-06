@@ -161,6 +161,7 @@ exports.generateReport = async (req, res) => {
       // );
 
       objectGenerated.seniorAccountantId = reportData.seniorAccountantId.toString();
+      objectGenerated.invoiceIdGenerated = reportData.invoiceIdGenerated;
       const chartAccountData = chartAccount.filter(el => {
         return (
           el.accountID.toString() === reportData.seniorAccountantId.toString()
@@ -417,6 +418,7 @@ exports.sendReportCSV = async (req, res) => {
       fieldDelimiter: ';',
       header: [
         { id: 'seniorAccountantId', title: 'Id Cuenta' },
+        { id: 'invoiceIdGenerated', title: 'Id Factura' },
         { id: 'concepto', title: 'Concepto' },
         { id: 'tipoDocumento', title: 'Tipo Documento' },
         {

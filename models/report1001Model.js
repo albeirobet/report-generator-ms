@@ -8,6 +8,10 @@ const report1001Schema = new mongoose.Schema({
     type: String,
     uppercase: true
   },
+  invoiceIdGenerated: {
+    type: String,
+    uppercase: true
+  },
   concepto: {
     type: String,
     uppercase: true
