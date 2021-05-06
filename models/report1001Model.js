@@ -12,6 +12,10 @@ const report1001Schema = new mongoose.Schema({
     type: String,
     uppercase: true
   },
+  externalReferenceId: {
+    type: String,
+    uppercase: true
+  },
   concepto: {
     type: String,
     uppercase: true
