@@ -73,7 +73,7 @@ exports.generateIvaReport = async (req, res) => {
     console.log(' =========  Cargando en memoria');
     let masterReportData = await MasterReport.find({
       companyId: userInfo.companyId
-      // ,       originalDocumentId: { $in: ['4747'] }
+      //, originalDocumentId: { $in: ['6947'] }
     }).lean();
 
     let entryMerchandiseExtraDataMemory = await EntryMerchandiseExtra.find({
@@ -441,7 +441,9 @@ exports.generateIvaReport = async (req, res) => {
                     );
                     if (
                       assistantReportDataEM &&
-                      assistantReportDataEM.length > 0
+                      assistantReportDataEM.length > 0 &&
+                      reportData.accountingSeatType !==
+                        'Nota de crédito de proveedor'
                     ) {
                       assistantReportFull = assistantReportDataEM;
                     } else {
@@ -721,7 +723,9 @@ exports.generateIvaReport = async (req, res) => {
                   );
                   if (
                     assistantReportDataEM &&
-                    assistantReportDataEM.length > 0
+                    assistantReportDataEM.length > 0 &&
+                    reportData.accountingSeatType !==
+                      'Nota de crédito de proveedor'
                   ) {
                     assistantReportFull = assistantReportDataEM;
                   } else {
@@ -971,8 +975,6 @@ exports.generateIvaReport = async (req, res) => {
           // ===== Buscar en el Assistant Report para armar información de facturas y pagos
           // ===== Paso 4.
 
-          // ====== Importante, Comprobamos primero si existe el registro por entrada de mercancias, en caso contrario por factura
-          // ====== CASO A
           let assistantReportFull = null;
 
           // ===== INICIO AJUSTE TIPOS
@@ -994,10 +996,16 @@ exports.generateIvaReport = async (req, res) => {
             'Anulación otros gastos/créditos'
           ];
           if (types.includes(reportData.accountingSeatType)) {
+            // ====== Importante, Comprobamos primero si existe el registro por entrada de mercancias, en caso contrario por factura
+            // ====== CASO A
             const assistantReportDataEM = assistantReportDataEMMemory.filter(
               el => el.entryMerchandiseId === reportData.originalDocumentId
             );
-            if (assistantReportDataEM && assistantReportDataEM.length > 0) {
+            if (
+              assistantReportDataEM &&
+              assistantReportDataEM.length > 0 &&
+              reportData.accountingSeatType !== 'Nota de crédito de proveedor'
+            ) {
               assistantReportFull = assistantReportDataEM;
             } else {
               // ====== CASO B
@@ -1036,7 +1044,7 @@ exports.generateIvaReport = async (req, res) => {
                 if (assistantReportDataX && assistantReportDataX.length > 0) {
                   assistantReportFull = assistantReportDataX;
                 } else {
-                  // ====== CASO C
+                  // ====== CASO D
                   // Comprobamos si existe data con el id de factura basado en el id de documento original
                   const assistantReportDataY = assistantReportDataEMMemory.filter(
                     el => el.invoiceId === reportData.originalDocumentId
