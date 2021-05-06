@@ -67,7 +67,7 @@ exports.generateReport = async (req, res) => {
     console.log(' =========  Cargando en memoria');
     let masterReportData = await EntryMerchandiseAndServicesReportReport.find({
       companyId: userInfo.companyId
-      //, thirdId: { $in: ['5000986'] }
+      // , thirdId: { $in: ['5000986'] }
     }).lean();
 
     let chartAccount = await ChartAccount.find({
@@ -161,6 +161,7 @@ exports.generateReport = async (req, res) => {
       // );
 
       objectGenerated.seniorAccountantId = reportData.seniorAccountantId.toString();
+      console.log(objectGenerated.seniorAccountantId);
       const chartAccountData = chartAccount.filter(el => {
         return (
           el.accountID.toString() === reportData.seniorAccountantId.toString()
