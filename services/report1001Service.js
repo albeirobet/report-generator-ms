@@ -416,6 +416,7 @@ exports.sendReportCSV = async (req, res) => {
       path: pathx,
       fieldDelimiter: ';',
       header: [
+        { id: 'seniorAccountantId', title: 'Id Cuenta' },
         { id: 'concepto', title: 'Concepto' },
         { id: 'tipoDocumento', title: 'Tipo Documento' },
         {
