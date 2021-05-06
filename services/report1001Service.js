@@ -160,6 +160,7 @@ exports.generateReport = async (req, res) => {
       //   el => el.accountID === reportData.seniorAccountantId
       // );
 
+      objectGenerated.seniorAccountantId = reportData.seniorAccountantId.toString();
       const chartAccountData = chartAccount.filter(el => {
         return (
           el.accountID.toString() === reportData.seniorAccountantId.toString()

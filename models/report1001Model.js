@@ -4,6 +4,10 @@
 const mongoose = require('mongoose');
 
 const report1001Schema = new mongoose.Schema({
+  seniorAccountantId: {
+    type: String,
+    uppercase: true
+  },
   concepto: {
     type: String,
     uppercase: true
