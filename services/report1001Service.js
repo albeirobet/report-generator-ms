@@ -1,3 +1,5 @@
+/* eslint-disable prefer-destructuring */
+/* eslint-disable no-plusplus */
 /* eslint-disable no-lonely-if */
 /* eslint-disable no-loop-func */
 /* eslint-disable no-restricted-syntax */
@@ -22,6 +24,11 @@ const reportFunctionsUpdate = require('../utils/functions/reportFunctionsUpdate'
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const userService = require('./userService');
 const email = require('../utils/email');
+
+function getNum(val) {
+  val = +val || 0;
+  return val;
+}
 
 // =========== Function to count records of reports
 exports.generateReport = async (req, res) => {
@@ -62,12 +69,13 @@ exports.generateReport = async (req, res) => {
       companyId: userInfo.companyId
     });
     const arrayGenerated = [];
+    const arrayGeneratedDef = [];
     let objectGenerated = {};
 
     console.log(' =========  Cargando en memoria');
     let masterReportData = await EntryMerchandiseAndServicesReportReport.find({
       companyId: userInfo.companyId
-      // , thirdId: { $in: ['5000986'] }
+      // , thirdId: { $in: ['5000647'] }
     }).lean();
 
     let chartAccount = await ChartAccount.find({
@@ -280,7 +288,450 @@ exports.generateReport = async (req, res) => {
       }
     }
     const summaryLoadedData = new SummaryLoadedData('', 0);
-    console.log('Insert Data Init ', arrayGenerated.length);
+    const nroCedulasUnicos = [];
+    for (let i = 0; i < arrayGenerated.length; i++) {
+      if (
+        nroCedulasUnicos.indexOf(arrayGenerated[i].nroIdentificacion) === -1
+      ) {
+        nroCedulasUnicos.push(arrayGenerated[i].nroIdentificacion);
+      }
+    }
+
+    nroCedulasUnicos.forEach(doc => {
+      const byCedulaList = arrayGenerated.filter(
+        el => el.nroIdentificacion === doc
+      );
+
+      const conceptosUnicos = [];
+      for (let i = 0; i < byCedulaList.length; i++) {
+        if (conceptosUnicos.indexOf(byCedulaList[i].concepto) === -1) {
+          conceptosUnicos.push(byCedulaList[i].concepto);
+        }
+      }
+
+      conceptosUnicos.forEach(concepto => {
+        if (concepto !== 'N/A') {
+          const byConceptosList = arrayGenerated.filter(
+            el => el.concepto === concepto
+          );
+          objectGenerated = {};
+          byConceptosList.forEach(rowFinal => {
+            console.log(`${concepto}`, rowFinal);
+            objectGenerated.seniorAccountantId = rowFinal.seniorAccountantId;
+            objectGenerated.invoiceIdGenerated = rowFinal.invoiceIdGenerated;
+            objectGenerated.externalReferenceId = rowFinal.externalReferenceId;
+            objectGenerated.concepto = rowFinal.concepto;
+            objectGenerated.tipoDocumento = rowFinal.tipoDocumento;
+            objectGenerated.nroIdentificacion = rowFinal.nroIdentificacion;
+            objectGenerated.primerApellido = rowFinal.primerApellido;
+            objectGenerated.segundoApellido = rowFinal.segundoApellido;
+            objectGenerated.primerNombre = rowFinal.primerNombre;
+            objectGenerated.segundoNombre = rowFinal.segundoNombre;
+            objectGenerated.razonSocial = rowFinal.razonSocial;
+            objectGenerated.direccion = rowFinal.direccion;
+            objectGenerated.codigoDepto = rowFinal.codigoDepto;
+            objectGenerated.codigoMpo = rowFinal.codigoMpo;
+            objectGenerated.paisResidencia = rowFinal.paisResidencia;
+
+            // ==== Pago Deducible
+            let pagoDeducibleDef = 0;
+            if (getNum(objectGenerated.pagoDeducible)) {
+              pagoDeducibleDef =
+                getNum(objectGenerated.pagoDeducible) +
+                getNum(rowFinal.pagoDeducible);
+            } else {
+              const pagoDeducible = getNum(rowFinal.pagoDeducible);
+              if (pagoDeducible) {
+                pagoDeducibleDef = pagoDeducible;
+              }
+            }
+            objectGenerated.pagoDeducible = pagoDeducibleDef;
+
+            // ==== Pago No Deducible
+            let pagoNoDeducibleDef = 0;
+            if (getNum(objectGenerated.pagoNoDeducible)) {
+              pagoNoDeducibleDef =
+                getNum(objectGenerated.pagoNoDeducible) +
+                getNum(rowFinal.pagoNoDeducible);
+            } else {
+              const pagoNoDeducible = getNum(rowFinal.pagoNoDeducible);
+              if (pagoNoDeducible) {
+                pagoNoDeducibleDef = pagoNoDeducible;
+              }
+            }
+            objectGenerated.pagoNoDeducible = pagoNoDeducibleDef;
+
+            // ==== IVA Deducible
+            let ivaDeducibleDef = 0;
+            if (getNum(objectGenerated.ivaDeducible)) {
+              ivaDeducibleDef =
+                getNum(objectGenerated.ivaDeducible) +
+                getNum(rowFinal.ivaDeducible);
+            } else {
+              const ivaDeducible = getNum(rowFinal.ivaDeducible);
+              if (ivaDeducible) {
+                ivaDeducibleDef = ivaDeducible;
+              }
+            }
+            objectGenerated.ivaDeducible = ivaDeducibleDef;
+
+            // ==== IVA NO Deducible
+            let ivaNoDeducibleDef = 0;
+            if (getNum(objectGenerated.ivaNoDeducible)) {
+              ivaNoDeducibleDef =
+                getNum(objectGenerated.ivaNoDeducible) +
+                getNum(rowFinal.ivaNoDeducible);
+            } else {
+              const ivaNoDeducible = getNum(rowFinal.ivaNoDeducible);
+              if (ivaNoDeducible) {
+                ivaNoDeducibleDef = ivaNoDeducible;
+              }
+            }
+            objectGenerated.ivaNoDeducible = ivaNoDeducibleDef;
+
+            // ==== Retencion Fuente Practicada
+            let retencionFuentePracticadaDef = 0;
+            if (getNum(objectGenerated.retencionFuentePracticada)) {
+              retencionFuentePracticadaDef =
+                getNum(objectGenerated.retencionFuentePracticada) +
+                getNum(rowFinal.retencionFuentePracticada);
+            } else {
+              const retencionFuentePracticada = getNum(
+                rowFinal.retencionFuentePracticada
+              );
+              if (retencionFuentePracticada) {
+                retencionFuentePracticadaDef = retencionFuentePracticada;
+              }
+            }
+            objectGenerated.retencionFuentePracticada = retencionFuentePracticadaDef;
+
+            // ==== Retencion Fuente Asumida
+            let retencionFuenteAsumidaDef = 0;
+            if (getNum(objectGenerated.retencionFuenteAsumida)) {
+              retencionFuenteAsumidaDef =
+                getNum(objectGenerated.retencionFuenteAsumida) +
+                getNum(rowFinal.retencionFuenteAsumida);
+            } else {
+              const retencionFuenteAsumida = getNum(
+                rowFinal.retencionFuenteAsumida
+              );
+              if (retencionFuenteAsumida) {
+                retencionFuenteAsumidaDef = retencionFuenteAsumida;
+              }
+            }
+            objectGenerated.retencionFuenteAsumida = retencionFuenteAsumidaDef;
+
+            // ==== Retencion Fuente  Iva Regimen Comun
+            let retencionFuenteIvaRegimenComunDef = 0;
+            if (getNum(objectGenerated.retencionFuenteIvaRegimenComun)) {
+              retencionFuenteIvaRegimenComunDef =
+                getNum(objectGenerated.retencionFuenteIvaRegimenComun) +
+                getNum(rowFinal.retencionFuenteIvaRegimenComun);
+            } else {
+              const retencionFuenteIvaRegimenComun = getNum(
+                rowFinal.retencionFuenteIvaRegimenComun
+              );
+              if (retencionFuenteIvaRegimenComun) {
+                retencionFuenteIvaRegimenComunDef = retencionFuenteIvaRegimenComun;
+              }
+            }
+            objectGenerated.retencionFuenteIvaRegimenComun = retencionFuenteIvaRegimenComunDef;
+
+            // ==== Retencion Fuente  Iva  No domiciliados
+            let retencionFuenteIvaNoDomiciliadosDef = 0;
+            if (getNum(objectGenerated.retencionFuenteIvaNoDomiciliados)) {
+              retencionFuenteIvaNoDomiciliadosDef =
+                getNum(objectGenerated.retencionFuenteIvaNoDomiciliados) +
+                getNum(rowFinal.retencionFuenteIvaNoDomiciliados);
+            } else {
+              const retencionFuenteIvaNoDomiciliados = getNum(
+                rowFinal.retencionFuenteIvaNoDomiciliados
+              );
+              if (retencionFuenteIvaNoDomiciliados) {
+                retencionFuenteIvaNoDomiciliadosDef = retencionFuenteIvaNoDomiciliados;
+              }
+            }
+            objectGenerated.retencionFuenteIvaNoDomiciliados = retencionFuenteIvaNoDomiciliadosDef;
+          });
+          objectGenerated.companyId = userInfo.companyId;
+          objectGenerated.userId = userInfo._id;
+          arrayGeneratedDef.push(objectGenerated);
+          objectGenerated = {};
+        }
+      });
+
+      const byConceptosList = arrayGenerated.filter(
+        el => el.concepto === 'N/A'
+      );
+
+      arrayGeneratedDef.forEach(row => {
+        byConceptosList.forEach(function(rowFinal, index) {
+          if (row.invoiceIdGenerated === rowFinal.invoiceIdGenerated) {
+            // ==== Pago Deducible
+            let pagoDeducibleDef = 0;
+            if (getNum(row.pagoDeducible)) {
+              pagoDeducibleDef =
+                getNum(row.pagoDeducible) + getNum(rowFinal.pagoDeducible);
+            } else {
+              const pagoDeducible = getNum(rowFinal.pagoDeducible);
+              if (pagoDeducible) {
+                pagoDeducibleDef = pagoDeducible;
+              }
+            }
+            row.pagoDeducible = pagoDeducibleDef;
+
+            // ==== Pago No Deducible
+            let pagoNoDeducibleDef = 0;
+            if (getNum(row.pagoNoDeducible)) {
+              pagoNoDeducibleDef =
+                getNum(row.pagoNoDeducible) + getNum(rowFinal.pagoNoDeducible);
+            } else {
+              const pagoNoDeducible = getNum(rowFinal.pagoNoDeducible);
+              if (pagoNoDeducible) {
+                pagoNoDeducibleDef = pagoNoDeducible;
+              }
+            }
+            row.pagoNoDeducible = pagoNoDeducibleDef;
+
+            // ==== IVA Deducible
+            let ivaDeducibleDef = 0;
+            if (getNum(row.ivaDeducible)) {
+              ivaDeducibleDef =
+                getNum(row.ivaDeducible) + getNum(rowFinal.ivaDeducible);
+            } else {
+              const ivaDeducible = getNum(rowFinal.ivaDeducible);
+              if (ivaDeducible) {
+                ivaDeducibleDef = ivaDeducible;
+              }
+            }
+            row.ivaDeducible = ivaDeducibleDef;
+
+            // ==== IVA NO Deducible
+            let ivaNoDeducibleDef = 0;
+            if (getNum(row.ivaNoDeducible)) {
+              ivaNoDeducibleDef =
+                getNum(row.ivaNoDeducible) + getNum(rowFinal.ivaNoDeducible);
+            } else {
+              const ivaNoDeducible = getNum(rowFinal.ivaNoDeducible);
+              if (ivaNoDeducible) {
+                ivaNoDeducibleDef = ivaNoDeducible;
+              }
+            }
+            row.ivaNoDeducible = ivaNoDeducibleDef;
+
+            // ==== Retencion Fuente Practicada
+            let retencionFuentePracticadaDef = 0;
+            if (getNum(row.retencionFuentePracticada)) {
+              retencionFuentePracticadaDef =
+                getNum(row.retencionFuentePracticada) +
+                getNum(rowFinal.retencionFuentePracticada);
+            } else {
+              const retencionFuentePracticada = getNum(
+                rowFinal.retencionFuentePracticada
+              );
+              if (retencionFuentePracticada) {
+                retencionFuentePracticadaDef = retencionFuentePracticada;
+              }
+            }
+            row.retencionFuentePracticada = retencionFuentePracticadaDef;
+
+            // ==== Retencion Fuente Asumida
+            let retencionFuenteAsumidaDef = 0;
+            if (getNum(row.retencionFuenteAsumida)) {
+              retencionFuenteAsumidaDef =
+                getNum(row.retencionFuenteAsumida) +
+                getNum(rowFinal.retencionFuenteAsumida);
+            } else {
+              const retencionFuenteAsumida = getNum(
+                rowFinal.retencionFuenteAsumida
+              );
+              if (retencionFuenteAsumida) {
+                retencionFuenteAsumidaDef = retencionFuenteAsumida;
+              }
+            }
+            row.retencionFuenteAsumida = retencionFuenteAsumidaDef;
+
+            // ==== Retencion Fuente  Iva Regimen Comun
+            let retencionFuenteIvaRegimenComunDef = 0;
+            if (getNum(row.retencionFuenteIvaRegimenComun)) {
+              retencionFuenteIvaRegimenComunDef =
+                getNum(row.retencionFuenteIvaRegimenComun) +
+                getNum(rowFinal.retencionFuenteIvaRegimenComun);
+            } else {
+              const retencionFuenteIvaRegimenComun = getNum(
+                rowFinal.retencionFuenteIvaRegimenComun
+              );
+              if (retencionFuenteIvaRegimenComun) {
+                retencionFuenteIvaRegimenComunDef = retencionFuenteIvaRegimenComun;
+              }
+            }
+            row.retencionFuenteIvaRegimenComun = retencionFuenteIvaRegimenComunDef;
+
+            // ==== Retencion Fuente  Iva  No domiciliados
+            let retencionFuenteIvaNoDomiciliadosDef = 0;
+            if (getNum(row.retencionFuenteIvaNoDomiciliados)) {
+              retencionFuenteIvaNoDomiciliadosDef =
+                getNum(row.retencionFuenteIvaNoDomiciliados) +
+                getNum(rowFinal.retencionFuenteIvaNoDomiciliados);
+            } else {
+              const retencionFuenteIvaNoDomiciliados = getNum(
+                rowFinal.retencionFuenteIvaNoDomiciliados
+              );
+              if (retencionFuenteIvaNoDomiciliados) {
+                retencionFuenteIvaNoDomiciliadosDef = retencionFuenteIvaNoDomiciliados;
+              }
+            }
+            row.retencionFuenteIvaNoDomiciliados = retencionFuenteIvaNoDomiciliadosDef;
+
+            // byConceptosList.splice(index, 1);
+            delete byConceptosList[index];
+          } else {
+            let tempExternalReferenceId = rowFinal.externalReferenceId;
+            let invoiceIdGenerated = row.invoiceIdGenerated;
+            if (tempExternalReferenceId) {
+              tempExternalReferenceId = tempExternalReferenceId.replace(
+                /\s/g,
+                ''
+              );
+              tempExternalReferenceId = tempExternalReferenceId.replace(
+                /-/,
+                ''
+              );
+            }
+            if (invoiceIdGenerated) {
+              invoiceIdGenerated = invoiceIdGenerated.replace(/\s/g, '');
+              invoiceIdGenerated = invoiceIdGenerated.replace(/-/, '');
+            }
+
+            if (tempExternalReferenceId.includes(invoiceIdGenerated)) {
+              // ==== Pago Deducible
+              let pagoDeducibleDef = 0;
+              if (getNum(row.pagoDeducible)) {
+                pagoDeducibleDef =
+                  getNum(row.pagoDeducible) + getNum(rowFinal.pagoDeducible);
+              } else {
+                const pagoDeducible = getNum(rowFinal.pagoDeducible);
+                if (pagoDeducible) {
+                  pagoDeducibleDef = pagoDeducible;
+                }
+              }
+              row.pagoDeducible = pagoDeducibleDef;
+
+              // ==== Pago No Deducible
+              let pagoNoDeducibleDef = 0;
+              if (getNum(row.pagoNoDeducible)) {
+                pagoNoDeducibleDef =
+                  getNum(row.pagoNoDeducible) +
+                  getNum(rowFinal.pagoNoDeducible);
+              } else {
+                const pagoNoDeducible = getNum(rowFinal.pagoNoDeducible);
+                if (pagoNoDeducible) {
+                  pagoNoDeducibleDef = pagoNoDeducible;
+                }
+              }
+              row.pagoNoDeducible = pagoNoDeducibleDef;
+
+              // ==== IVA Deducible
+              let ivaDeducibleDef = 0;
+              if (getNum(row.ivaDeducible)) {
+                ivaDeducibleDef =
+                  getNum(row.ivaDeducible) + getNum(rowFinal.ivaDeducible);
+              } else {
+                const ivaDeducible = getNum(rowFinal.ivaDeducible);
+                if (ivaDeducible) {
+                  ivaDeducibleDef = ivaDeducible;
+                }
+              }
+              row.ivaDeducible = ivaDeducibleDef;
+
+              // ==== IVA NO Deducible
+              let ivaNoDeducibleDef = 0;
+              if (getNum(row.ivaNoDeducible)) {
+                ivaNoDeducibleDef =
+                  getNum(row.ivaNoDeducible) + getNum(rowFinal.ivaNoDeducible);
+              } else {
+                const ivaNoDeducible = getNum(rowFinal.ivaNoDeducible);
+                if (ivaNoDeducible) {
+                  ivaNoDeducibleDef = ivaNoDeducible;
+                }
+              }
+              row.ivaNoDeducible = ivaNoDeducibleDef;
+
+              // ==== Retencion Fuente Practicada
+              let retencionFuentePracticadaDef = 0;
+              if (getNum(row.retencionFuentePracticada)) {
+                retencionFuentePracticadaDef =
+                  getNum(row.retencionFuentePracticada) +
+                  getNum(rowFinal.retencionFuentePracticada);
+              } else {
+                const retencionFuentePracticada = getNum(
+                  rowFinal.retencionFuentePracticada
+                );
+                if (retencionFuentePracticada) {
+                  retencionFuentePracticadaDef = retencionFuentePracticada;
+                }
+              }
+              row.retencionFuentePracticada = retencionFuentePracticadaDef;
+
+              // ==== Retencion Fuente Asumida
+              let retencionFuenteAsumidaDef = 0;
+              if (getNum(row.retencionFuenteAsumida)) {
+                retencionFuenteAsumidaDef =
+                  getNum(row.retencionFuenteAsumida) +
+                  getNum(rowFinal.retencionFuenteAsumida);
+              } else {
+                const retencionFuenteAsumida = getNum(
+                  rowFinal.retencionFuenteAsumida
+                );
+                if (retencionFuenteAsumida) {
+                  retencionFuenteAsumidaDef = retencionFuenteAsumida;
+                }
+              }
+              row.retencionFuenteAsumida = retencionFuenteAsumidaDef;
+
+              // ==== Retencion Fuente  Iva Regimen Comun
+              let retencionFuenteIvaRegimenComunDef = 0;
+              if (getNum(row.retencionFuenteIvaRegimenComun)) {
+                retencionFuenteIvaRegimenComunDef =
+                  getNum(row.retencionFuenteIvaRegimenComun) +
+                  getNum(rowFinal.retencionFuenteIvaRegimenComun);
+              } else {
+                const retencionFuenteIvaRegimenComun = getNum(
+                  rowFinal.retencionFuenteIvaRegimenComun
+                );
+                if (retencionFuenteIvaRegimenComun) {
+                  retencionFuenteIvaRegimenComunDef = retencionFuenteIvaRegimenComun;
+                }
+              }
+              row.retencionFuenteIvaRegimenComun = retencionFuenteIvaRegimenComunDef;
+
+              // ==== Retencion Fuente  Iva  No domiciliados
+              let retencionFuenteIvaNoDomiciliadosDef = 0;
+              if (getNum(row.retencionFuenteIvaNoDomiciliados)) {
+                retencionFuenteIvaNoDomiciliadosDef =
+                  getNum(row.retencionFuenteIvaNoDomiciliados) +
+                  getNum(rowFinal.retencionFuenteIvaNoDomiciliados);
+              } else {
+                const retencionFuenteIvaNoDomiciliados = getNum(
+                  rowFinal.retencionFuenteIvaNoDomiciliados
+                );
+                if (retencionFuenteIvaNoDomiciliados) {
+                  retencionFuenteIvaNoDomiciliadosDef = retencionFuenteIvaNoDomiciliados;
+                }
+              }
+              row.retencionFuenteIvaNoDomiciliados = retencionFuenteIvaNoDomiciliadosDef;
+              // byConceptosList.splice(index, 1);
+              delete byConceptosList[index];
+            }
+          }
+        });
+      });
+    });
+
+    console.table(arrayGeneratedDef);
+
+    console.log('Insert Data Init ', arrayGeneratedDef.length);
+
     // Actualizando información encabezado reporte
     objectReportResume.state = 'entering_information';
     objectReportResume.percentageCompletition = 66;
@@ -293,18 +744,18 @@ exports.generateReport = async (req, res) => {
     chartAccount = null;
 
     await Report1001.collection
-      .insertMany(arrayGenerated)
+      .insertMany(arrayGeneratedDef)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
-        summaryLoadedData.counter = arrayGenerated.length;
+        summaryLoadedData.counter = arrayGeneratedDef.length;
         console.log('Insert Data Finish');
-        this.arrayGenerated = null;
+        this.arrayGeneratedDef = null;
         async function finishReport() {
           // Actualizando información encabezado reporte
           objectReportResume.state = 'created_report';
           objectReportResume.percentageCompletition = 90;
-          objectReportResume.counterRows = arrayGenerated.length;
+          objectReportResume.counterRows = arrayGeneratedDef.length;
           objectReportResume.message = 'Reporte cargado correctamente';
           objectReportResume.endDate = new Date();
           await reportFunctionsUpdate.updateReportCreator(objectReportResume);
@@ -315,7 +766,7 @@ exports.generateReport = async (req, res) => {
         // Limpiando memoria general
         masterReportData = null;
         chartAccount = null;
-        this.arrayGenerated = null;
+        this.arrayGeneratedDef = null;
 
         summaryLoadedData.message =
           reportGeneratorMessages.E_REPORT_GENERATOR_MS_03;
