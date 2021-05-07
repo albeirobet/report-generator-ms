@@ -728,7 +728,7 @@ exports.generateReport = async (req, res) => {
       });
     });
 
-    console.table(arrayGeneratedDef);
+    //  console.table(arrayGeneratedDef);
 
     console.log('Insert Data Init ', arrayGeneratedDef.length);
 
