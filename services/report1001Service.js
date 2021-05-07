@@ -316,7 +316,6 @@ exports.generateReport = async (req, res) => {
           );
           objectGenerated = {};
           byConceptosList.forEach(rowFinal => {
-            console.log(`${concepto}`, rowFinal);
             objectGenerated.seniorAccountantId = rowFinal.seniorAccountantId;
             objectGenerated.invoiceIdGenerated = rowFinal.invoiceIdGenerated;
             objectGenerated.externalReferenceId = rowFinal.externalReferenceId;
