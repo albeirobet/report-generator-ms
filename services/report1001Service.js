@@ -75,7 +75,7 @@ exports.generateReport = async (req, res) => {
     console.log(' =========  Cargando en memoria');
     let masterReportData = await EntryMerchandiseAndServicesReportReport.find({
       companyId: userInfo.companyId
-      //, businessPartnerID: { $in: ['5000103', '5000850'] }
+      //, businessPartnerID: { $in: ['5000103'] }
     }).lean();
 
     let chartAccount = await ChartAccount.find({
@@ -298,7 +298,7 @@ exports.generateReport = async (req, res) => {
     }
 
     nroCedulasUnicos = [...new Set(nroCedulasUnicos)];
-    nroCedulasUnicos = ['5000103', '5000850'];
+
     nroCedulasUnicos.forEach(function(doc, indey) {
       let byCedulaList = [];
       byCedulaList = arrayGenerated.filter(el => el.nroIdentificacion === doc);
