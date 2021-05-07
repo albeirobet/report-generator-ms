@@ -734,11 +734,16 @@ exports.generateReport = async (req, res) => {
           });
         });
       }
-
       nroCedulasUnicos.splice(indey, 1);
     });
 
     //  console.table(arrayGeneratedDef);
+
+    arrayGeneratedDef.forEach(function(row, index) {
+      if (getNum(row.pagoDeducible) < 100000) {
+        row.primerNombre = 'HOLA MUNDO';
+      }
+    });
 
     console.log('Insert Data Init ', arrayGeneratedDef.length);
 
