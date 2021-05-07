@@ -84,7 +84,10 @@ exports.generateReport = async (req, res) => {
 
     console.log(chartAccount.length);
 
-    console.log('Cargada información Maestra en Memoria');
+    console.log(
+      'Cargada información Maestra en Memoria ',
+      masterReportData.length
+    );
     for await (const reportData of masterReportData) {
       objectGenerated = {};
       objectGenerated.companyId = userInfo.companyId;
@@ -309,8 +312,7 @@ exports.generateReport = async (req, res) => {
           conceptosUnicos.push(byCedulaList[i].concepto);
         }
       }
-
-      conceptosUnicos.forEach(concepto => {
+      conceptosUnicos.forEach(function(concepto, indexConceptos) {
         if (concepto !== 'N/A') {
           let byConceptosList = [];
           byConceptosList = arrayGenerated.filter(
@@ -318,7 +320,7 @@ exports.generateReport = async (req, res) => {
           );
           if (byConceptosList && byConceptosList.length > 0) {
             objectGenerated = {};
-            byConceptosList.forEach(rowFinal => {
+            byConceptosList.forEach(function(rowFinal, indexConceptosList) {
               objectGenerated.seniorAccountantId = rowFinal.seniorAccountantId;
               objectGenerated.invoiceIdGenerated = rowFinal.invoiceIdGenerated;
               objectGenerated.externalReferenceId =
@@ -455,6 +457,7 @@ exports.generateReport = async (req, res) => {
                 }
               }
               objectGenerated.retencionFuenteIvaNoDomiciliados = retencionFuenteIvaNoDomiciliadosDef;
+              delete byConceptosList[indexConceptosList];
             });
             objectGenerated.companyId = userInfo.companyId;
             objectGenerated.userId = userInfo._id;
@@ -462,6 +465,7 @@ exports.generateReport = async (req, res) => {
             objectGenerated = {};
           }
         }
+        delete conceptosUnicos[indexConceptos];
       });
 
       // const byConceptosList = arrayGenerated.filter(
