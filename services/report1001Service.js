@@ -290,6 +290,8 @@ exports.generateReport = async (req, res) => {
         arrayGenerated.push(objectGenerated);
       }
     }
+    console.log('REPORT 1001 SIN AGRUPACION:  ', arrayGenerated.length);
+
     const summaryLoadedData = new SummaryLoadedData('', 0);
     let nroCedulasUnicos = [];
     for (let i = 0; i < arrayGenerated.length; i++) {
@@ -299,9 +301,7 @@ exports.generateReport = async (req, res) => {
         nroCedulasUnicos.push(arrayGenerated[i].nroIdentificacion);
       }
     }
-
     nroCedulasUnicos = [...new Set(nroCedulasUnicos)];
-
     nroCedulasUnicos.forEach(function(doc, indey) {
       let byCedulaList = [];
       byCedulaList = arrayGenerated.filter(el => el.nroIdentificacion === doc);
@@ -315,9 +315,7 @@ exports.generateReport = async (req, res) => {
       conceptosUnicos.forEach(function(concepto, indexConceptos) {
         if (concepto !== 'N/A') {
           let byConceptosList = [];
-          byConceptosList = arrayGenerated.filter(
-            el => el.concepto === concepto
-          );
+          byConceptosList = byCedulaList.filter(el => el.concepto === concepto);
           if (byConceptosList && byConceptosList.length > 0) {
             objectGenerated = {};
             byConceptosList.forEach(function(rowFinal, indexConceptosList) {
@@ -468,276 +466,274 @@ exports.generateReport = async (req, res) => {
         delete conceptosUnicos[indexConceptos];
       });
 
-      // const byConceptosList = arrayGenerated.filter(
-      //   el => el.concepto === 'N/A'
-      // );
+      const byConceptosList = byCedulaList.filter(el => el.concepto === 'N/A');
 
-      // if (byConceptosList && byConceptosList.length > 0) {
-      //   arrayGeneratedDef.forEach(row => {
-      //     byConceptosList.forEach(function(rowFinal, index) {
-      //       if (row.invoiceIdGenerated === rowFinal.invoiceIdGenerated) {
-      //         // ==== Pago Deducible
-      //         let pagoDeducibleDef = 0;
-      //         if (getNum(row.pagoDeducible)) {
-      //           pagoDeducibleDef =
-      //             getNum(row.pagoDeducible) + getNum(rowFinal.pagoDeducible);
-      //         } else {
-      //           const pagoDeducible = getNum(rowFinal.pagoDeducible);
-      //           if (pagoDeducible) {
-      //             pagoDeducibleDef = pagoDeducible;
-      //           }
-      //         }
-      //         row.pagoDeducible = pagoDeducibleDef;
+      if (byConceptosList && byConceptosList.length > 0) {
+        arrayGeneratedDef.forEach(row => {
+          byConceptosList.forEach(function(rowFinal, index) {
+            if (row.invoiceIdGenerated === rowFinal.invoiceIdGenerated) {
+              // ==== Pago Deducible
+              let pagoDeducibleDef = 0;
+              if (getNum(row.pagoDeducible)) {
+                pagoDeducibleDef =
+                  getNum(row.pagoDeducible) + getNum(rowFinal.pagoDeducible);
+              } else {
+                const pagoDeducible = getNum(rowFinal.pagoDeducible);
+                if (pagoDeducible) {
+                  pagoDeducibleDef = pagoDeducible;
+                }
+              }
+              row.pagoDeducible = pagoDeducibleDef;
 
-      //         // ==== Pago No Deducible
-      //         let pagoNoDeducibleDef = 0;
-      //         if (getNum(row.pagoNoDeducible)) {
-      //           pagoNoDeducibleDef =
-      //             getNum(row.pagoNoDeducible) +
-      //             getNum(rowFinal.pagoNoDeducible);
-      //         } else {
-      //           const pagoNoDeducible = getNum(rowFinal.pagoNoDeducible);
-      //           if (pagoNoDeducible) {
-      //             pagoNoDeducibleDef = pagoNoDeducible;
-      //           }
-      //         }
-      //         row.pagoNoDeducible = pagoNoDeducibleDef;
+              // ==== Pago No Deducible
+              let pagoNoDeducibleDef = 0;
+              if (getNum(row.pagoNoDeducible)) {
+                pagoNoDeducibleDef =
+                  getNum(row.pagoNoDeducible) +
+                  getNum(rowFinal.pagoNoDeducible);
+              } else {
+                const pagoNoDeducible = getNum(rowFinal.pagoNoDeducible);
+                if (pagoNoDeducible) {
+                  pagoNoDeducibleDef = pagoNoDeducible;
+                }
+              }
+              row.pagoNoDeducible = pagoNoDeducibleDef;
 
-      //         // ==== IVA Deducible
-      //         let ivaDeducibleDef = 0;
-      //         if (getNum(row.ivaDeducible)) {
-      //           ivaDeducibleDef =
-      //             getNum(row.ivaDeducible) + getNum(rowFinal.ivaDeducible);
-      //         } else {
-      //           const ivaDeducible = getNum(rowFinal.ivaDeducible);
-      //           if (ivaDeducible) {
-      //             ivaDeducibleDef = ivaDeducible;
-      //           }
-      //         }
-      //         row.ivaDeducible = ivaDeducibleDef;
+              // ==== IVA Deducible
+              let ivaDeducibleDef = 0;
+              if (getNum(row.ivaDeducible)) {
+                ivaDeducibleDef =
+                  getNum(row.ivaDeducible) + getNum(rowFinal.ivaDeducible);
+              } else {
+                const ivaDeducible = getNum(rowFinal.ivaDeducible);
+                if (ivaDeducible) {
+                  ivaDeducibleDef = ivaDeducible;
+                }
+              }
+              row.ivaDeducible = ivaDeducibleDef;
 
-      //         // ==== IVA NO Deducible
-      //         let ivaNoDeducibleDef = 0;
-      //         if (getNum(row.ivaNoDeducible)) {
-      //           ivaNoDeducibleDef =
-      //             getNum(row.ivaNoDeducible) + getNum(rowFinal.ivaNoDeducible);
-      //         } else {
-      //           const ivaNoDeducible = getNum(rowFinal.ivaNoDeducible);
-      //           if (ivaNoDeducible) {
-      //             ivaNoDeducibleDef = ivaNoDeducible;
-      //           }
-      //         }
-      //         row.ivaNoDeducible = ivaNoDeducibleDef;
+              // ==== IVA NO Deducible
+              let ivaNoDeducibleDef = 0;
+              if (getNum(row.ivaNoDeducible)) {
+                ivaNoDeducibleDef =
+                  getNum(row.ivaNoDeducible) + getNum(rowFinal.ivaNoDeducible);
+              } else {
+                const ivaNoDeducible = getNum(rowFinal.ivaNoDeducible);
+                if (ivaNoDeducible) {
+                  ivaNoDeducibleDef = ivaNoDeducible;
+                }
+              }
+              row.ivaNoDeducible = ivaNoDeducibleDef;
 
-      //         // ==== Retencion Fuente Practicada
-      //         let retencionFuentePracticadaDef = 0;
-      //         if (getNum(row.retencionFuentePracticada)) {
-      //           retencionFuentePracticadaDef =
-      //             getNum(row.retencionFuentePracticada) +
-      //             getNum(rowFinal.retencionFuentePracticada);
-      //         } else {
-      //           const retencionFuentePracticada = getNum(
-      //             rowFinal.retencionFuentePracticada
-      //           );
-      //           if (retencionFuentePracticada) {
-      //             retencionFuentePracticadaDef = retencionFuentePracticada;
-      //           }
-      //         }
-      //         row.retencionFuentePracticada = retencionFuentePracticadaDef;
+              // ==== Retencion Fuente Practicada
+              let retencionFuentePracticadaDef = 0;
+              if (getNum(row.retencionFuentePracticada)) {
+                retencionFuentePracticadaDef =
+                  getNum(row.retencionFuentePracticada) +
+                  getNum(rowFinal.retencionFuentePracticada);
+              } else {
+                const retencionFuentePracticada = getNum(
+                  rowFinal.retencionFuentePracticada
+                );
+                if (retencionFuentePracticada) {
+                  retencionFuentePracticadaDef = retencionFuentePracticada;
+                }
+              }
+              row.retencionFuentePracticada = retencionFuentePracticadaDef;
 
-      //         // ==== Retencion Fuente Asumida
-      //         let retencionFuenteAsumidaDef = 0;
-      //         if (getNum(row.retencionFuenteAsumida)) {
-      //           retencionFuenteAsumidaDef =
-      //             getNum(row.retencionFuenteAsumida) +
-      //             getNum(rowFinal.retencionFuenteAsumida);
-      //         } else {
-      //           const retencionFuenteAsumida = getNum(
-      //             rowFinal.retencionFuenteAsumida
-      //           );
-      //           if (retencionFuenteAsumida) {
-      //             retencionFuenteAsumidaDef = retencionFuenteAsumida;
-      //           }
-      //         }
-      //         row.retencionFuenteAsumida = retencionFuenteAsumidaDef;
+              // ==== Retencion Fuente Asumida
+              let retencionFuenteAsumidaDef = 0;
+              if (getNum(row.retencionFuenteAsumida)) {
+                retencionFuenteAsumidaDef =
+                  getNum(row.retencionFuenteAsumida) +
+                  getNum(rowFinal.retencionFuenteAsumida);
+              } else {
+                const retencionFuenteAsumida = getNum(
+                  rowFinal.retencionFuenteAsumida
+                );
+                if (retencionFuenteAsumida) {
+                  retencionFuenteAsumidaDef = retencionFuenteAsumida;
+                }
+              }
+              row.retencionFuenteAsumida = retencionFuenteAsumidaDef;
 
-      //         // ==== Retencion Fuente  Iva Regimen Comun
-      //         let retencionFuenteIvaRegimenComunDef = 0;
-      //         if (getNum(row.retencionFuenteIvaRegimenComun)) {
-      //           retencionFuenteIvaRegimenComunDef =
-      //             getNum(row.retencionFuenteIvaRegimenComun) +
-      //             getNum(rowFinal.retencionFuenteIvaRegimenComun);
-      //         } else {
-      //           const retencionFuenteIvaRegimenComun = getNum(
-      //             rowFinal.retencionFuenteIvaRegimenComun
-      //           );
-      //           if (retencionFuenteIvaRegimenComun) {
-      //             retencionFuenteIvaRegimenComunDef = retencionFuenteIvaRegimenComun;
-      //           }
-      //         }
-      //         row.retencionFuenteIvaRegimenComun = retencionFuenteIvaRegimenComunDef;
+              // ==== Retencion Fuente  Iva Regimen Comun
+              let retencionFuenteIvaRegimenComunDef = 0;
+              if (getNum(row.retencionFuenteIvaRegimenComun)) {
+                retencionFuenteIvaRegimenComunDef =
+                  getNum(row.retencionFuenteIvaRegimenComun) +
+                  getNum(rowFinal.retencionFuenteIvaRegimenComun);
+              } else {
+                const retencionFuenteIvaRegimenComun = getNum(
+                  rowFinal.retencionFuenteIvaRegimenComun
+                );
+                if (retencionFuenteIvaRegimenComun) {
+                  retencionFuenteIvaRegimenComunDef = retencionFuenteIvaRegimenComun;
+                }
+              }
+              row.retencionFuenteIvaRegimenComun = retencionFuenteIvaRegimenComunDef;
 
-      //         // ==== Retencion Fuente  Iva  No domiciliados
-      //         let retencionFuenteIvaNoDomiciliadosDef = 0;
-      //         if (getNum(row.retencionFuenteIvaNoDomiciliados)) {
-      //           retencionFuenteIvaNoDomiciliadosDef =
-      //             getNum(row.retencionFuenteIvaNoDomiciliados) +
-      //             getNum(rowFinal.retencionFuenteIvaNoDomiciliados);
-      //         } else {
-      //           const retencionFuenteIvaNoDomiciliados = getNum(
-      //             rowFinal.retencionFuenteIvaNoDomiciliados
-      //           );
-      //           if (retencionFuenteIvaNoDomiciliados) {
-      //             retencionFuenteIvaNoDomiciliadosDef = retencionFuenteIvaNoDomiciliados;
-      //           }
-      //         }
-      //         row.retencionFuenteIvaNoDomiciliados = retencionFuenteIvaNoDomiciliadosDef;
+              // ==== Retencion Fuente  Iva  No domiciliados
+              let retencionFuenteIvaNoDomiciliadosDef = 0;
+              if (getNum(row.retencionFuenteIvaNoDomiciliados)) {
+                retencionFuenteIvaNoDomiciliadosDef =
+                  getNum(row.retencionFuenteIvaNoDomiciliados) +
+                  getNum(rowFinal.retencionFuenteIvaNoDomiciliados);
+              } else {
+                const retencionFuenteIvaNoDomiciliados = getNum(
+                  rowFinal.retencionFuenteIvaNoDomiciliados
+                );
+                if (retencionFuenteIvaNoDomiciliados) {
+                  retencionFuenteIvaNoDomiciliadosDef = retencionFuenteIvaNoDomiciliados;
+                }
+              }
+              row.retencionFuenteIvaNoDomiciliados = retencionFuenteIvaNoDomiciliadosDef;
 
-      //         // byConceptosList.splice(index, 1);
-      //         delete byConceptosList[index];
-      //       } else {
-      //         let tempExternalReferenceId = rowFinal.externalReferenceId;
-      //         let invoiceIdGenerated = row.invoiceIdGenerated;
-      //         if (tempExternalReferenceId) {
-      //           tempExternalReferenceId = tempExternalReferenceId.replace(
-      //             /\s/g,
-      //             ''
-      //           );
-      //           tempExternalReferenceId = tempExternalReferenceId.replace(
-      //             /-/,
-      //             ''
-      //           );
-      //         }
-      //         if (invoiceIdGenerated) {
-      //           invoiceIdGenerated = invoiceIdGenerated.replace(/\s/g, '');
-      //           invoiceIdGenerated = invoiceIdGenerated.replace(/-/, '');
-      //         }
+              // byConceptosList.splice(index, 1);
+              delete byConceptosList[index];
+            } else {
+              let tempExternalReferenceId = rowFinal.externalReferenceId;
+              let invoiceIdGenerated = row.invoiceIdGenerated;
+              if (tempExternalReferenceId) {
+                tempExternalReferenceId = tempExternalReferenceId.replace(
+                  /\s/g,
+                  ''
+                );
+                tempExternalReferenceId = tempExternalReferenceId.replace(
+                  /-/,
+                  ''
+                );
+              }
+              if (invoiceIdGenerated) {
+                invoiceIdGenerated = invoiceIdGenerated.replace(/\s/g, '');
+                invoiceIdGenerated = invoiceIdGenerated.replace(/-/, '');
+              }
 
-      //         if (tempExternalReferenceId.includes(invoiceIdGenerated)) {
-      //           // ==== Pago Deducible
-      //           let pagoDeducibleDef = 0;
-      //           if (getNum(row.pagoDeducible)) {
-      //             pagoDeducibleDef =
-      //               getNum(row.pagoDeducible) + getNum(rowFinal.pagoDeducible);
-      //           } else {
-      //             const pagoDeducible = getNum(rowFinal.pagoDeducible);
-      //             if (pagoDeducible) {
-      //               pagoDeducibleDef = pagoDeducible;
-      //             }
-      //           }
-      //           row.pagoDeducible = pagoDeducibleDef;
+              if (tempExternalReferenceId.includes(invoiceIdGenerated)) {
+                // ==== Pago Deducible
+                let pagoDeducibleDef = 0;
+                if (getNum(row.pagoDeducible)) {
+                  pagoDeducibleDef =
+                    getNum(row.pagoDeducible) + getNum(rowFinal.pagoDeducible);
+                } else {
+                  const pagoDeducible = getNum(rowFinal.pagoDeducible);
+                  if (pagoDeducible) {
+                    pagoDeducibleDef = pagoDeducible;
+                  }
+                }
+                row.pagoDeducible = pagoDeducibleDef;
 
-      //           // ==== Pago No Deducible
-      //           let pagoNoDeducibleDef = 0;
-      //           if (getNum(row.pagoNoDeducible)) {
-      //             pagoNoDeducibleDef =
-      //               getNum(row.pagoNoDeducible) +
-      //               getNum(rowFinal.pagoNoDeducible);
-      //           } else {
-      //             const pagoNoDeducible = getNum(rowFinal.pagoNoDeducible);
-      //             if (pagoNoDeducible) {
-      //               pagoNoDeducibleDef = pagoNoDeducible;
-      //             }
-      //           }
-      //           row.pagoNoDeducible = pagoNoDeducibleDef;
+                // ==== Pago No Deducible
+                let pagoNoDeducibleDef = 0;
+                if (getNum(row.pagoNoDeducible)) {
+                  pagoNoDeducibleDef =
+                    getNum(row.pagoNoDeducible) +
+                    getNum(rowFinal.pagoNoDeducible);
+                } else {
+                  const pagoNoDeducible = getNum(rowFinal.pagoNoDeducible);
+                  if (pagoNoDeducible) {
+                    pagoNoDeducibleDef = pagoNoDeducible;
+                  }
+                }
+                row.pagoNoDeducible = pagoNoDeducibleDef;
 
-      //           // ==== IVA Deducible
-      //           let ivaDeducibleDef = 0;
-      //           if (getNum(row.ivaDeducible)) {
-      //             ivaDeducibleDef =
-      //               getNum(row.ivaDeducible) + getNum(rowFinal.ivaDeducible);
-      //           } else {
-      //             const ivaDeducible = getNum(rowFinal.ivaDeducible);
-      //             if (ivaDeducible) {
-      //               ivaDeducibleDef = ivaDeducible;
-      //             }
-      //           }
-      //           row.ivaDeducible = ivaDeducibleDef;
+                // ==== IVA Deducible
+                let ivaDeducibleDef = 0;
+                if (getNum(row.ivaDeducible)) {
+                  ivaDeducibleDef =
+                    getNum(row.ivaDeducible) + getNum(rowFinal.ivaDeducible);
+                } else {
+                  const ivaDeducible = getNum(rowFinal.ivaDeducible);
+                  if (ivaDeducible) {
+                    ivaDeducibleDef = ivaDeducible;
+                  }
+                }
+                row.ivaDeducible = ivaDeducibleDef;
 
-      //           // ==== IVA NO Deducible
-      //           let ivaNoDeducibleDef = 0;
-      //           if (getNum(row.ivaNoDeducible)) {
-      //             ivaNoDeducibleDef =
-      //               getNum(row.ivaNoDeducible) +
-      //               getNum(rowFinal.ivaNoDeducible);
-      //           } else {
-      //             const ivaNoDeducible = getNum(rowFinal.ivaNoDeducible);
-      //             if (ivaNoDeducible) {
-      //               ivaNoDeducibleDef = ivaNoDeducible;
-      //             }
-      //           }
-      //           row.ivaNoDeducible = ivaNoDeducibleDef;
+                // ==== IVA NO Deducible
+                let ivaNoDeducibleDef = 0;
+                if (getNum(row.ivaNoDeducible)) {
+                  ivaNoDeducibleDef =
+                    getNum(row.ivaNoDeducible) +
+                    getNum(rowFinal.ivaNoDeducible);
+                } else {
+                  const ivaNoDeducible = getNum(rowFinal.ivaNoDeducible);
+                  if (ivaNoDeducible) {
+                    ivaNoDeducibleDef = ivaNoDeducible;
+                  }
+                }
+                row.ivaNoDeducible = ivaNoDeducibleDef;
 
-      //           // ==== Retencion Fuente Practicada
-      //           let retencionFuentePracticadaDef = 0;
-      //           if (getNum(row.retencionFuentePracticada)) {
-      //             retencionFuentePracticadaDef =
-      //               getNum(row.retencionFuentePracticada) +
-      //               getNum(rowFinal.retencionFuentePracticada);
-      //           } else {
-      //             const retencionFuentePracticada = getNum(
-      //               rowFinal.retencionFuentePracticada
-      //             );
-      //             if (retencionFuentePracticada) {
-      //               retencionFuentePracticadaDef = retencionFuentePracticada;
-      //             }
-      //           }
-      //           row.retencionFuentePracticada = retencionFuentePracticadaDef;
+                // ==== Retencion Fuente Practicada
+                let retencionFuentePracticadaDef = 0;
+                if (getNum(row.retencionFuentePracticada)) {
+                  retencionFuentePracticadaDef =
+                    getNum(row.retencionFuentePracticada) +
+                    getNum(rowFinal.retencionFuentePracticada);
+                } else {
+                  const retencionFuentePracticada = getNum(
+                    rowFinal.retencionFuentePracticada
+                  );
+                  if (retencionFuentePracticada) {
+                    retencionFuentePracticadaDef = retencionFuentePracticada;
+                  }
+                }
+                row.retencionFuentePracticada = retencionFuentePracticadaDef;
 
-      //           // ==== Retencion Fuente Asumida
-      //           let retencionFuenteAsumidaDef = 0;
-      //           if (getNum(row.retencionFuenteAsumida)) {
-      //             retencionFuenteAsumidaDef =
-      //               getNum(row.retencionFuenteAsumida) +
-      //               getNum(rowFinal.retencionFuenteAsumida);
-      //           } else {
-      //             const retencionFuenteAsumida = getNum(
-      //               rowFinal.retencionFuenteAsumida
-      //             );
-      //             if (retencionFuenteAsumida) {
-      //               retencionFuenteAsumidaDef = retencionFuenteAsumida;
-      //             }
-      //           }
-      //           row.retencionFuenteAsumida = retencionFuenteAsumidaDef;
+                // ==== Retencion Fuente Asumida
+                let retencionFuenteAsumidaDef = 0;
+                if (getNum(row.retencionFuenteAsumida)) {
+                  retencionFuenteAsumidaDef =
+                    getNum(row.retencionFuenteAsumida) +
+                    getNum(rowFinal.retencionFuenteAsumida);
+                } else {
+                  const retencionFuenteAsumida = getNum(
+                    rowFinal.retencionFuenteAsumida
+                  );
+                  if (retencionFuenteAsumida) {
+                    retencionFuenteAsumidaDef = retencionFuenteAsumida;
+                  }
+                }
+                row.retencionFuenteAsumida = retencionFuenteAsumidaDef;
 
-      //           // ==== Retencion Fuente  Iva Regimen Comun
-      //           let retencionFuenteIvaRegimenComunDef = 0;
-      //           if (getNum(row.retencionFuenteIvaRegimenComun)) {
-      //             retencionFuenteIvaRegimenComunDef =
-      //               getNum(row.retencionFuenteIvaRegimenComun) +
-      //               getNum(rowFinal.retencionFuenteIvaRegimenComun);
-      //           } else {
-      //             const retencionFuenteIvaRegimenComun = getNum(
-      //               rowFinal.retencionFuenteIvaRegimenComun
-      //             );
-      //             if (retencionFuenteIvaRegimenComun) {
-      //               retencionFuenteIvaRegimenComunDef = retencionFuenteIvaRegimenComun;
-      //             }
-      //           }
-      //           row.retencionFuenteIvaRegimenComun = retencionFuenteIvaRegimenComunDef;
+                // ==== Retencion Fuente  Iva Regimen Comun
+                let retencionFuenteIvaRegimenComunDef = 0;
+                if (getNum(row.retencionFuenteIvaRegimenComun)) {
+                  retencionFuenteIvaRegimenComunDef =
+                    getNum(row.retencionFuenteIvaRegimenComun) +
+                    getNum(rowFinal.retencionFuenteIvaRegimenComun);
+                } else {
+                  const retencionFuenteIvaRegimenComun = getNum(
+                    rowFinal.retencionFuenteIvaRegimenComun
+                  );
+                  if (retencionFuenteIvaRegimenComun) {
+                    retencionFuenteIvaRegimenComunDef = retencionFuenteIvaRegimenComun;
+                  }
+                }
+                row.retencionFuenteIvaRegimenComun = retencionFuenteIvaRegimenComunDef;
 
-      //           // ==== Retencion Fuente  Iva  No domiciliados
-      //           let retencionFuenteIvaNoDomiciliadosDef = 0;
-      //           if (getNum(row.retencionFuenteIvaNoDomiciliados)) {
-      //             retencionFuenteIvaNoDomiciliadosDef =
-      //               getNum(row.retencionFuenteIvaNoDomiciliados) +
-      //               getNum(rowFinal.retencionFuenteIvaNoDomiciliados);
-      //           } else {
-      //             const retencionFuenteIvaNoDomiciliados = getNum(
-      //               rowFinal.retencionFuenteIvaNoDomiciliados
-      //             );
-      //             if (retencionFuenteIvaNoDomiciliados) {
-      //               retencionFuenteIvaNoDomiciliadosDef = retencionFuenteIvaNoDomiciliados;
-      //             }
-      //           }
-      //           row.retencionFuenteIvaNoDomiciliados = retencionFuenteIvaNoDomiciliadosDef;
-      //           // byConceptosList.splice(index, 1);
-      //           delete byConceptosList[index];
-      //         }
-      //       }
-      //     });
-      //   });
-      // }
+                // ==== Retencion Fuente  Iva  No domiciliados
+                let retencionFuenteIvaNoDomiciliadosDef = 0;
+                if (getNum(row.retencionFuenteIvaNoDomiciliados)) {
+                  retencionFuenteIvaNoDomiciliadosDef =
+                    getNum(row.retencionFuenteIvaNoDomiciliados) +
+                    getNum(rowFinal.retencionFuenteIvaNoDomiciliados);
+                } else {
+                  const retencionFuenteIvaNoDomiciliados = getNum(
+                    rowFinal.retencionFuenteIvaNoDomiciliados
+                  );
+                  if (retencionFuenteIvaNoDomiciliados) {
+                    retencionFuenteIvaNoDomiciliadosDef = retencionFuenteIvaNoDomiciliados;
+                  }
+                }
+                row.retencionFuenteIvaNoDomiciliados = retencionFuenteIvaNoDomiciliadosDef;
+                // byConceptosList.splice(index, 1);
+                delete byConceptosList[index];
+              }
+            }
+          });
+        });
+      }
 
       nroCedulasUnicos.splice(indey, 1);
     });
