@@ -1,3 +1,3 @@
 Id Cuenta;Id Factura;Id Factura;Concepto;Tipo Documento;Número de Identificación del Informado;Primer apellido del informado;Segundo apellido del informado;Primer nombre del informado;Otros nombres del informado;Razon social informado;Dirección;Codigo Dpto;Codigo cp;Pais de residencia o domicilio;Pago o abono en cuenta deducible;Pago o abono en cuenta no deducible;IVA mayor del costo o gasto deducible;IVA mayor del costo o gasto no deducible;Retencion en la fuente practicada en renta;Retencion en la fuente asumida en renta;Retencion en la fuente practicada IVA regimen comun;Retencion en la fuente practicada IVA no domiciliados
-7540050000;FP-19952;#;5004;;5000647;;;;;;;;;;2611766;0;87016,96;0;55359;0;35853;0
-7550040000;FP-19952;#;5016;;5000647;;;;;;;;;;1499950;0;0;0;0;0;0;0
+7540020000;;#;5004;;5000103;;;;;;;;;;40336,12;0;0;0;0;0;0;0
+7550130000;;#;5016;;5000103;;;;;;;;;;96000;0;0;0;0;0;0;0
