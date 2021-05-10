@@ -24,14 +24,34 @@ const reportFunctionsUpdate = require('../utils/functions/reportFunctionsUpdate'
 const SummaryLoadedData = require('../dto/summaryLoadedDataDTO');
 const userService = require('./userService');
 const email = require('../utils/email');
+// Requiring users file
+const ciudades = require('../utils/ciudades/api.json');
 
 function getNum(val) {
   val = +val || 0;
   return val;
 }
 
+const removeAccents = str => {
+  if (str) {
+    str = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  } else {
+    str = null;
+  }
+  return str;
+};
+
 // =========== Function to count records of reports
 exports.generateReport = async (req, res) => {
+  ciudades.forEach(function(ciudad) {
+    console.log(
+      removeAccents(ciudad.MUNICIPIO),
+      removeAccents(ciudad.DEPARTAMENTO)
+    );
+  });
+};
+
+exports.generateReportTemp = async (req, res) => {
   try {
     const objectReportResume = {};
     objectReportResume.code = '1001GR';
@@ -738,14 +758,168 @@ exports.generateReport = async (req, res) => {
     });
 
     //  console.table(arrayGeneratedDef);
+    const arrayGeneratedDefinitivo = [];
+    objectGenerated = {};
+    objectGenerated.tipoDocumento = '43';
+    objectGenerated.nroIdentificacion = '222222222';
+    objectGenerated.razonSocial = 'CUANTIAS MENORES';
+    objectGenerated.direccion = 'Cra. 26 #1068';
+    objectGenerated.codigoDepto = '86';
+    objectGenerated.codigoMpo = '568';
+    objectGenerated.paisResidencia = '169';
+    arrayGeneratedDef.forEach(function(rowFinal) {
+      const pagoDeducibleTmp = getNum(rowFinal.pagoDeducible);
+      const pagoNoDeducibleTmp = getNum(rowFinal.pagoNoDeducible);
 
-    arrayGeneratedDef.forEach(function(row, index) {
-      if (getNum(row.pagoDeducible) < 100000) {
-        row.primerNombre = 'HOLA MUNDO';
+      let flagPagos = false;
+      let flagGeneral = false;
+      if (pagoDeducibleTmp > 0) {
+        flagPagos = true;
+      }
+      if (pagoNoDeducibleTmp > 0) {
+        flagPagos = true;
+      }
+
+      if (flagPagos) {
+        if (pagoDeducibleTmp < 100000 && pagoNoDeducibleTmp === 0) {
+          flagGeneral = true;
+        } else if (pagoNoDeducibleTmp < 100000 && pagoDeducibleTmp === 0) {
+          flagGeneral = true;
+        } else {
+          flagGeneral = false;
+        }
+      }
+      if (flagGeneral) {
+        // ==== Pago Deducible
+        let pagoDeducibleDef = 0;
+        if (getNum(objectGenerated.pagoDeducible)) {
+          pagoDeducibleDef =
+            getNum(objectGenerated.pagoDeducible) +
+            getNum(rowFinal.pagoDeducible);
+        } else {
+          const pagoDeducible = getNum(rowFinal.pagoDeducible);
+          if (pagoDeducible) {
+            pagoDeducibleDef = pagoDeducible;
+          }
+        }
+        objectGenerated.pagoDeducible = pagoDeducibleDef;
+
+        // ==== Pago No Deducible
+        let pagoNoDeducibleDef = 0;
+        if (getNum(objectGenerated.pagoNoDeducible)) {
+          pagoNoDeducibleDef =
+            getNum(objectGenerated.pagoNoDeducible) +
+            getNum(rowFinal.pagoNoDeducible);
+        } else {
+          const pagoNoDeducible = getNum(rowFinal.pagoNoDeducible);
+          if (pagoNoDeducible) {
+            pagoNoDeducibleDef = pagoNoDeducible;
+          }
+        }
+        objectGenerated.pagoNoDeducible = pagoNoDeducibleDef;
+
+        // ==== IVA Deducible
+        let ivaDeducibleDef = 0;
+        if (getNum(objectGenerated.ivaDeducible)) {
+          ivaDeducibleDef =
+            getNum(objectGenerated.ivaDeducible) +
+            getNum(rowFinal.ivaDeducible);
+        } else {
+          const ivaDeducible = getNum(rowFinal.ivaDeducible);
+          if (ivaDeducible) {
+            ivaDeducibleDef = ivaDeducible;
+          }
+        }
+        objectGenerated.ivaDeducible = ivaDeducibleDef;
+
+        // ==== IVA NO Deducible
+        let ivaNoDeducibleDef = 0;
+        if (getNum(objectGenerated.ivaNoDeducible)) {
+          ivaNoDeducibleDef =
+            getNum(objectGenerated.ivaNoDeducible) +
+            getNum(rowFinal.ivaNoDeducible);
+        } else {
+          const ivaNoDeducible = getNum(rowFinal.ivaNoDeducible);
+          if (ivaNoDeducible) {
+            ivaNoDeducibleDef = ivaNoDeducible;
+          }
+        }
+        objectGenerated.ivaNoDeducible = ivaNoDeducibleDef;
+
+        // ==== Retencion Fuente Practicada
+        let retencionFuentePracticadaDef = 0;
+        if (getNum(objectGenerated.retencionFuentePracticada)) {
+          retencionFuentePracticadaDef =
+            getNum(objectGenerated.retencionFuentePracticada) +
+            getNum(rowFinal.retencionFuentePracticada);
+        } else {
+          const retencionFuentePracticada = getNum(
+            rowFinal.retencionFuentePracticada
+          );
+          if (retencionFuentePracticada) {
+            retencionFuentePracticadaDef = retencionFuentePracticada;
+          }
+        }
+        objectGenerated.retencionFuentePracticada = retencionFuentePracticadaDef;
+
+        // ==== Retencion Fuente Asumida
+        let retencionFuenteAsumidaDef = 0;
+        if (getNum(objectGenerated.retencionFuenteAsumida)) {
+          retencionFuenteAsumidaDef =
+            getNum(objectGenerated.retencionFuenteAsumida) +
+            getNum(rowFinal.retencionFuenteAsumida);
+        } else {
+          const retencionFuenteAsumida = getNum(
+            rowFinal.retencionFuenteAsumida
+          );
+          if (retencionFuenteAsumida) {
+            retencionFuenteAsumidaDef = retencionFuenteAsumida;
+          }
+        }
+        objectGenerated.retencionFuenteAsumida = retencionFuenteAsumidaDef;
+
+        // ==== Retencion Fuente  Iva Regimen Comun
+        let retencionFuenteIvaRegimenComunDef = 0;
+        if (getNum(objectGenerated.retencionFuenteIvaRegimenComun)) {
+          retencionFuenteIvaRegimenComunDef =
+            getNum(objectGenerated.retencionFuenteIvaRegimenComun) +
+            getNum(rowFinal.retencionFuenteIvaRegimenComun);
+        } else {
+          const retencionFuenteIvaRegimenComun = getNum(
+            rowFinal.retencionFuenteIvaRegimenComun
+          );
+          if (retencionFuenteIvaRegimenComun) {
+            retencionFuenteIvaRegimenComunDef = retencionFuenteIvaRegimenComun;
+          }
+        }
+        objectGenerated.retencionFuenteIvaRegimenComun = retencionFuenteIvaRegimenComunDef;
+
+        // ==== Retencion Fuente  Iva  No domiciliados
+        let retencionFuenteIvaNoDomiciliadosDef = 0;
+        if (getNum(objectGenerated.retencionFuenteIvaNoDomiciliados)) {
+          retencionFuenteIvaNoDomiciliadosDef =
+            getNum(objectGenerated.retencionFuenteIvaNoDomiciliados) +
+            getNum(rowFinal.retencionFuenteIvaNoDomiciliados);
+        } else {
+          const retencionFuenteIvaNoDomiciliados = getNum(
+            rowFinal.retencionFuenteIvaNoDomiciliados
+          );
+          if (retencionFuenteIvaNoDomiciliados) {
+            retencionFuenteIvaNoDomiciliadosDef = retencionFuenteIvaNoDomiciliados;
+          }
+        }
+        objectGenerated.retencionFuenteIvaNoDomiciliados = retencionFuenteIvaNoDomiciliadosDef;
+        objectGenerated.companyId = userInfo.companyId;
+        objectGenerated.userId = userInfo._id;
+        //arrayGeneratedDef[index];
+        console.log('Borrando ', rowFinal.nroIdentificacion);
+      } else {
+        arrayGeneratedDefinitivo.push(rowFinal);
       }
     });
-
-    console.log('Insert Data Init ', arrayGeneratedDef.length);
+    arrayGeneratedDefinitivo.push(objectGenerated);
+    objectGenerated = {};
+    console.log('Insert Data Init ', arrayGeneratedDefinitivo.length);
 
     // Actualizando información encabezado reporte
     objectReportResume.state = 'entering_information';
@@ -759,18 +933,18 @@ exports.generateReport = async (req, res) => {
     chartAccount = null;
 
     await Report1001.collection
-      .insertMany(arrayGeneratedDef)
+      .insertMany(arrayGeneratedDefinitivo)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
-        summaryLoadedData.counter = arrayGeneratedDef.length;
+        summaryLoadedData.counter = arrayGeneratedDefinitivo.length;
         console.log('Insert Data Finish');
-        this.arrayGeneratedDef = null;
+        this.arrayGeneratedDefinitivo = null;
         async function finishReport() {
           // Actualizando información encabezado reporte
           objectReportResume.state = 'created_report';
           objectReportResume.percentageCompletition = 90;
-          objectReportResume.counterRows = arrayGeneratedDef.length;
+          objectReportResume.counterRows = arrayGeneratedDefinitivo.length;
           objectReportResume.message = 'Reporte cargado correctamente';
           objectReportResume.endDate = new Date();
           await reportFunctionsUpdate.updateReportCreator(objectReportResume);
@@ -781,7 +955,7 @@ exports.generateReport = async (req, res) => {
         // Limpiando memoria general
         masterReportData = null;
         chartAccount = null;
-        this.arrayGeneratedDef = null;
+        this.arrayGeneratedDefinitivo = null;
 
         summaryLoadedData.message =
           reportGeneratorMessages.E_REPORT_GENERATOR_MS_03;
