@@ -17,6 +17,7 @@ const commonErrors = require('../utils/constants/commonErrors');
 const httpCodes = require('../utils/constants/httpCodes');
 const ChartAccount = require('../models/chartAccountModel');
 const EntryMerchandiseAndServicesReportReport = require('../models/entryMerchandiseAndServicesReportReportModel');
+const Supplier = require('../models/supplierModel');
 const Report1001 = require('../models/report1001Model');
 const ReportCreator = require('../models/reportCreatorModel');
 const reportGeneratorMessages = require('../utils/constants/reportGeneratorMessages');
@@ -41,17 +42,209 @@ const removeAccents = str => {
   return str;
 };
 
+function generatePersonalData(objectGenerated, supplierFound) {
+  const identificationNumber = supplierFound.identificationNumber;
+  const identificationType = supplierFound.identificationType;
+  let direccion = null;
+  let tipoDocumento = null;
+  let nroIdentificacion = null;
+  let razonSocial = null;
+  let primerApellido = null;
+  let segundoApellido = null;
+  let primerNombre = null;
+  let segundoNombre = null;
+  direccion = supplierFound.address;
+  if (identificationType === '31-Número de identificación tributaria') {
+    nroIdentificacion = identificationNumber.slice(0, -1);
+    tipoDocumento = '31';
+    razonSocial = supplierFound.name;
+  } else {
+    let nombresParts = supplierFound.name.split(' ');
+    nombresParts = nombresParts.filter(item => item);
+    if (nombresParts.length > 0) {
+      if (nombresParts.length === 1) {
+        primerApellido = nombresParts[0];
+      }
+      if (nombresParts.length === 2) {
+        primerApellido = nombresParts[0];
+        primerNombre = nombresParts[1];
+      }
+      if (nombresParts.length === 3) {
+        primerApellido = nombresParts[0];
+        segundoApellido = nombresParts[1];
+        primerNombre = nombresParts[2];
+      }
+      if (nombresParts.length === 4) {
+        primerApellido = nombresParts[0];
+        segundoApellido = nombresParts[1];
+        primerNombre = nombresParts[2];
+        segundoNombre = nombresParts[3];
+      }
+      if (nombresParts.length > 4) {
+        primerApellido = nombresParts[0];
+        segundoApellido = nombresParts[1];
+        primerNombre = nombresParts[2];
+        let counter = 3;
+        segundoNombre = '';
+        for (counter; counter < nombresParts.length; counter++) {
+          const nameTmp = nombresParts[counter];
+          segundoNombre += `${nameTmp} `;
+        }
+      }
+    } else {
+      primerApellido = supplierFound.name;
+    }
+    nroIdentificacion = identificationNumber;
+    const identificationTypeParts = identificationType.split('-');
+    if (identificationType === 'Número de identificación fiscal') {
+      nroIdentificacion = 42;
+    } else {
+      if (identificationTypeParts.length > 0) {
+        tipoDocumento = identificationTypeParts[0];
+        if (isNaN(tipoDocumento)) {
+          tipoDocumento = 9999999999;
+        }
+      } else {
+        tipoDocumento = 9999999999;
+      }
+    }
+  }
+  objectGenerated.direccion = direccion;
+  objectGenerated.tipoDocumento = tipoDocumento;
+  objectGenerated.nroIdentificacion = nroIdentificacion;
+  objectGenerated.razonSocial = razonSocial;
+  objectGenerated.primerApellido = primerApellido;
+  objectGenerated.segundoApellido = segundoApellido;
+  objectGenerated.primerNombre = primerNombre;
+  objectGenerated.segundoNombre = segundoNombre;
+  return objectGenerated;
+}
+
+function generateAddressData(
+  ciudadesCorregidas,
+  objectGenerated,
+  supplierReportData
+) {
+  let codigoDepto = null;
+  let codigoMpo = null;
+  let paisResidencia = null;
+
+  try {
+    const supplierFound = supplierReportData.find(
+      el => el.supplier === objectGenerated.nroIdentificacion
+    );
+    if (supplierFound) {
+      objectGenerated = generatePersonalData(objectGenerated, supplierFound);
+      let country = supplierFound.country;
+
+      if (country) {
+        country = removeAccents(country.toUpperCase());
+        if (country.toUpperCase() === 'COLOMBIA') {
+          paisResidencia = '169';
+          let department = supplierFound.department;
+          if (department) {
+            department = removeAccents(department.toUpperCase());
+            const departmentDane = ciudadesCorregidas.find(
+              el => removeAccents(el.DEPARTAMENTO) === department
+            );
+            if (departmentDane) {
+              let city = supplierFound.city;
+              if (isNaN(city)) {
+                city = removeAccents(city).toUpperCase();
+                if (city.includes('BOGOTA')) {
+                  codigoDepto = '11';
+                  codigoMpo = '001';
+                } else {
+                  const cityDane = ciudadesCorregidas.find(
+                    el =>
+                      removeAccents(el.MUNICIPIO) === city &&
+                      el.CODIGO_DANE_DEL_DEPARTAMENTO ===
+                        departmentDane.CODIGO_DANE_DEL_DEPARTAMENTO
+                  );
+                  if (cityDane) {
+                    const cityDaneParts = cityDane.CODIGO_DANE_DEL_MUNICIPIO.split(
+                      ','
+                    );
+                    codigoDepto = cityDaneParts[0];
+                    codigoMpo = cityDaneParts[1];
+                  } else {
+                    throw new Error('custom');
+                  }
+                }
+              } else {
+                const cityDane = ciudadesCorregidas.find(
+                  el => el.CODIGO_DANE_DEL_MUNICIPIO_LIMPIO === city
+                );
+                if (cityDane) {
+                  const cityDaneParts = cityDane.CODIGO_DANE_DEL_MUNICIPIO.split(
+                    ','
+                  );
+                  codigoDepto = cityDaneParts[0];
+                  codigoMpo = cityDaneParts[1];
+                } else {
+                  throw new Error('custom');
+                }
+              }
+            } else {
+              throw new Error('custom');
+            }
+          }
+        } else {
+          codigoDepto = '11';
+          codigoMpo = '001';
+          // Canada 149
+          if (country === 'CANADA') {
+            paisResidencia = '149';
+          }
+          // Estados unidos 249
+          if (country === 'ESTADOS UNIDOS') {
+            paisResidencia = '249';
+          }
+          //Mexico 493
+          if (country === 'MEXICO') {
+            paisResidencia = '493';
+          }
+        }
+      } else {
+        throw new Error('custom');
+      }
+    } else {
+      objectGenerated.tipoDocumento = '43';
+      objectGenerated.nroIdentificacion = '222222222';
+      objectGenerated.razonSocial = 'CUANTIAS MENORES';
+      objectGenerated.direccion = 'Cra. 26 #1068';
+      objectGenerated.codigoDepto = '86';
+      objectGenerated.codigoMpo = '568';
+      objectGenerated.paisResidencia = '169';
+      objectGenerated.paisResidencia = '5016';
+      return objectGenerated;
+    }
+  } catch (err) {
+    if (err.message === 'custom') {
+      objectGenerated.codigoDepto = '86';
+      objectGenerated.codigoMpo = '568';
+      objectGenerated.paisResidencia = '169';
+      objectGenerated.paisResidencia = '5016';
+    } else {
+      objectGenerated.tipoDocumento = '43';
+      objectGenerated.nroIdentificacion = '222222222';
+      objectGenerated.razonSocial = 'CUANTIAS MENORES';
+      objectGenerated.direccion = 'Cra. 26 #1068';
+      objectGenerated.codigoDepto = '86';
+      objectGenerated.codigoMpo = '568';
+      objectGenerated.paisResidencia = '169';
+      objectGenerated.paisResidencia = '5016';
+    }
+    return objectGenerated;
+  }
+  objectGenerated.codigoDepto = codigoDepto;
+  objectGenerated.codigoMpo = codigoMpo;
+  objectGenerated.paisResidencia = paisResidencia;
+  return objectGenerated;
+}
+
 // =========== Function to count records of reports
 exports.generateReport = async (req, res) => {
-  ciudades.forEach(function(ciudad) {
-    console.log(
-      removeAccents(ciudad.MUNICIPIO),
-      removeAccents(ciudad.DEPARTAMENTO)
-    );
-  });
-};
-
-exports.generateReportTemp = async (req, res) => {
   try {
     const objectReportResume = {};
     objectReportResume.code = '1001GR';
@@ -94,8 +287,10 @@ exports.generateReportTemp = async (req, res) => {
 
     console.log(' =========  Cargando en memoria');
     let masterReportData = await EntryMerchandiseAndServicesReportReport.find({
-      companyId: userInfo.companyId
-      //, businessPartnerID: { $in: ['5000103'] }
+      companyId: userInfo.companyId,
+      thirdId: {
+        $in: ['3010000571']
+      }
     }).lean();
 
     let chartAccount = await ChartAccount.find({
@@ -310,7 +505,6 @@ exports.generateReportTemp = async (req, res) => {
         arrayGenerated.push(objectGenerated);
       }
     }
-    console.log('REPORT 1001 SIN AGRUPACION:  ', arrayGenerated.length);
 
     const summaryLoadedData = new SummaryLoadedData('', 0);
     let nroCedulasUnicos = [];
@@ -758,7 +952,7 @@ exports.generateReportTemp = async (req, res) => {
     });
 
     //  console.table(arrayGeneratedDef);
-    const arrayGeneratedDefinitivo = [];
+    let arrayGeneratedDefinitivo = [];
     objectGenerated = {};
     objectGenerated.tipoDocumento = '43';
     objectGenerated.nroIdentificacion = '222222222';
@@ -767,6 +961,7 @@ exports.generateReportTemp = async (req, res) => {
     objectGenerated.codigoDepto = '86';
     objectGenerated.codigoMpo = '568';
     objectGenerated.paisResidencia = '169';
+    objectGenerated.paisResidencia = '5016';
     arrayGeneratedDef.forEach(function(rowFinal) {
       const pagoDeducibleTmp = getNum(rowFinal.pagoDeducible);
       const pagoNoDeducibleTmp = getNum(rowFinal.pagoNoDeducible);
@@ -912,13 +1107,47 @@ exports.generateReportTemp = async (req, res) => {
         objectGenerated.companyId = userInfo.companyId;
         objectGenerated.userId = userInfo._id;
         //arrayGeneratedDef[index];
-        console.log('Borrando ', rowFinal.nroIdentificacion);
       } else {
         arrayGeneratedDefinitivo.push(rowFinal);
       }
     });
     arrayGeneratedDefinitivo.push(objectGenerated);
     objectGenerated = {};
+
+    const ciudadesCorregidas = ciudades.map(p =>
+      p.CODIGO_DANE_DEL_MUNICIPIO
+        ? {
+            ...p,
+            CODIGO_DANE_DEL_MUNICIPIO_LIMPIO: p.CODIGO_DANE_DEL_MUNICIPIO.replace(
+              ',',
+              ''
+            )
+          }
+        : p
+    );
+
+    // Cargando datos de proveedores en memoria
+    console.log(' =========  Cargando proveedores en memoria');
+    const supplierReportData = await Supplier.find({
+      companyId: userInfo.companyId
+    }).lean();
+    console.log('Proveedores cargados', supplierReportData.length);
+    const copyArrayGeneratedDefinitivo = arrayGeneratedDefinitivo;
+    arrayGeneratedDefinitivo = [];
+
+    copyArrayGeneratedDefinitivo.forEach(row => {
+      if (row.nroIdentificacion !== '222222222') {
+        const rowDef = generateAddressData(
+          ciudadesCorregidas,
+          row,
+          supplierReportData
+        );
+        arrayGeneratedDefinitivo.push(rowDef);
+      } else {
+        arrayGeneratedDefinitivo.push(row);
+      }
+    });
+
     console.log('Insert Data Init ', arrayGeneratedDefinitivo.length);
 
     // Actualizando información encabezado reporte
@@ -1059,9 +1288,9 @@ exports.sendReportCSV = async (req, res) => {
       path: pathx,
       fieldDelimiter: ';',
       header: [
-        { id: 'seniorAccountantId', title: 'Id Cuenta' },
-        { id: 'invoiceIdGenerated', title: 'Id Factura' },
-        { id: 'externalReferenceId', title: 'Id Factura' },
+        // { id: 'seniorAccountantId', title: 'Id Cuenta' },
+        // { id: 'invoiceIdGenerated', title: 'Id Factura' },
+        // { id: 'externalReferenceId', title: 'Id Factura' },
 
         { id: 'concepto', title: 'Concepto' },
         { id: 'tipoDocumento', title: 'Tipo Documento' },
