@@ -216,7 +216,6 @@ function generateAddressData(
       objectGenerated.codigoDepto = '86';
       objectGenerated.codigoMpo = '568';
       objectGenerated.paisResidencia = '169';
-      objectGenerated.paisResidencia = '5016';
       return objectGenerated;
     }
   } catch (err) {
@@ -224,7 +223,6 @@ function generateAddressData(
       objectGenerated.codigoDepto = '86';
       objectGenerated.codigoMpo = '568';
       objectGenerated.paisResidencia = '169';
-      objectGenerated.paisResidencia = '5016';
     } else {
       objectGenerated.tipoDocumento = '43';
       objectGenerated.nroIdentificacion = '222222222';
@@ -233,7 +231,6 @@ function generateAddressData(
       objectGenerated.codigoDepto = '86';
       objectGenerated.codigoMpo = '568';
       objectGenerated.paisResidencia = '169';
-      objectGenerated.paisResidencia = '5016';
     }
     return objectGenerated;
   }
@@ -959,7 +956,6 @@ exports.generateReport = async (req, res) => {
     objectGenerated.codigoDepto = '86';
     objectGenerated.codigoMpo = '568';
     objectGenerated.paisResidencia = '169';
-    objectGenerated.paisResidencia = '5016';
     arrayGeneratedDef.forEach(function(rowFinal) {
       const pagoDeducibleTmp = getNum(rowFinal.pagoDeducible);
       const pagoNoDeducibleTmp = getNum(rowFinal.pagoNoDeducible);
