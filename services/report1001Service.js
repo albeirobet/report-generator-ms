@@ -287,10 +287,8 @@ exports.generateReport = async (req, res) => {
 
     console.log(' =========  Cargando en memoria');
     let masterReportData = await EntryMerchandiseAndServicesReportReport.find({
-      companyId: userInfo.companyId,
-      thirdId: {
-        $in: ['3010000571']
-      }
+      companyId: userInfo.companyId
+      //,  thirdId: { $in: ['3010000571']      }
     }).lean();
 
     let chartAccount = await ChartAccount.find({
