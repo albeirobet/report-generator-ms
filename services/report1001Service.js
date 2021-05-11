@@ -1282,9 +1282,9 @@ exports.sendReportCSV = async (req, res) => {
       path: pathx,
       fieldDelimiter: ';',
       header: [
-        // { id: 'seniorAccountantId', title: 'Id Cuenta' },
-        // { id: 'invoiceIdGenerated', title: 'Id Factura' },
-        // { id: 'externalReferenceId', title: 'Id Factura' },
+        { id: 'seniorAccountantId', title: 'Id Cuenta' },
+        { id: 'invoiceIdGenerated', title: 'Id Factura' },
+        { id: 'externalReferenceId', title: 'Id Factura' },
 
         { id: 'concepto', title: 'Concepto' },
         { id: 'tipoDocumento', title: 'Tipo Documento' },
@@ -1299,7 +1299,7 @@ exports.sendReportCSV = async (req, res) => {
         { id: 'razonSocial', title: 'Razon social informado' },
         { id: 'direccion', title: 'Dirección' },
         { id: 'codigoDepto', title: 'Codigo Dpto' },
-        { id: 'codigoMpo', title: 'Codigo cp' },
+        { id: 'codigoMpo', title: 'Codigo Mcp' },
         { id: 'paisResidencia', title: 'Pais de residencia o domicilio' },
         { id: 'pagoDeducible', title: 'Pago o abono en cuenta deducible' },
         { id: 'pagoNoDeducible', title: 'Pago o abono en cuenta no deducible' },
