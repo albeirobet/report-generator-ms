@@ -1,3 +1,4 @@
 Id Cuenta;Id Factura;Id Factura;Concepto;Tipo Documento;Número de Identificación del Informado;Primer apellido del informado;Segundo apellido del informado;Primer nombre del informado;Otros nombres del informado;Razon social informado;Dirección;Codigo Dpto;Codigo Mcp;Pais de residencia o domicilio;Pago o abono en cuenta deducible;Pago o abono en cuenta no deducible;IVA mayor del costo o gasto deducible;IVA mayor del costo o gasto no deducible;Retencion en la fuente practicada en renta;Retencion en la fuente asumida en renta;Retencion en la fuente practicada IVA regimen comun;Retencion en la fuente practicada IVA no domiciliados
 5111110100;FP-22596;HON-REUN-AGOST-5-28 ACT476-486;5002;13;18110534;BONILLA;BLANDON;OSWALDO;;;CRA,34 N, 10-23 / 86568 / CO;86;568;169;14349094;0;0;0;-1434836;0;0;0
-;;;;43;222222222;;;;;CUANTIAS MENORES;Cra, 26 #1068;86;568;169;10000;0;0;0;1284034549;0;84987980;0
+7540130000;;#;5004;13;18110534;BONILLA;BLANDON;OSWALDO;;;CRA,34 N, 10-23 / 86568 / CO;86;568;169;200000;0;0;0;0;0;0;0
+;;;;43;222222222;;;;;CUANTIAS MENORES;Cra, 26 #1068;86;568;169;10000;0;0;0;1285469385;0;84987980;0

@@ -284,7 +284,7 @@ exports.generateReport = async (req, res) => {
     console.log(' =========  Cargando en memoria');
     let masterReportData = await EntryMerchandiseAndServicesReportReport.find({
       companyId: userInfo.companyId
-      // , thirdId: { $in: ['5000120', '5000349'] }
+      // ,      thirdId: { $in: ['5000120', '5000349'] }
     }).lean();
 
     let chartAccount = await ChartAccount.find({
@@ -517,6 +517,7 @@ exports.generateReport = async (req, res) => {
       }
     }
     nroCedulasUnicos.forEach(function(doc) {
+      // console.log(doc);
       let byCedulaList = [];
       byCedulaList = arrayGenerated.filter(el => el.nroIdentificacion === doc);
       const conceptosUnicos = [];
@@ -685,10 +686,16 @@ exports.generateReport = async (req, res) => {
 
       // ============ NUEVA LOGICA PARA TEMPORALES RETFU, RETIVA
       // arrayGeneratedDef.forEach(row => {
-
-      let byConceptosList = byCedulaList.filter(el => el.concepto === 'RETFU');
+      const byCedulaListComplete = byCedulaList;
+      let byConceptosList = byCedulaListComplete.filter(
+        el => el.concepto === 'RETFU'
+      );
       if (byConceptosList && byConceptosList.length > 0) {
-        arrayGeneratedDef.forEach(row => {
+        // console.log('EN RETFU');
+        byCedulaList = arrayGeneratedDef.filter(
+          el => el.nroIdentificacion === doc
+        );
+        byCedulaList.every(row => {
           byConceptosList.forEach(function(rowFinal) {
             // ==== Retencion Fuente Practicada
             let retencionFuentePracticadaDef = 0;
@@ -757,12 +764,19 @@ exports.generateReport = async (req, res) => {
             // byConceptosList.splice(index, 1);
             // delete byConceptosList[index];
           });
+          return false;
         });
       }
 
-      byConceptosList = byCedulaList.filter(el => el.concepto === 'RETIVA');
+      byConceptosList = byCedulaListComplete.filter(
+        el => el.concepto === 'RETIVA'
+      );
       if (byConceptosList && byConceptosList.length > 0) {
-        arrayGeneratedDef.forEach(row => {
+        // console.log('EN RETIVA');
+        byCedulaList = arrayGeneratedDef.filter(
+          el => el.nroIdentificacion === doc
+        );
+        byCedulaList.every(row => {
           byConceptosList.forEach(function(rowFinal) {
             // ==== Retencion Fuente Practicada
             let retencionFuentePracticadaDef = 0;
@@ -829,8 +843,9 @@ exports.generateReport = async (req, res) => {
             row.retencionFuenteIvaNoDomiciliados = retencionFuenteIvaNoDomiciliadosDef;
 
             // byConceptosList.splice(index, 1);
-            //delete byConceptosList[index];
+            // delete byConceptosList[index];
           });
+          return false;
         });
       }
 
@@ -838,7 +853,9 @@ exports.generateReport = async (req, res) => {
 
       // ============ FIN LOGICA PARA TEMPORALES RETFU, RETIVA
 
-      byConceptosList = byCedulaList.filter(el => el.concepto === 'N/A');
+      byConceptosList = byCedulaListComplete.filter(
+        el => el.concepto === 'N/A'
+      );
 
       if (byConceptosList && byConceptosList.length > 0) {
         arrayGeneratedDef.forEach(row => {
