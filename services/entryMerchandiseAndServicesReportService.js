@@ -1309,7 +1309,7 @@ exports.generateIvaReport = async (req, res) => {
         objectGeneratedToSave = {};
       }
     }
-    const summaryLoadedData = new SummaryLoadedData('', 0);
+    let summaryLoadedData = new SummaryLoadedData('', 0);
     console.log('Insert Data Init ', arrayGenerated.length);
     // Actualizando información encabezado reporte
     objectReportResume.state = 'entering_information';
@@ -1373,6 +1373,7 @@ exports.generateIvaReport = async (req, res) => {
       });
     if (summaryLoadedData.counter > 0) {
       console.log('voy a enviar de una vez la plantilla');
+      summaryLoadedData = new SummaryLoadedData('', 0);
       this.sendReportCSV(req, res);
     }
     return summaryLoadedData;
@@ -1445,7 +1446,7 @@ exports.sendReportCSV = async (req, res) => {
     await reportFunctionsUpdate.updateReportCreator(objectReportResume);
 
     console.log('>>>>>>>>>>>>  empecé a cargar en memoria');
-    const reportData = await EntryMerchandiseAndServicesReportReport.find({
+    let reportData = await EntryMerchandiseAndServicesReportReport.find({
       companyId: userInfo.companyId
       // , originalDocumentId: { $in: ['2990'] }
     }).lean();
@@ -1565,14 +1566,11 @@ exports.sendReportCSV = async (req, res) => {
       ]
     });
 
-    reportData.forEach(function(cursor, index, object) {
+    reportData.forEach(function(cursor) {
       cursor.postingDate = customValidator.stringFromDate(cursor.postingDate);
       cursor.createdAtGenerated = customValidator.stringFromDate(
         cursor.createdAtGenerated
       );
-      if (cursor.seniorAccountantId === 'RESULTADO') {
-        object.splice(index, 1);
-      }
 
       if (cursor.supplierCoName === 'X') {
         if (cursor.supplierCoId && cursor.supplierCoId !== '#') {
@@ -1586,6 +1584,7 @@ exports.sendReportCSV = async (req, res) => {
 
     csvWriter.writeRecords(reportData).then(function() {
       console.log('Terminé de escribir el archivo');
+      reportData = null;
       async function finishReport() {
         // Actualizando información encabezado reporte
         objectReportResume.state = 'email_send';
