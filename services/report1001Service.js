@@ -284,7 +284,7 @@ exports.generateReport = async (req, res) => {
     console.log(' =========  Cargando en memoria');
     let masterReportData = await EntryMerchandiseAndServicesReportReport.find({
       companyId: userInfo.companyId
-      // ,      thirdId: { $in: ['5000120', '5000349'] }
+      // ,  thirdId: { $in: ['5000477'] }
     }).lean();
 
     let chartAccount = await ChartAccount.find({
@@ -358,9 +358,9 @@ exports.generateReport = async (req, res) => {
       // ==== ENCONTRANDO EL IVA A REPORTAR
       if (
         reportData.ivaValueCalculated &&
-        reportData.ivaValueCalculated !== '#' &&
         reportData.ivaValueCalculated !== '0' &&
-        reportData.ivaValueCalculated !== '0,00'
+        reportData.ivaValueCalculated !== '0,00' &&
+        reportData.ivaValueCalculated !== '0.00'
       ) {
         valorIva = reportData.ivaValueCalculated;
       }
