@@ -1287,9 +1287,17 @@ exports.generateReport = async (req, res) => {
     arrayGeneratedDefinitivo.push(objectGenerated);
     objectGenerated = {};
     // ====== RECORRIENDO FINALMENTE PARA ELIMINAR RETENCIONES O IVA SI EL PAGO DEDUCIBLE ES CERO
-    // arrayGeneratedDefinitivo.forEach(row => {
-
-    // });
+    arrayGeneratedDefinitivo.forEach(row => {
+      if (getNum(row.pagoDeducible) === 0) {
+        row.pagoNoDeducible = 0;
+        row.ivaDeducible = 0;
+        row.ivaNoDeducible = 0;
+        row.retencionFuentePracticada = 0;
+        row.retencionFuenteAsumida = 0;
+        row.retencionFuenteIvaRegimenComun = 0;
+        row.retencionFuenteIvaNoDomiciliados = 0;
+      }
+    });
     // ====== FIN RECORRIENDO FINALMENTE PARA ELIMINAR RETENCIONES O IVA SI EL PAGO DEDUCIBLE ES CERO
 
     const ciudadesCorregidas = ciudades.map(p =>
