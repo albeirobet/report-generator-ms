@@ -1491,14 +1491,14 @@ exports.sendReportCSV = async (req, res) => {
           title: 'ID de documento de anulación'
         },
         { id: 'extraOriginalDocumentId', title: 'ID doc.original' },
-        {
-          id: 'debtAmountCompanyCurrency',
-          title: 'Importe en debe en moneda de empresa'
-        },
-        {
-          id: 'creditAmountCompanyCurrency',
-          title: 'Importe en haber en moneda de empresa'
-        },
+        // {
+        //   id: 'debtAmountCompanyCurrency',
+        //   title: 'Importe en debe en moneda de empresa'
+        // },
+        // {
+        //   id: 'creditAmountCompanyCurrency',
+        //   title: 'Importe en haber en moneda de empresa'
+        // },
         {
           id: 'balanceAmountCompanyCurrency',
           title: 'Saldo en Moneda de la Empresa'
@@ -1557,12 +1557,12 @@ exports.sendReportCSV = async (req, res) => {
         { id: 'ivaValueCalculated', title: 'Valor Iva' },
         { id: 'ivaCalculated', title: '% Iva' },
         { id: 'ipoconsumoValueCalculated', title: 'Valor Ipoconsumo' },
-        { id: 'ipoconsumoCalculated', title: '% Ipoconsumo' },
+        { id: 'ipoconsumoCalculated', title: '% Ipoconsumo' }
 
-        { id: 'documentIdGenerated', title: 'Id pago' },
-        { id: 'createdAtGenerated', title: 'Fecha de pago' },
-        { id: 'pyamentMethodGenerated', title: 'Modalidad  de Pago' },
-        { id: 'paymentAmountGenerated', title: 'Valor pagado' }
+        // { id: 'documentIdGenerated', title: 'Id pago' },
+        // { id: 'createdAtGenerated', title: 'Fecha de pago' },
+        // { id: 'pyamentMethodGenerated', title: 'Modalidad  de Pago' },
+        // { id: 'paymentAmountGenerated', title: 'Valor pagado' }
       ]
     });
 
