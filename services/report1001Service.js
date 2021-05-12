@@ -291,8 +291,6 @@ exports.generateReport = async (req, res) => {
       companyId: userInfo.companyId
     }).lean();
 
-    console.log(chartAccount.length);
-
     console.log(
       'Cargada información Maestra en Memoria ',
       masterReportData.length
@@ -506,7 +504,6 @@ exports.generateReport = async (req, res) => {
 
     // TEMPORAL
     // const arrayGeneratedDefinitivo = arrayGenerated;
-    console.log(arrayGenerated.length);
     // ===========================================
     // ============= INICIA AGRUPACIÓN  ==========
     // ===========================================
@@ -519,9 +516,7 @@ exports.generateReport = async (req, res) => {
         nroCedulasUnicos.push(arrayGenerated[i].nroIdentificacion);
       }
     }
-    console.log(nroCedulasUnicos);
     nroCedulasUnicos.forEach(function(doc) {
-      console.log(doc);
       let byCedulaList = [];
       byCedulaList = arrayGenerated.filter(el => el.nroIdentificacion === doc);
       const conceptosUnicos = [];
