@@ -483,6 +483,7 @@ exports.generateReport = async (req, res) => {
               accountTypeTrim === 'RET - Retenciones Fuente'
             ) {
               objectGenerated.retencionFuentePracticada = valorReportado;
+              objectGenerated.concepto = 'RETFU';
             }
             // ==== FIN DEFINICION DEFINICION RETENCION EN LA FUENTE
 
@@ -492,6 +493,7 @@ exports.generateReport = async (req, res) => {
               accountTypeTrim === 'RET - Retenciones Iva'
             ) {
               objectGenerated.retencionFuenteIvaRegimenComun = valorReportado;
+              objectGenerated.concepto = 'RETIVA';
             }
             // ==== FIN DEFINICION DEFINICION RETENCION IVA
           }
