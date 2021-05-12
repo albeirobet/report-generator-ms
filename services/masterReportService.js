@@ -169,6 +169,7 @@ exports.loadMasterReportDataAsync = async (req, res) => {
             businessPartnerName: currRow.getCell(24).value,
             debtAmountCompanyCurrency: currRow.getCell(25).value,
             creditAmountCompanyCurrency: currRow.getCell(26).value,
+            balanceAmountCompanyCurrency: currRow.getCell(27).value,
             companyId: userInfo.companyId,
             userId: userInfo._id
           };

@@ -202,6 +202,8 @@ exports.generateIvaReport = async (req, res) => {
         reportData.debtAmountCompanyCurrency;
       objectGenerated.creditAmountCompanyCurrency =
         reportData.creditAmountCompanyCurrency;
+      objectGenerated.balanceAmountCompanyCurrency =
+        reportData.balanceAmountCompanyCurrency;
       objectGenerated.companyId = userInfo.companyId;
       objectGenerated.userId = userInfo._id;
 
@@ -230,6 +232,7 @@ exports.generateIvaReport = async (req, res) => {
             if (count > 0) {
               objectGeneratedToSave.debtAmountCompanyCurrency = 0;
               objectGeneratedToSave.creditAmountCompanyCurrency = 0;
+              objectGeneratedToSave.balanceAmountCompanyCurrency = 0;
 
               objectGeneratedToSave.requestedAmountGenerated = 0;
               objectGeneratedToSave.netPriceCompanyCurrencyGenerated = 0;
@@ -1242,6 +1245,7 @@ exports.generateIvaReport = async (req, res) => {
           if (count > 0) {
             objectGeneratedToSave.debtAmountCompanyCurrency = 0;
             objectGeneratedToSave.creditAmountCompanyCurrency = 0;
+            objectGeneratedToSave.balanceAmountCompanyCurrency = 0;
 
             objectGeneratedToSave.requestedAmountGenerated = 0;
             objectGeneratedToSave.netPriceCompanyCurrencyGenerated = 0;
@@ -1493,6 +1497,10 @@ exports.sendReportCSV = async (req, res) => {
         {
           id: 'creditAmountCompanyCurrency',
           title: 'Importe en haber en moneda de empresa'
+        },
+        {
+          id: 'balanceAmountCompanyCurrency',
+          title: 'Saldo en Moneda de la Empresa'
         },
         // {
         //   id: 'entryMerchandiseIdGenerated',

@@ -123,6 +123,11 @@ const masterReportSchema = new mongoose.Schema({
     type: String,
     uppercase: true
   },
+  // Saldo en moneda de empresa
+  balanceAmountCompanyCurrency: {
+    type: String,
+    uppercase: true
+  },
   companyId: {
     type: String,
     required: [

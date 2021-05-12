@@ -284,8 +284,8 @@ exports.generateReport = async (req, res) => {
 
     console.log(' =========  Cargando en memoria');
     let masterReportData = await EntryMerchandiseAndServicesReportReport.find({
-      companyId: userInfo.companyId
-      //,  thirdId: { $in: ['3010000571']      }
+      companyId: userInfo.companyId,
+      thirdId: { $in: ['3010002514'] }
     }).lean();
 
     let chartAccount = await ChartAccount.find({
@@ -336,24 +336,26 @@ exports.generateReport = async (req, res) => {
       }
       // ==== FIN ENCONTRANDO EL NUMERO DE IDENTIFICACIÓN DEL USUARIO
 
+      valorReportado = reportData.balanceAmountCompanyCurrency;
+
       // ==== ENCONTRANDO EL VALOR A REPORTAR
-      if (
-        reportData.debtAmountCompanyCurrency &&
-        reportData.debtAmountCompanyCurrency !== '#' &&
-        reportData.debtAmountCompanyCurrency !== '0' &&
-        reportData.debtAmountCompanyCurrency !== '0,00'
-      ) {
-        valorReportado = reportData.debtAmountCompanyCurrency;
-      } else {
-        if (
-          reportData.creditAmountCompanyCurrency &&
-          reportData.creditAmountCompanyCurrency !== '#' &&
-          reportData.creditAmountCompanyCurrency !== '0' &&
-          reportData.creditAmountCompanyCurrency !== '0,00'
-        ) {
-          valorReportado = reportData.creditAmountCompanyCurrency;
-        }
-      }
+      // if (
+      //   reportData.debtAmountCompanyCurrency &&
+      //   reportData.debtAmountCompanyCurrency !== '#' &&
+      //   reportData.debtAmountCompanyCurrency !== '0' &&
+      //   reportData.debtAmountCompanyCurrency !== '0,00'
+      // ) {
+      //   valorReportado = reportData.debtAmountCompanyCurrency;
+      // } else {
+      //   if (
+      //     reportData.creditAmountCompanyCurrency &&
+      //     reportData.creditAmountCompanyCurrency !== '#' &&
+      //     reportData.creditAmountCompanyCurrency !== '0' &&
+      //     reportData.creditAmountCompanyCurrency !== '0,00'
+      //   ) {
+      //     valorReportado = reportData.creditAmountCompanyCurrency;
+      //   }
+      // }
       // ==== FIN ENCONTRANDO EL VALOR A REPORTAR
 
       // ==== ENCONTRANDO EL IVA A REPORTAR
@@ -502,7 +504,7 @@ exports.generateReport = async (req, res) => {
     }
 
     const summaryLoadedData = new SummaryLoadedData('', 0);
-    let nroCedulasUnicos = [];
+    const nroCedulasUnicos = [];
     for (let i = 0; i < arrayGenerated.length; i++) {
       if (
         nroCedulasUnicos.indexOf(arrayGenerated[i].nroIdentificacion) === -1
@@ -510,11 +512,9 @@ exports.generateReport = async (req, res) => {
         nroCedulasUnicos.push(arrayGenerated[i].nroIdentificacion);
       }
     }
-    nroCedulasUnicos = [...new Set(nroCedulasUnicos)];
-    nroCedulasUnicos.forEach(function(doc, indey) {
+    nroCedulasUnicos.forEach(function(doc) {
       let byCedulaList = [];
       byCedulaList = arrayGenerated.filter(el => el.nroIdentificacion === doc);
-
       const conceptosUnicos = [];
       for (let i = 0; i < byCedulaList.length; i++) {
         if (conceptosUnicos.indexOf(byCedulaList[i].concepto) === -1) {
@@ -943,7 +943,8 @@ exports.generateReport = async (req, res) => {
           });
         });
       }
-      nroCedulasUnicos.splice(indey, 1);
+      // nroCedulasUnicos.splice(indey, 1);
+      // delete nroCedulasUnicos[indey];
     });
 
     //  console.table(arrayGeneratedDef);
