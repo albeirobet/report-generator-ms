@@ -491,6 +491,37 @@ exports.generateReport = async (req, res) => {
       }
     });
 
+    arrayGeneratedTmp = arrayGenerated;
+    arrayGenerated = [];
+    objectGenerated = {};
+    objectGenerated.companyId = userInfo.companyId;
+    objectGenerated.userId = userInfo._id;
+    objectGenerated.tipoDocumento = '43';
+    objectGenerated.nroIdentificacion = '222222222';
+    objectGenerated.razonSocial = 'CUANTIAS MENORES';
+    objectGenerated.direccion = 'Cra. 26 #1068';
+    objectGenerated.codigoDepto = '86';
+    objectGenerated.codigoMpo = '568';
+    objectGenerated.paisResidencia = '169';
+    objectGenerated.saldoCuentasPorPagar = 0;
+    objectGenerated.seniorAccountantId = null;
+    objectGenerated.concepto = null;
+    arrayGeneratedTmp.forEach(row => {
+      if (row.nroIdentificacion === '222222222') {
+        const saldoCuentasPorPagarTmp = getNum(row.saldoCuentasPorPagar);
+        let saldoCuentasPorPagarDef = 0;
+        saldoCuentasPorPagarDef =
+          getNum(objectGenerated.saldoCuentasPorPagar) +
+          saldoCuentasPorPagarTmp;
+        objectGenerated.saldoCuentasPorPagar = saldoCuentasPorPagarDef;
+      } else {
+        arrayGenerated.push(row);
+      }
+    });
+    if (objectGenerated.saldoCuentasPorPagar !== 0) {
+      arrayGenerated.push(objectGenerated);
+    }
+
     const summaryLoadedData = new SummaryLoadedData('', 0);
     // Actualizando información encabezado reporte
     objectReportResume.state = 'entering_information';
