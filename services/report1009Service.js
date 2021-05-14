@@ -213,7 +213,7 @@ function generateAddressData(
     } else {
       objectGenerated.tipoDocumento = '43';
       objectGenerated.nroIdentificacion = '222222222';
-      objectGenerated.razonSocial = 'CUANTIAS MENORES';
+      objectGenerated.razonSocial = `CUANTIAS MENORES PROVEEDOR NO ENCONTRADO ${objectGenerated.nroIdentificacion}`;
       objectGenerated.direccion = 'Cra. 26 #1068';
       objectGenerated.codigoDepto = '86';
       objectGenerated.codigoMpo = '568';
@@ -228,7 +228,7 @@ function generateAddressData(
     } else {
       objectGenerated.tipoDocumento = '43';
       objectGenerated.nroIdentificacion = '222222222';
-      objectGenerated.razonSocial = 'CUANTIAS MENORES';
+      objectGenerated.razonSocial = 'CUANTIAS MENORES ERROR NO CONTROLADO';
       objectGenerated.direccion = 'Cra. 26 #1068';
       objectGenerated.codigoDepto = '86';
       objectGenerated.codigoMpo = '568';
