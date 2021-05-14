@@ -33,6 +33,7 @@ const reportDownloaderRoute = require('./routes/reportDownloaderRoute');
 const reportEnableRoute = require('./routes/reportEnableRoute');
 const withHoldingNotesRoute = require('./routes/withHoldingNotesRoute');
 const chartAccountRoute = require('./routes/chartAccountRoute');
+const dailyAccountRoute = require('./routes/dailyAccountRoute');
 
 const app = express();
 
@@ -131,6 +132,8 @@ app.use('/api/v1/reportEnable', reportEnableRoute);
 app.use('/api/v1/withHoldingNotes', withHoldingNotesRoute);
 // 22. Chart Account
 app.use('/api/v1/chartAccounts', chartAccountRoute);
+// 22. Daily Account
+app.use('/api/v1/dailyAccount', dailyAccountRoute);
 
 // ... End Not Found Route
 app.all('*', notFoundRoute);

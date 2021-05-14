@@ -335,26 +335,6 @@ exports.generateReport = async (req, res) => {
 
       valorReportado = reportData.balanceAmountCompanyCurrency;
 
-      // ==== ENCONTRANDO EL VALOR A REPORTAR
-      // if (
-      //   reportData.debtAmountCompanyCurrency &&
-      //   reportData.debtAmountCompanyCurrency !== '#' &&
-      //   reportData.debtAmountCompanyCurrency !== '0' &&
-      //   reportData.debtAmountCompanyCurrency !== '0,00'
-      // ) {
-      //   valorReportado = reportData.debtAmountCompanyCurrency;
-      // } else {
-      //   if (
-      //     reportData.creditAmountCompanyCurrency &&
-      //     reportData.creditAmountCompanyCurrency !== '#' &&
-      //     reportData.creditAmountCompanyCurrency !== '0' &&
-      //     reportData.creditAmountCompanyCurrency !== '0,00'
-      //   ) {
-      //     valorReportado = reportData.creditAmountCompanyCurrency;
-      //   }
-      // }
-      // ==== FIN ENCONTRANDO EL VALOR A REPORTAR
-
       // ==== ENCONTRANDO EL IVA A REPORTAR
       if (
         reportData.ivaValueCalculated &&
@@ -1128,6 +1108,8 @@ exports.generateReport = async (req, res) => {
     //  console.table(arrayGeneratedDef);
     let arrayGeneratedDefinitivo = [];
     objectGenerated = {};
+    objectGenerated.companyId = userInfo.companyId;
+    objectGenerated.userId = userInfo._id;
     objectGenerated.tipoDocumento = '43';
     objectGenerated.nroIdentificacion = '222222222';
     objectGenerated.razonSocial = 'CUANTIAS MENORES';

@@ -21,6 +21,20 @@ router.get(
 );
 
 router.get(
+  '/generateReport1005',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin', 'reports'),
+  reportCreatorController.generateReport1005
+);
+
+router.get(
+  '/generateReport1009',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin', 'reports'),
+  reportCreatorController.generateReport1009
+);
+
+router.get(
   '/downloadEntryMerchandiseAndServicesReport',
   authController.protectPath,
   authController.protectPathWithRoles('admin', 'reports'),
