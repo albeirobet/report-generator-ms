@@ -358,185 +358,185 @@ exports.generateReport = async (req, res) => {
       }
     }
 
-    // const nroCedulasUnicos = [];
-    // for (let i = 0; i < arrayGenerated.length; i++) {
-    //   if (
-    //     nroCedulasUnicos.indexOf(arrayGenerated[i].nroIdentificacion) === -1
-    //   ) {
-    //     nroCedulasUnicos.push(arrayGenerated[i].nroIdentificacion);
-    //   }
-    // }
-    // arrayGeneratedTmp = arrayGenerated;
-    // arrayGenerated = [];
+    const nroCedulasUnicos = [];
+    for (let i = 0; i < arrayGenerated.length; i++) {
+      if (
+        nroCedulasUnicos.indexOf(arrayGenerated[i].nroIdentificacion) === -1
+      ) {
+        nroCedulasUnicos.push(arrayGenerated[i].nroIdentificacion);
+      }
+    }
+    arrayGeneratedTmp = arrayGenerated;
+    arrayGenerated = [];
 
-    // nroCedulasUnicos.forEach(function(doc) {
-    //   let byCedulaList = [];
-    //   byCedulaList = arrayGeneratedTmp.filter(
-    //     el => el.nroIdentificacion === doc
-    //   );
-    //   const conceptosUnicos = [];
-    //   for (let i = 0; i < byCedulaList.length; i++) {
-    //     if (conceptosUnicos.indexOf(byCedulaList[i].concepto) === -1) {
-    //       conceptosUnicos.push(byCedulaList[i].concepto);
-    //     }
-    //   }
-    //   conceptosUnicos.forEach(function(concepto) {
-    //     let byConceptosList = [];
-    //     byConceptosList = byCedulaList.filter(el => el.concepto === concepto);
-    //     if (byConceptosList && byConceptosList.length > 0) {
-    //       objectGenerated = {};
-    //       objectGenerated.companyId = userInfo.companyId;
-    //       objectGenerated.userId = userInfo._id;
-    //       objectGenerated.saldoCuentasPorCobrar = 0;
-    //       byConceptosList.forEach(function(docSum) {
-    //         objectGenerated.seniorAccountantId = docSum.seniorAccountantId;
-    //         objectGenerated.concepto = docSum.concepto;
-    //         objectGenerated.nroIdentificacion = docSum.nroIdentificacion;
-    //         // ==== Impuesto Descontable
-    //         let saldoCuentasPorCobrarDef = 0;
-    //         if (getNum(docSum.saldoCuentasPorCobrar)) {
-    //           saldoCuentasPorCobrarDef =
-    //             getNum(objectGenerated.saldoCuentasPorCobrar) +
-    //             getNum(docSum.saldoCuentasPorCobrar);
-    //           objectGenerated.saldoCuentasPorCobrar = saldoCuentasPorCobrarDef;
-    //         }
-    //       });
-    //       arrayGenerated.push(objectGenerated);
-    //     }
-    //   });
-    // });
+    nroCedulasUnicos.forEach(function(doc) {
+      let byCedulaList = [];
+      byCedulaList = arrayGeneratedTmp.filter(
+        el => el.nroIdentificacion === doc
+      );
+      const conceptosUnicos = [];
+      for (let i = 0; i < byCedulaList.length; i++) {
+        if (conceptosUnicos.indexOf(byCedulaList[i].concepto) === -1) {
+          conceptosUnicos.push(byCedulaList[i].concepto);
+        }
+      }
+      conceptosUnicos.forEach(function(concepto) {
+        let byConceptosList = [];
+        byConceptosList = byCedulaList.filter(el => el.concepto === concepto);
+        if (byConceptosList && byConceptosList.length > 0) {
+          objectGenerated = {};
+          objectGenerated.companyId = userInfo.companyId;
+          objectGenerated.userId = userInfo._id;
+          objectGenerated.saldoCuentasPorCobrar = 0;
+          byConceptosList.forEach(function(docSum) {
+            objectGenerated.seniorAccountantId = docSum.seniorAccountantId;
+            objectGenerated.concepto = docSum.concepto;
+            objectGenerated.nroIdentificacion = docSum.nroIdentificacion;
+            // ==== Impuesto Descontable
+            let saldoCuentasPorCobrarDef = 0;
+            if (getNum(docSum.saldoCuentasPorCobrar)) {
+              saldoCuentasPorCobrarDef =
+                getNum(objectGenerated.saldoCuentasPorCobrar) +
+                getNum(docSum.saldoCuentasPorCobrar);
+              objectGenerated.saldoCuentasPorCobrar = saldoCuentasPorCobrarDef;
+            }
+          });
+          arrayGenerated.push(objectGenerated);
+        }
+      });
+    });
 
-    // arrayGeneratedTmp = arrayGenerated;
-    // arrayGenerated = [];
+    arrayGeneratedTmp = arrayGenerated;
+    arrayGenerated = [];
 
-    // // Voy a generar cuantias menores a 500.000
-    // objectGenerated = {};
-    // objectGenerated.companyId = userInfo.companyId;
-    // objectGenerated.userId = userInfo._id;
-    // objectGenerated.tipoDocumento = '43';
-    // objectGenerated.nroIdentificacion = '222222222';
-    // objectGenerated.razonSocial = 'CUANTIAS MENORES';
-    // objectGenerated.direccion = 'Cra. 26 #1068';
-    // objectGenerated.codigoDepto = '86';
-    // objectGenerated.codigoMpo = '568';
-    // objectGenerated.paisResidencia = '169';
-    // objectGenerated.saldoCuentasPorCobrar = 0;
-    // arrayGeneratedTmp.forEach(function(rowFinal) {
-    //   const saldoCuentasPorCobrarTmp = getNum(rowFinal.saldoCuentasPorCobrar);
-    //   const signus = Math.sign(saldoCuentasPorCobrarTmp);
-    //   let flag = false;
-    //   if (saldoCuentasPorCobrarTmp === 0) {
-    //     flag = true;
-    //   } else {
-    //     if (signus === 1) {
-    //       if (saldoCuentasPorCobrarTmp < 500000) {
-    //         flag = true;
-    //       } else {
-    //         flag = false;
-    //       }
-    //     } else {
-    //       if (signus === -1) {
-    //         const saldoCuentasPorCobrarTmpPositive =
-    //           saldoCuentasPorCobrarTmp * -1;
-    //         if (saldoCuentasPorCobrarTmpPositive < 500000) {
-    //           flag = true;
-    //         } else {
-    //           flag = false;
-    //         }
-    //       } else {
-    //         flag = true;
-    //       }
-    //     }
-    //   }
-    //   if (flag) {
-    //     let saldoCuentasPorCobrarDef = 0;
-    //     saldoCuentasPorCobrarDef =
-    //       getNum(objectGenerated.saldoCuentasPorCobrar) +
-    //       saldoCuentasPorCobrarTmp;
-    //     objectGenerated.saldoCuentasPorCobrar = saldoCuentasPorCobrarDef;
-    //   } else {
-    //     arrayGenerated.push(rowFinal);
-    //   }
-    // });
-    // if (objectGenerated.saldoCuentasPorCobrar !== 0) {
-    //   arrayGenerated.push(objectGenerated);
-    // }
+    // Voy a generar cuantias menores a 500.000
+    objectGenerated = {};
+    objectGenerated.companyId = userInfo.companyId;
+    objectGenerated.userId = userInfo._id;
+    objectGenerated.tipoDocumento = '43';
+    objectGenerated.nroIdentificacion = '222222222';
+    objectGenerated.razonSocial = 'CUANTIAS MENORES';
+    objectGenerated.direccion = 'Cra. 26 #1068';
+    objectGenerated.codigoDepto = '86';
+    objectGenerated.codigoMpo = '568';
+    objectGenerated.paisResidencia = '169';
+    objectGenerated.saldoCuentasPorCobrar = 0;
+    arrayGeneratedTmp.forEach(function(rowFinal) {
+      const saldoCuentasPorCobrarTmp = getNum(rowFinal.saldoCuentasPorCobrar);
+      const signus = Math.sign(saldoCuentasPorCobrarTmp);
+      let flag = false;
+      if (saldoCuentasPorCobrarTmp === 0) {
+        flag = true;
+      } else {
+        if (signus === 1) {
+          if (saldoCuentasPorCobrarTmp < 500000) {
+            flag = true;
+          } else {
+            flag = false;
+          }
+        } else {
+          if (signus === -1) {
+            const saldoCuentasPorCobrarTmpPositive =
+              saldoCuentasPorCobrarTmp * -1;
+            if (saldoCuentasPorCobrarTmpPositive < 500000) {
+              flag = true;
+            } else {
+              flag = false;
+            }
+          } else {
+            flag = true;
+          }
+        }
+      }
+      if (flag) {
+        let saldoCuentasPorCobrarDef = 0;
+        saldoCuentasPorCobrarDef =
+          getNum(objectGenerated.saldoCuentasPorCobrar) +
+          saldoCuentasPorCobrarTmp;
+        objectGenerated.saldoCuentasPorCobrar = saldoCuentasPorCobrarDef;
+      } else {
+        arrayGenerated.push(rowFinal);
+      }
+    });
+    if (objectGenerated.saldoCuentasPorCobrar !== 0) {
+      arrayGenerated.push(objectGenerated);
+    }
 
-    // // Generando información personal, direcciones
-    // // Corrigiendo datos DANE
-    // const ciudadesCorregidas = ciudades.map(p =>
-    //   p.CODIGO_DANE_DEL_MUNICIPIO
-    //     ? {
-    //         ...p,
-    //         CODIGO_DANE_DEL_MUNICIPIO_LIMPIO: p.CODIGO_DANE_DEL_MUNICIPIO.replace(
-    //           ',',
-    //           ''
-    //         )
-    //       }
-    //     : p
-    // );
+    // Generando información personal, direcciones
+    // Corrigiendo datos DANE
+    const ciudadesCorregidas = ciudades.map(p =>
+      p.CODIGO_DANE_DEL_MUNICIPIO
+        ? {
+            ...p,
+            CODIGO_DANE_DEL_MUNICIPIO_LIMPIO: p.CODIGO_DANE_DEL_MUNICIPIO.replace(
+              ',',
+              ''
+            )
+          }
+        : p
+    );
 
-    // // Cargando datos de proveedores en memoria
-    // console.log(' =========  Cargando proveedores en memoria');
-    // let supplierReportData = await Supplier.find({
-    //   companyId: userInfo.companyId
-    // }).lean();
-    // console.log('Proveedores cargados', supplierReportData.length);
+    // Cargando datos de proveedores en memoria
+    console.log(' =========  Cargando proveedores en memoria');
+    let supplierReportData = await Supplier.find({
+      companyId: userInfo.companyId
+    }).lean();
+    console.log('Proveedores cargados', supplierReportData.length);
 
-    // // Cargando datos de clientes en memoria
-    // console.log(' =========  Cargando clientes en memoria');
-    // let clientReportData = await Client.find({
-    //   companyId: userInfo.companyId
-    // }).lean();
-    // console.log('Clientes cargados', clientReportData.length);
+    // Cargando datos de clientes en memoria
+    console.log(' =========  Cargando clientes en memoria');
+    let clientReportData = await Client.find({
+      companyId: userInfo.companyId
+    }).lean();
+    console.log('Clientes cargados', clientReportData.length);
 
-    // arrayGeneratedTmp = arrayGenerated;
-    // arrayGenerated = [];
+    arrayGeneratedTmp = arrayGenerated;
+    arrayGenerated = [];
 
-    // arrayGeneratedTmp.forEach(row => {
-    //   if (row.nroIdentificacion !== '222222222') {
-    //     const rowDef = generateAddressData(
-    //       ciudadesCorregidas,
-    //       row,
-    //       supplierReportData,
-    //       clientReportData
-    //     );
-    //     arrayGenerated.push(rowDef);
-    //   } else {
-    //     arrayGenerated.push(row);
-    //   }
-    // });
+    arrayGeneratedTmp.forEach(row => {
+      if (row.nroIdentificacion !== '222222222') {
+        const rowDef = generateAddressData(
+          ciudadesCorregidas,
+          row,
+          supplierReportData,
+          clientReportData
+        );
+        arrayGenerated.push(rowDef);
+      } else {
+        arrayGenerated.push(row);
+      }
+    });
 
-    // arrayGeneratedTmp = arrayGenerated;
-    // arrayGenerated = [];
-    // objectGenerated = {};
-    // objectGenerated.companyId = userInfo.companyId;
-    // objectGenerated.userId = userInfo._id;
-    // objectGenerated.tipoDocumento = '43';
-    // objectGenerated.nroIdentificacion = '222222222';
-    // objectGenerated.razonSocial = 'CUANTIAS MENORES';
-    // objectGenerated.direccion = 'Cra. 26 #1068';
-    // objectGenerated.codigoDepto = '86';
-    // objectGenerated.codigoMpo = '568';
-    // objectGenerated.paisResidencia = '169';
-    // objectGenerated.saldoCuentasPorCobrar = 0;
-    // objectGenerated.seniorAccountantId = null;
-    // objectGenerated.concepto = null;
-    // arrayGeneratedTmp.forEach(row => {
-    //   if (row.nroIdentificacion === '222222222') {
-    //     const saldoCuentasPorCobrarTmp = getNum(row.saldoCuentasPorCobrar);
-    //     let saldoCuentasPorCobrarDef = 0;
-    //     saldoCuentasPorCobrarDef =
-    //       getNum(objectGenerated.saldoCuentasPorCobrar) +
-    //       saldoCuentasPorCobrarTmp;
-    //     objectGenerated.saldoCuentasPorCobrar = saldoCuentasPorCobrarDef;
-    //   } else {
-    //     arrayGenerated.push(row);
-    //   }
-    // });
-    // if (objectGenerated.saldoCuentasPorCobrar !== 0) {
-    //   arrayGenerated.push(objectGenerated);
-    // }
+    arrayGeneratedTmp = arrayGenerated;
+    arrayGenerated = [];
+    objectGenerated = {};
+    objectGenerated.companyId = userInfo.companyId;
+    objectGenerated.userId = userInfo._id;
+    objectGenerated.tipoDocumento = '43';
+    objectGenerated.nroIdentificacion = '222222222';
+    objectGenerated.razonSocial = 'CUANTIAS MENORES';
+    objectGenerated.direccion = 'Cra. 26 #1068';
+    objectGenerated.codigoDepto = '86';
+    objectGenerated.codigoMpo = '568';
+    objectGenerated.paisResidencia = '169';
+    objectGenerated.saldoCuentasPorCobrar = 0;
+    objectGenerated.seniorAccountantId = null;
+    objectGenerated.concepto = null;
+    arrayGeneratedTmp.forEach(row => {
+      if (row.nroIdentificacion === '222222222') {
+        const saldoCuentasPorCobrarTmp = getNum(row.saldoCuentasPorCobrar);
+        let saldoCuentasPorCobrarDef = 0;
+        saldoCuentasPorCobrarDef =
+          getNum(objectGenerated.saldoCuentasPorCobrar) +
+          saldoCuentasPorCobrarTmp;
+        objectGenerated.saldoCuentasPorCobrar = saldoCuentasPorCobrarDef;
+      } else {
+        arrayGenerated.push(row);
+      }
+    });
+    if (objectGenerated.saldoCuentasPorCobrar !== 0) {
+      arrayGenerated.push(objectGenerated);
+    }
 
     const summaryLoadedData = new SummaryLoadedData('', 0);
     // Actualizando información encabezado reporte
@@ -548,8 +548,8 @@ exports.generateReport = async (req, res) => {
 
     // Limpiando memoria general
     masterReportData = null;
-    // supplierReportData = null;
-    // clientReportData = null;
+    supplierReportData = null;
+    clientReportData = null;
     chartAccount = null;
     arrayGeneratedTmp = [];
 
@@ -574,8 +574,8 @@ exports.generateReport = async (req, res) => {
       .catch(function(error) {
         // Limpiando memoria general
         masterReportData = null;
-        // supplierReportData = null;
-        // clientReportData = null;
+        supplierReportData = null;
+        clientReportData = null;
 
         summaryLoadedData.message =
           reportGeneratorMessages.E_REPORT_GENERATOR_MS_03;
