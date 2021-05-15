@@ -15,6 +15,7 @@ const entryMerchandiseAndServicesReportService = require('./entryMerchandiseAndS
 const report1001Service = require('./report1001Service');
 const report1005Service = require('./report1005Service');
 const report1009Service = require('./report1009Service');
+const report1008Service = require('./report1008Service');
 const userService = require('./userService');
 const ReportDownloader = require('../models/reportDownloaderModel');
 const EntryMerchandiseAndServicesReportReport = require('../models/entryMerchandiseAndServicesReportReportModel');
@@ -43,6 +44,16 @@ exports.generateReport1001 = async (req, res) => {
 exports.generateReport1005 = async (req, res) => {
   try {
     report1005Service.generateReport(req, res);
+    return 'El reporte está siendo generado. Por favor validar su estado';
+  } catch (error) {
+    throw error;
+  }
+};
+
+// =========== Function to
+exports.generateReport1008 = async (req, res) => {
+  try {
+    report1008Service.generateReport(req, res);
     return 'El reporte está siendo generado. Por favor validar su estado';
   } catch (error) {
     throw error;

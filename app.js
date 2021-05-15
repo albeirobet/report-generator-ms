@@ -34,6 +34,8 @@ const reportEnableRoute = require('./routes/reportEnableRoute');
 const withHoldingNotesRoute = require('./routes/withHoldingNotesRoute');
 const chartAccountRoute = require('./routes/chartAccountRoute');
 const dailyAccountRoute = require('./routes/dailyAccountRoute');
+const taxSaleRoute = require('./routes/taxSaleRoute');
+const suscriberDebtRoute = require('./routes/suscriberDebtRoute');
 
 const app = express();
 
@@ -134,6 +136,10 @@ app.use('/api/v1/withHoldingNotes', withHoldingNotesRoute);
 app.use('/api/v1/chartAccounts', chartAccountRoute);
 // 22. Daily Account
 app.use('/api/v1/dailyAccount', dailyAccountRoute);
+// 23. Daily Account
+app.use('/api/v1/taxSale', taxSaleRoute);
+// 24. Suscriber Debt
+app.use('/api/v1/suscriberDebt', suscriberDebtRoute);
 
 // ... End Not Found Route
 app.all('*', notFoundRoute);
