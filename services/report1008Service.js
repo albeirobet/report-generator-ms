@@ -16,6 +16,7 @@ const ServiceException = require('../utils/errors/serviceException');
 const commonErrors = require('../utils/constants/commonErrors');
 const httpCodes = require('../utils/constants/httpCodes');
 const MasterReport = require('../models/masterReportModel');
+const SuscriberDebt = require('../models/suscriberDebtModel');
 const Supplier = require('../models/supplierModel');
 const Client = require('../models/clientModel');
 const ChartAccount = require('../models/chartAccountModel');
@@ -293,8 +294,8 @@ exports.generateReport = async (req, res) => {
 
     console.log(' =========  Cargando en memoria');
     let masterReportData = await MasterReport.find({
-      companyId: userInfo.companyId
-      // ,      thirdId: { $in: ['5000120'] }
+      companyId: userInfo.companyId,
+      thirdId: { $in: ['1126458092'] }
     }).lean();
 
     let chartAccount = await ChartAccount.find({
@@ -357,6 +358,28 @@ exports.generateReport = async (req, res) => {
         continue;
       }
     }
+    // CARGANDO INFORMACIÓN DE EEBPSA
+
+    console.log(' =========  Cargando en memoria Suscriber Debt');
+    let suscriberDebtData = await SuscriberDebt.find({
+      companyId: userInfo.companyId
+    }).lean();
+    for await (const suscriberData of suscriberDebtData) {
+      objectGenerated = {};
+      objectGenerated.companyId = userInfo.companyId;
+      objectGenerated.userId = userInfo._id;
+      objectGenerated.seniorAccountantId = 'SUPERNOVA-ORIGEN';
+      objectGenerated.saldoCuentasPorCobrar = suscriberData.value;
+      objectGenerated.nroIdentificacion = suscriberData.identificationNumber;
+      objectGenerated.concepto = suscriberData.concept;
+      if (objectGenerated.concepto) {
+        arrayGenerated.push(objectGenerated);
+      }
+    }
+    suscriberDebtData = null;
+    console.log(' =========  Cargado y adjunto a general Suscriber Debt');
+
+    // FIN CARGANDO INFORMACIÓN DE EEBPSA
 
     const nroCedulasUnicos = [];
     for (let i = 0; i < arrayGenerated.length; i++) {
