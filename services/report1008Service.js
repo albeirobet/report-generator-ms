@@ -294,8 +294,8 @@ exports.generateReport = async (req, res) => {
 
     console.log(' =========  Cargando en memoria');
     let masterReportData = await MasterReport.find({
-      companyId: userInfo.companyId,
-      thirdId: { $in: ['1126458092'] }
+      companyId: userInfo.companyId
+      // ,      thirdId: { $in: ['5000120'] }
     }).lean();
 
     let chartAccount = await ChartAccount.find({
@@ -363,6 +363,7 @@ exports.generateReport = async (req, res) => {
     console.log(' =========  Cargando en memoria Suscriber Debt');
     let suscriberDebtData = await SuscriberDebt.find({
       companyId: userInfo.companyId
+      // ,       identificationNumber: { $in: ['18110534'] }
     }).lean();
     for await (const suscriberData of suscriberDebtData) {
       objectGenerated = {};
@@ -575,14 +576,14 @@ exports.generateReport = async (req, res) => {
     clientReportData = null;
     chartAccount = null;
     arrayGeneratedTmp = [];
-
+    console.log('Insert Data init', arrayGenerated.length);
     await Report1008.collection
       .insertMany(arrayGenerated)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
         summaryLoadedData.counter = arrayGenerated.length;
-        console.log('Insert Data Finish');
+        console.log('Insert Data Finish', arrayGenerated.length);
         async function finishReport() {
           // Actualizando información encabezado reporte
           objectReportResume.state = 'created_report';
