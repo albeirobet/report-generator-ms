@@ -332,7 +332,6 @@ exports.generateReport = async (req, res) => {
         }
       }
       // ==== FIN ENCONTRANDO EL NUMERO DE IDENTIFICACIÓN DEL USUARIO
-
       //valorReportado = reportData.balanceAmountCompanyCurrency;
       valorReportado = reportData.debtAmountCompanyCurrency;
       if (!valorReportado) {
