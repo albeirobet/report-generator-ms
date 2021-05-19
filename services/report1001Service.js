@@ -1126,6 +1126,7 @@ exports.generateReport = async (req, res) => {
       const pagoDeducibleTmp = getNum(rowFinal.pagoDeducible);
       const signus = Math.sign(Math.trunc(pagoDeducibleTmp));
       let flag = false;
+
       if (pagoDeducibleTmp === 100000) {
         flag = false;
       } else {
