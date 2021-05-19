@@ -1491,14 +1491,14 @@ exports.sendReportCSV = async (req, res) => {
           title: 'ID de documento de anulación'
         },
         { id: 'extraOriginalDocumentId', title: 'ID doc.original' },
-        // {
-        //   id: 'debtAmountCompanyCurrency',
-        //   title: 'Importe en debe en moneda de empresa'
-        // },
-        // {
-        //   id: 'creditAmountCompanyCurrency',
-        //   title: 'Importe en haber en moneda de empresa'
-        // },
+        {
+          id: 'debtAmountCompanyCurrency',
+          title: 'Importe en debe en moneda de empresa'
+        },
+        {
+          id: 'creditAmountCompanyCurrency',
+          title: 'Importe en haber en moneda de empresa'
+        },
         {
           id: 'balanceAmountCompanyCurrency',
           title: 'Saldo en Moneda de la Empresa'
