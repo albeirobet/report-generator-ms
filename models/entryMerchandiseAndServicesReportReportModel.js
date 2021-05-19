@@ -71,6 +71,11 @@ const entryMerchandiseAndServiceReportSchema = new mongoose.Schema({
     type: String,
     uppercase: true
   },
+  // Saldo en moneda de empresa
+  balanceAmountCompanyCurrency: {
+    type: String,
+    uppercase: true
+  },
 
   // ========DESDE ESTE PUNTO LOS GENERADOS
 
