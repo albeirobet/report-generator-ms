@@ -1124,27 +1124,31 @@ exports.generateReport = async (req, res) => {
     objectGenerated.pagoDeducible = 0;
     arrayGeneratedDef.forEach(function(rowFinal) {
       const pagoDeducibleTmp = getNum(rowFinal.pagoDeducible);
-      const signus = Math.sign(pagoDeducibleTmp);
+      const signus = Math.sign(Math.trunc(pagoDeducibleTmp));
       let flag = false;
-      if (pagoDeducibleTmp === 0) {
-        flag = true;
+      if (pagoDeducibleTmp === 100000) {
+        flag = false;
       } else {
-        if (signus === 1) {
-          if (pagoDeducibleTmp < 100000) {
-            flag = true;
-          } else {
-            flag = false;
-          }
+        if (pagoDeducibleTmp === 0) {
+          flag = true;
         } else {
-          if (signus === -1) {
-            const pagoDeducibleTmpPositive = pagoDeducibleTmp * -1;
-            if (pagoDeducibleTmpPositive < 100000) {
+          if (signus === 1) {
+            if (pagoDeducibleTmp < 100000) {
               flag = true;
             } else {
               flag = false;
             }
           } else {
-            flag = true;
+            if (signus === -1) {
+              const pagoDeducibleTmpPositive = pagoDeducibleTmp * -1;
+              if (pagoDeducibleTmpPositive < 100000) {
+                flag = true;
+              } else {
+                flag = false;
+              }
+            } else {
+              flag = true;
+            }
           }
         }
       }
@@ -1326,6 +1330,37 @@ exports.generateReport = async (req, res) => {
         arrayGeneratedDefinitivo.push(row);
       }
     });
+
+    const arrayGeneratedTmp = arrayGeneratedDefinitivo;
+    arrayGeneratedDefinitivo = [];
+    objectGenerated = {};
+    objectGenerated.companyId = userInfo.companyId;
+    objectGenerated.userId = userInfo._id;
+    objectGenerated.tipoDocumento = '43';
+    objectGenerated.nroIdentificacion = '222222222';
+    objectGenerated.razonSocial = 'CUANTIAS MENORES';
+    objectGenerated.direccion = 'Cra. 26 #1068';
+    objectGenerated.codigoDepto = '86';
+    objectGenerated.codigoMpo = '568';
+    objectGenerated.paisResidencia = '169';
+    objectGenerated.saldoCuentasPorCobrar = 0;
+    objectGenerated.seniorAccountantId = null;
+    objectGenerated.concepto = null;
+    objectGenerated.pagoDeducible = 0;
+    arrayGeneratedTmp.forEach(row => {
+      if (row.nroIdentificacion === '222222222') {
+        const pagoDeducibleTmp = getNum(row.pagoDeducible);
+        let pagoDeducibleDef = 0;
+        pagoDeducibleDef =
+          getNum(objectGenerated.pagoDeducible) + pagoDeducibleTmp;
+        objectGenerated.pagoDeducible = pagoDeducibleDef;
+      } else {
+        arrayGeneratedDefinitivo.push(row);
+      }
+    });
+    if (objectGenerated.pagoDeducible !== 0) {
+      arrayGeneratedDefinitivo.push(objectGenerated);
+    }
 
     // ===========================================
     // ============= FINALIZA AGRUPACIÓN  ==========
