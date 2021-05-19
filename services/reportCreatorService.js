@@ -14,6 +14,7 @@ const httpCodes = require('../utils/constants/httpCodes');
 const entryMerchandiseAndServicesReportService = require('./entryMerchandiseAndServicesReportService');
 const report1001Service = require('./report1001Service');
 const report1005Service = require('./report1005Service');
+const report1006Service = require('./report1006Service');
 const report1009Service = require('./report1009Service');
 const report1008Service = require('./report1008Service');
 const userService = require('./userService');
@@ -50,6 +51,15 @@ exports.generateReport1005 = async (req, res) => {
   }
 };
 
+// =========== Function to
+exports.generateReport1006 = async (req, res) => {
+  try {
+    report1006Service.generateReport(req, res);
+    return 'El reporte está siendo generado. Por favor validar su estado';
+  } catch (error) {
+    throw error;
+  }
+};
 // =========== Function to
 exports.generateReport1008 = async (req, res) => {
   try {
