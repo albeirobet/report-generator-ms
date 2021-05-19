@@ -1124,27 +1124,31 @@ exports.generateReport = async (req, res) => {
     objectGenerated.pagoDeducible = 0;
     arrayGeneratedDef.forEach(function(rowFinal) {
       const pagoDeducibleTmp = getNum(rowFinal.pagoDeducible);
-      const pagoNoDeducibleTmp = getNum(rowFinal.pagoNoDeducible);
-
-      let flagPagos = false;
-      let flagGeneral = false;
-      if (pagoDeducibleTmp > 0) {
-        flagPagos = true;
-      }
-      if (pagoNoDeducibleTmp > 0) {
-        flagPagos = true;
-      }
-
-      if (flagPagos) {
-        if (pagoDeducibleTmp < 100000 && pagoNoDeducibleTmp === 0) {
-          flagGeneral = true;
-        } else if (pagoNoDeducibleTmp < 100000 && pagoDeducibleTmp === 0) {
-          flagGeneral = true;
+      const signus = Math.sign(pagoDeducibleTmp);
+      let flag = false;
+      if (pagoDeducibleTmp === 0) {
+        flag = true;
+      } else {
+        if (signus === 1) {
+          if (pagoDeducibleTmp < 100000) {
+            flag = true;
+          } else {
+            flag = false;
+          }
         } else {
-          flagGeneral = false;
+          if (signus === -1) {
+            const pagoDeducibleTmpPositive = pagoDeducibleTmp * -1;
+            if (pagoDeducibleTmpPositive < 100000) {
+              flag = true;
+            } else {
+              flag = false;
+            }
+          } else {
+            flag = true;
+          }
         }
       }
-      if (flagGeneral) {
+      if (flag) {
         // ==== Pago Deducible
         let pagoDeducibleDef = 0;
         if (getNum(objectGenerated.pagoDeducible)) {
