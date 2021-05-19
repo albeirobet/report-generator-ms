@@ -284,7 +284,7 @@ exports.generateReport = async (req, res) => {
     console.log(' =========  Cargando en memoria');
     let masterReportData = await EntryMerchandiseAndServicesReportReport.find({
       companyId: userInfo.companyId
-      // ,       thirdId: { $in: ['5000477'] }
+      // ,      thirdId: { $in: ['5000090'] }
     }).lean();
 
     let chartAccount = await ChartAccount.find({
@@ -1121,6 +1121,7 @@ exports.generateReport = async (req, res) => {
     objectGenerated.codigoDepto = '86';
     objectGenerated.codigoMpo = '568';
     objectGenerated.paisResidencia = '169';
+    objectGenerated.pagoDeducible = 0;
     arrayGeneratedDef.forEach(function(rowFinal) {
       const pagoDeducibleTmp = getNum(rowFinal.pagoDeducible);
       const pagoNoDeducibleTmp = getNum(rowFinal.pagoNoDeducible);
@@ -1270,7 +1271,9 @@ exports.generateReport = async (req, res) => {
         arrayGeneratedDefinitivo.push(rowFinal);
       }
     });
-    arrayGeneratedDefinitivo.push(objectGenerated);
+    if (objectGenerated.pagoDeducible !== 0) {
+      arrayGeneratedDefinitivo.push(objectGenerated);
+    }
     objectGenerated = {};
     // ====== RECORRIENDO FINALMENTE PARA ELIMINAR RETENCIONES O IVA SI EL PAGO DEDUCIBLE ES CERO
     arrayGeneratedDefinitivo.forEach(row => {
