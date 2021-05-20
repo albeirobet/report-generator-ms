@@ -338,8 +338,8 @@ exports.generateReport = async (req, res) => {
             const { format, concept } = chartAccountRow;
             if (format && concept) {
               if (
-                (format && format.length > 0 && format === '1008') ||
-                format === 1008
+                (format && format.length > 0 && format === '1007') ||
+                format === 1007
               ) {
                 defConcept = concept;
                 objectGenerated.concepto = defConcept;
@@ -692,7 +692,7 @@ exports.sendReportCSV = async (req, res) => {
     }).lean();
     console.log('>>>>>>>>>>>>  cargado en memoria');
 
-    const nameFile = 'REPORTE 1008';
+    const nameFile = 'REPORTE 1007';
     const pathTmp = path.resolve(__dirname, '../resources/uploads/');
     const pathx = `${pathTmp}//${nameFile}.csv`;
     const csvWriter = createCsvWriter({
@@ -706,18 +706,11 @@ exports.sendReportCSV = async (req, res) => {
           id: 'nroIdentificacion',
           title: 'Número de Identificación acreedor'
         },
-        {
-          id: 'dv',
-          title: 'DV'
-        },
         { id: 'primerApellido', title: 'Primer apellido acreedor' },
         { id: 'segundoApellido', title: 'Segundo apellido acreedor' },
         { id: 'primerNombre', title: 'Primer nombre acreedor' },
         { id: 'segundoNombre', title: 'Otros nombres acreedor' },
         { id: 'razonSocial', title: 'Razon social acreedor' },
-        { id: 'direccion', title: 'Dirección' },
-        { id: 'codigoDepto', title: 'Codigo Dpto' },
-        { id: 'codigoMpo', title: 'Codigo Mcp' },
         { id: 'paisResidencia', title: 'Pais de residencia o domicilio' },
         {
           id: 'ingresosBrutos',
