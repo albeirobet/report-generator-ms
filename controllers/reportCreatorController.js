@@ -73,6 +73,22 @@ exports.generateReport1006 = async (req, res) => {
   return res.status(codeHttp).json(generalResponse);
 };
 
+exports.generateReport1007 = async (req, res) => {
+  let codeHttp = httpCodes.OK;
+  let generalResponse = new GeneralResponse();
+  generalResponse.success = true;
+  try {
+    const data = await reportCreatorService.generateReport1007(req, res);
+    generalResponse = generalResp.generalSuccess(data);
+  } catch (err) {
+    generalResponse = generalResp.generalError(err);
+    console.error(generalResponse.apiError.messageUser);
+    codeHttp = generalResponse.apiError.codeHTTP || httpCodes.BAD_REQUEST;
+    generalResponse.apiError.codeHTTP = undefined;
+  }
+  return res.status(codeHttp).json(generalResponse);
+};
+
 exports.generateReport1008 = async (req, res) => {
   let codeHttp = httpCodes.OK;
   let generalResponse = new GeneralResponse();

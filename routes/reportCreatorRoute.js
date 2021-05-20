@@ -35,6 +35,13 @@ router.get(
 );
 
 router.get(
+  '/generateReport1007',
+  authController.protectPath,
+  authController.protectPathWithRoles('admin', 'reports'),
+  reportCreatorController.generateReport1007
+);
+
+router.get(
   '/generateReport1008',
   authController.protectPath,
   authController.protectPathWithRoles('admin', 'reports'),
