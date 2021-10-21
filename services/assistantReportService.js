@@ -173,7 +173,7 @@ exports.loadAssistantReportDataAsyncy = async (req, res) => {
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportUploader(objectReportResume);
-    const countDB = await ChartAccountModel.countDocuments({
+    const countDB = await AssistantReport.countDocuments({
       companyId: userInfo.companyId
     });
     await AssistantReport.insertMany(assistantReport)

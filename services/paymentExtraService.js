@@ -168,7 +168,7 @@ exports.loadPaymentExtraDataAsyncy = async (req, res) => {
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportUploader(objectReportResume);
-    const countDB = await ChartAccountModel.countDocuments({
+    const countDB = await PaymentExtra.countDocuments({
       companyId: userInfo.companyId
     });
     await PaymentExtra.collection

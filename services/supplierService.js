@@ -166,7 +166,7 @@ exports.loadSuppliersAsyncy = async (req, res) => {
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportUploader(objectReportResume);
-    const countDB = await ChartAccountModel.countDocuments({
+    const countDB = await Supplier.countDocuments({
       companyId: userInfo.companyId
     });
     await Supplier.collection

@@ -186,7 +186,7 @@ exports.loadMasterReportDataAsync = async (req, res) => {
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportUploader(objectReportResume);
-    const countDB = await ChartAccountModel.countDocuments({
+    const countDB = await MasterReport.countDocuments({
       companyId: userInfo.companyId
     });
     await MasterReport.collection

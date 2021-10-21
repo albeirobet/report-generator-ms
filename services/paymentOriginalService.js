@@ -163,7 +163,7 @@ exports.loadPaymentOriginalDataAsyncy = async (req, res) => {
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportUploader(objectReportResume);
-    const countDB = await ChartAccountModel.countDocuments({
+    const countDB = await PaymentOriginal.countDocuments({
       companyId: userInfo.companyId
     });
     await PaymentOriginal.collection

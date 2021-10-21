@@ -162,7 +162,7 @@ exports.loadEntryMerchandiseExtraAsync = async (req, res) => {
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportUploader(objectReportResume);
-    const countDB = await ChartAccountModel.countDocuments({
+    const countDB = await EntryMerchandiseExtra.countDocuments({
       companyId: userInfo.companyId
     });
     await EntryMerchandiseExtra.collection
