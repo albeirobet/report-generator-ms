@@ -75,6 +75,7 @@ exports.getReport = async (req, res) => {
 exports.getAllAllReports = async (req, res) => {
   try {
     const userInfo = await userService.getUserInfo(req, res);
+    console.log(userInfo);
     const data = await ReportUploader.find({
       companyId: userInfo.companyId
     }).lean();

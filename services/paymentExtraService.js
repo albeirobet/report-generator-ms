@@ -168,18 +168,21 @@ exports.loadPaymentExtraDataAsyncy = async (req, res) => {
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportUploader(objectReportResume);
+    const countDB = await ChartAccountModel.countDocuments({
+      companyId: userInfo.companyId
+    });
     await PaymentExtra.collection
       .insertMany(paymentExtraData)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
-        summaryLoadedData.counter = paymentExtraData.length;
+        summaryLoadedData.counter = paymentExtraData.length + countDB;
         console.log('Insert Data Finish');
         async function finishReport() {
           // Actualizando información encabezado reporte
           objectReportResume.state = 'uploaded_data';
           objectReportResume.percentageCompletition = 100;
-          objectReportResume.counterRows = paymentExtraData.length;
+          objectReportResume.counterRows = paymentExtraData.length + countDB;
           objectReportResume.message = 'Reporte cargado correctamente';
           objectReportResume.endDate = new Date();
           await reportFunctionsUpdate.updateReportUploader(objectReportResume);

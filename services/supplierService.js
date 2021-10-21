@@ -166,18 +166,21 @@ exports.loadSuppliersAsyncy = async (req, res) => {
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportUploader(objectReportResume);
+    const countDB = await ChartAccountModel.countDocuments({
+      companyId: userInfo.companyId
+    });
     await Supplier.collection
       .insertMany(suppliers)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
-        summaryLoadedData.counter = suppliers.length;
+        summaryLoadedData.counter = suppliers.length + countDB;
         console.log('Insert Data Finish');
         async function finishReport() {
           // Actualizando información encabezado reporte
           objectReportResume.state = 'uploaded_data';
           objectReportResume.percentageCompletition = 100;
-          objectReportResume.counterRows = suppliers.length;
+          objectReportResume.counterRows = suppliers.length + countDB;
           objectReportResume.message = 'Reporte cargado correctamente';
           objectReportResume.endDate = new Date();
           await reportFunctionsUpdate.updateReportUploader(objectReportResume);

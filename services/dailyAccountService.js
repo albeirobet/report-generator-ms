@@ -159,18 +159,21 @@ exports.loadAsyncy = async (req, res) => {
     objectReportResume.counterRows = 0;
     objectReportResume.message = 'Insertando Información';
     await reportFunctionsUpdate.updateReportUploader(objectReportResume);
+    const countDB = await ChartAccountModel.countDocuments({
+      companyId: userInfo.companyId
+    });
     await DailyAccount.collection
       .insertMany(dailyAccounts)
       .then(function() {
         summaryLoadedData.message =
           reportGeneratorMessages.M_REPORT_GENERATOR_MS_01;
-        summaryLoadedData.counter = dailyAccounts.length;
+        summaryLoadedData.counter = dailyAccounts.length + countDB;
         console.log('Insert Data Finish');
         async function finishReport() {
           // Actualizando información encabezado reporte
           objectReportResume.state = 'uploaded_data';
           objectReportResume.percentageCompletition = 100;
-          objectReportResume.counterRows = dailyAccounts.length;
+          objectReportResume.counterRows = dailyAccounts.length + countDB;
           objectReportResume.message = 'Reporte cargado correctamente';
           objectReportResume.endDate = new Date();
           await reportFunctionsUpdate.updateReportUploader(objectReportResume);
